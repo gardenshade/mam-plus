@@ -1,0 +1,8 @@
+.DS_Store
+node_modules
+*.tmp*
+.sass-cache
+user-settings.json
+build/staging
+build/dev
+*.sublime*

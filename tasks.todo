@@ -1,0 +1,30 @@
+
+BUGS:
+  - SB settings not being read properly for no reason in some browsers???
+  - browser tab doesn't update in background because SB pauses
+  - topic count not triggering browser count?
+
+TWEAKS:
+  planned:
+    - stretch SB to fill full page
+    - set to ONLY show torrent OR zip, not both
+    - add toggle for bold/italic emphasis
+  concept:
+    - store all `pageLoad` calls in array so that it only needs to run once
+    - collapse freeleech sections
+    - notify of new freeleech picks
+    - points reminder when in range
+  wishlist:
+    - use keyboard to navigate Prev & Next pages
+
+FEATURES:
+  planned:
+    - make OP posts more visible in forums
+    - stretch SB to fill full page
+    - floating list of torrent files
+  concept:
+    - look into Chrome/FF browser alerts instead of browser tab changes
+    - add keywords for torrent pages & make triggered matches more visible
+  wishlist:
+    - audible notifications for SB
+    - "friends online" list
