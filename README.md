@@ -20,7 +20,7 @@ In case you want to modify the script and/or contribute to it, follow the below 
 - Clone this project to your computer
 - Make sure your terminal window is open to this project folder, and run `npm install`
 - Create a new file called `user-settings.json`
-- Find the path to your Greasemonkey scripts folder, and use it to create a new object in the User Settings, like this:
+- Find the path to your Greasemonkey scripts folder, and use it to create a new object in `user-settings.json`, like this:
 ```json
 { "userDir": "C:/Users/YOUR-USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles/YOUR-CODE.default/gm_scripts" }
 ```
