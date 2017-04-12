@@ -2,11 +2,9 @@
 
 The MAM+ userscript, converted to CoffeeScript and published in a more official manner.
 
-
-
 ## Installation
 
-Simply install with Greasemonkey (Firefox) or Tampermonkey (all other browsers).
+Simply install with [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) (Firefox) or [Tampermonkey](https://tampermonkey.net/) (all other browsers). MAM+ only officially supports the most recent versions of Chrome & Firefox, but other modern browsers should theoretically work.
 
 ## Modification & Contribution
 
@@ -21,10 +19,13 @@ In case you want to modify the script and/or contribute to it, follow the below 
 - Make sure the prerequisites are installed on your system
 - Clone this project to your computer
 - Make sure your terminal window is open to this project folder, and run `npm install`
-- Duplicate `edit_gulpfile.js` and rename it to `gulpfile.js`
+- Create a new file called `user-settings.json`
+- Find the path to your Greasemonkey scripts folder, and use it to create a new object in the User Settings, like this:
+```json
+{ "userDir": "C:/Users/YOUR-USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles/YOUR-CODE.default/gm_scripts" }
+```
 - Open Firefox and create a new userscript
-    - Set the name exactly to `MAM Plus`
+    - Set the name exactly to `MAM Plus Dev`
     - Set the includes to `https://myanonamouse.net/*` & `https://www.myanonamouse.net/*`
-- Open `gulpfile.js` and set the value of `YOUR_DIR` to the path of your Greasemonkey scripts directory
-- If you didn't set the local Greasemonkey location, you'll probably get an unnecessary folder showing up in your project directory until I get around to fixing this
-- Make sure your terminal window is open to this project folder, and run `gulp`
+- If you didn't set the local Greasemonkey location, the script will redundantly output to the project directory
+- Make sure your terminal window is open to this project folder, and run `gulp`. (A minified file of the release-ready script can be created by running `gulp release`)
