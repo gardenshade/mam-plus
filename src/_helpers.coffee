@@ -5,6 +5,3 @@ MP_HELPERS =
             .toUTCString()
             .split(' ')
         theDate[2]+' '+theDate[1]
-    preTest: ->
-        console.log 'limer'
-        do MP.run

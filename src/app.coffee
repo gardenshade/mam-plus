@@ -2,7 +2,7 @@ MP =
     # CONSTANTS
     VERSION     : '3.0'
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Apr 12th'
+    TIMESTAMP   : 'Apr 17th'
     UPDATE_LIST : [
         'Completely rewrote backend for <em>n</em>th time'
     ]
