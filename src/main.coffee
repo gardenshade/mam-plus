@@ -1,23 +1,27 @@
-prevVer = GM_getValue 'mp_version'
-pagePath = window.location.pathname
+try
+    MP =
+        # CONSTANTS
+        VERSION     : '3.0'
+        PREV_VER    : GM_getValue 'mp_version'
+        TIMESTAMP   : 'Apr 12th'
+        UPDATE_LIST : [
+            'Completely rewrote backend for <em>n</em>th time'
+        ]
+        BUG_LIST    : []
+        # VARIABLES
+        errorLog : []
+        pagePath : window.location.pathname
 
-MP = ->
-    # Constants
-    VERSION      = '3.0'
-    TIMESTAMP    = 'Apr 12th'
-    UPDATE_LIST  = [
-        'Completely rewrote backend for <em>n</em>th time'
-    ]
-    NEW_BUG_LIST = []
+        # THIS SHOULD BE INSERTED INTO A STYLESHEET
+        # Reference with .mp_dark and .mp_light
+        theme :
+            type: 'dark'
+            btnBorder: '1px solid #bbaa77'
+            btnColor: '#aaa'
 
-    # Defaults
-    # Maybe move this to its own function/object?
-    theme = {
-        type: 'dark'
-        btnBorder: '1px solid #bbaa77'
-        btnColor: '#aaa'
-    }
+        run :  ->
+            console.group "Welcome to MAM+ v#{@.VERSION}!"
 
-    return
-
-do MAM_PLUS
+    do MP.run
+catch e
+    if MP_DEBUG then console.warn e

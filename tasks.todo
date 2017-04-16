@@ -20,11 +20,12 @@ TWEAKS:
 FEATURES:
   planned:
     - make OP posts more visible in forums
-    - stretch SB to fill full page
     - floating list of torrent files
   concept:
     - look into Chrome/FF browser alerts instead of browser tab changes
     - add keywords for torrent pages & make triggered matches more visible
+    - add anchors to all shoutbox posts
+    - copy keyword triggers into their own feed, linking to the original anchors
   wishlist:
     - audible notifications for SB
     - "friends online" list

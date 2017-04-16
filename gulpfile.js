@@ -17,6 +17,7 @@ env = 'dev';
 csIn = ['src/*.coffee'];
 jsIn = [
     'src/infoblock.js',
+    'build/staging/_helpers.js',
     'build/staging/*.js'
 ];
 // DESTINATIONS
