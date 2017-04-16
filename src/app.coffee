@@ -11,13 +11,6 @@ MP =
     errorLog : []
     pagePath : window.location.pathname
 
-    # THIS SHOULD BE INSERTED INTO A STYLESHEET
-    # Reference with .mp_dark and .mp_light
-    theme :
-        type: 'dark'
-        btnBorder: '1px solid #bbaa77'
-        btnColor: '#aaa'
-
     run :  ->
         console.group "Welcome to MAM+ v#{@.VERSION}!"
 
