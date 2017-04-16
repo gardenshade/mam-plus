@@ -12,3 +12,8 @@
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
 // ==/UserScript==
+
+// This should be user-setable eventually
+var MP_DEBUG = true;
+
+try {

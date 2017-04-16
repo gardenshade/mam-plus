@@ -16,9 +16,10 @@ env = 'dev';
 // SOURCES
 csIn = ['src/*.coffee'];
 jsIn = [
-    'src/infoblock.js',
-    'build/staging/_helpers.js',
-    'build/staging/*.js'
+    'src/block_first.js',
+    'build/staging/!(app)*.js',
+    'build/staging/app.js',
+    'src/block_last.js'
 ];
 // DESTINATIONS
 csOut = 'build/staging';
@@ -39,7 +40,6 @@ gulp.task( 'js', function(){
         .pipe( gif( env==='release',uglify({ preserveComments: 'license' }) ) )
             .on( 'error', gutil.log )
         .pipe( gulp.dest( 'build/'+env ) )
-            .on( 'error', gutil.log )
         .pipe( gulp.dest( userDir+'/MAM_Plus_Dev' ) );
 } );
 /*=== SET RELEASE ===*/
