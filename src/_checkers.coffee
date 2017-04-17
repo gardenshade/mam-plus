@@ -19,4 +19,26 @@ MP_CHECK =
             console.groupEnd()
             return
     page: (path) ->
-        # null
+        # Do site-wide fixes
+        do MP_PAGE.global
+
+        # Run functions relevant to the current page
+        switch path.split('/')[1]
+            when null then break
+            when '' then do MP_PAGE.home; break
+            when 'shoutbox' then do MP_PAGE.shoutbox; break
+            when 'tor'
+                if pagePath.split('/')[2].indexOf( 'browse' ) is 0
+                    MP_PAGE.browse 'browse'
+                if pagePath.split('/')[2].indexOf( 'request' ) is 0
+                    MP_PAGE.browse 'requests'
+                break
+            when 't' then do MP_PAGE.torrent; break
+            when 'preferences' then do MP_PAGE.settings; break
+            when 'u' then do MP_PAGE.user; break
+            when 'millionaires'
+                if pagePath.split('/')[2].indexOf( 'pot' ) is 0
+                    MP_PAGE.vault 'pot'
+                if pagePath.split('/')[2].indexOf( 'donate' ) is 0
+                    MP_PAGE.vault 'donate'
+                break

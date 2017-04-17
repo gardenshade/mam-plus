@@ -21,5 +21,7 @@ MP =
         do MP_CHECK.version
         do MP_CHECK.page @.pagePath
 
+        console.groupEnd()
+
 # Start the script
 do MP.run
