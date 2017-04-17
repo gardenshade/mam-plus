@@ -11,6 +11,7 @@
 // @grant        GM_listValues
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
+// @grant        GM_info
 // ==/UserScript==
 
 // This should be user-setable eventually

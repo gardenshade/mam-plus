@@ -1,6 +1,6 @@
 MP =
     # CONSTANTS
-    VERSION     : '3.0'
+    VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
     TIMESTAMP   : 'Apr 17th'
     UPDATE_LIST : [
@@ -25,4 +25,3 @@ MP =
 
 # Start the script
 do MP.run
-MP_HELPERS.triggerNote 'firstRun'
