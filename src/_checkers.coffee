@@ -18,7 +18,7 @@ MP_CHECK =
             GM_setValue 'mp_version',MP.VERSION
             console.groupEnd()
             return
-    page: (path) ->
+    page : (path) ->
         # Do site-wide fixes
         do MP_PAGE.global
 

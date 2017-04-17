@@ -19,9 +19,10 @@ MP =
         console.log "Theme is #{MP_STYLE.theme}"
 
         do MP_CHECK.version
-        do MP_CHECK.page @.pagePath
+        MP_CHECK.page @.pagePath
 
         console.groupEnd()
 
 # Start the script
 do MP.run
+MP_HELPERS.triggerNote 'firstRun'
