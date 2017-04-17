@@ -1,7 +1,7 @@
 # An object full of helper functions
 MP_HELPERS =
-    timestamp: ->
+    timestamp : ->
         theDate = new Date()
             .toUTCString()
             .split(' ')
-        theDate[2]+' '+theDate[1]
+        return theDate[2]+' '+theDate[1]
