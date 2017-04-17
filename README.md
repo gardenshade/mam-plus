@@ -4,7 +4,7 @@ The MAM+ userscript, converted to CoffeeScript and published in a more official 
 
 ## Installation
 
-Simply install with [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) (Firefox) or [Tampermonkey](https://tampermonkey.net/) (all other browsers). MAM+ only officially supports the most recent versions of Chrome & Firefox, but other modern browsers should theoretically work.
+If you have [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) (Firefox) or [Tampermonkey](https://tampermonkey.net/) (all other browsers) installed, __[clicking here](https://github.com/gardenshade/mam-plus/raw/master/build/release/MAM_Plus_Dev.user.js)__ should install the script. MAM+ only officially supports the most recent versions of Chrome & Firefox, but other modern browsers should theoretically work.
 
 ## Modification & Contribution
 
