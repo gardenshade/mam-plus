@@ -67,6 +67,33 @@ MP =
     # Function that inserts the MAM+ settings
     insertSettings: ->
         console.group 'MP.insertSettings()' if MP_DEBUG is on
+
+        # Function for constructing the table from an object
+        buildSettings = (obj) ->
+            # Build the first part of the table
+            outp = '<tbody><tr><td class="row1" colspan="2">Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.</td></tr>'
+            # For every Page listed in the Object
+            ### The really confusing logic loop goes here ###
+            return outp
+
+        # Create new table elements
+        settingNav   = document.querySelector '#mainBody > table'
+        settingTitle = document.createElement 'h1'
+        settingTable = document.createElement 'table'
+
+        # Insert table elements after the Pref navbar
+        MP_HELPERS.insertAfter settingTitle,settingNav
+        MP_HELPERS.insertAfter settingTable,settingTitle
+        MP_HELPERS.setAttr settingTable,{
+            'class'       : 'coltable'
+            'cellspacing' : '1'
+            'style'       : 'width:100%;min-width:100%;max-width:100%;'
+        }
+
+        # Insert text into the table elements
+        settingTitle.innerHTML = 'MAM+ Settings'
+        settingTable.innerHTML = buildSettings MP_SETTINGS
+
         do console.groupEnd if MP_DEBUG is on
 
 # Start the script
