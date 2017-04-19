@@ -17,6 +17,19 @@ MP_PAGE =
         # Make the vault link go to the donation page, if enabled
         vaultLink.setAttribute 'href','/millionaires/donate.php' if GM_getValue 'mp_vault_link'
 
+        # Shorten the vault link & date info
+        if GM_getValue 'mp_short_info'
+            # Turn the numeric portion of the vault link into a number
+            newText = parseInt (vaultLink
+                .textContent
+                .split(':')[1]
+                .split(' ')[1]
+                .replace /,/g, '')
+            # Convert the vault amount to millionths
+            newText = (newText/1000000).toFixed 3
+            # Update the vault text
+            vaultLink.textContent = "Vault: #{newText} million"
+
         console.groupEnd()
     home: ->
         console.group 'Applying Home settings...'
