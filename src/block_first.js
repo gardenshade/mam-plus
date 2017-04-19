@@ -14,6 +14,7 @@
 // @grant        GM_info
 // ==/UserScript==
 
+var MP = {};
 // This should be user-setable eventually
 var MP_DEBUG = true;
 

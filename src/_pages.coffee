@@ -26,7 +26,7 @@ MP_PAGE =
                 .split(' ')[1]
                 .replace /,/g, '')
             # Convert the vault amount to millionths
-            newText = (newText/1000000).toFixed 3
+            newText = (newText/1e6).toFixed 3
             # Update the vault text
             vaultLink.textContent = "Vault: #{newText} million"
 
@@ -45,6 +45,13 @@ MP_PAGE =
         console.groupEnd()
     settings: ->
         console.group 'Applying Preference Page settings...'
+        pageURL = window.location.href
+        if yes in [pageURL.endsWith('preferences/index.php'),pageURL.endsWith('?view=general')]
+            console.log 'On General Settings page' if MP_DEBUG is on
+            do MP.insertSettings
+        else
+            e = "Page is #{pageURL}"
+            throw e
         console.groupEnd()
     user: ->
         console.group 'Applying User Page settings...'
