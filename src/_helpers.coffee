@@ -7,6 +7,12 @@ MP_HELPERS =
             .split(' ')
         return theDate[2]+' '+theDate[1]
 
+    # Currently unused
+    setAttr : (el,attrs) ->
+        console.log 'pling'
+        el.setAttribute key,attrs[key] for key in attrs
+        console.log 'plong'
+
     # This func creates a notification panel
     triggerNote : (type) ->
         if MP_DEBUG is yes

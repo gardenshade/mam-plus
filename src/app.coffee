@@ -6,6 +6,7 @@ MP =
     UPDATE_LIST : [
         'Completely rewrote backend for <em>n</em>th time'
         'Improved error handling'
+        'Minimized all the code, so hopefully it\'ll run faster!'
     ]
     BUG_LIST    : []
     # VARIABLES

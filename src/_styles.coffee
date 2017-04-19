@@ -34,6 +34,18 @@ MP_STYLE =
                 cursor: pointer;
                 z-index: 99999;
             }
+            .mp_hide_banner #header{
+                display: none;
+            }
+            .mp_hide_banner body{
+                padding-top: 15px;
+            }
+            .mp_hide_home #menu .homeLink{
+                display: none;
+            }
+            .mp_hide_browse #menu .mmTorrents li:first-of-type{
+                display: none;
+            }
             '''
         return @.theme
     # Default Values
