@@ -9,23 +9,26 @@ TWEAKS:
     - stretch SB to fill full page
     - set to ONLY show torrent OR zip, not both
     - add toggle for bold/italic emphasis
+  wishlist:
+    - use keyboard to navigate Prev & Next pages
+    - open all new users in new tabs with click of a button
   concept:
     - store all `pageLoad` calls in array so that it only needs to run once
     - collapse freeleech sections
     - notify of new freeleech picks
     - points reminder when in range
-  wishlist:
-    - use keyboard to navigate Prev & Next pages
+    - torrent list improvements (ex. split tags into searchable tag icons)
+
 
 FEATURES:
   planned:
     - make OP posts more visible in forums
     - floating list of torrent files
-  concept:
-    - look into Chrome/FF browser alerts instead of browser tab changes
+  wishlist:
     - add keywords for torrent pages & make triggered matches more visible
     - add anchors to all shoutbox posts
     - copy keyword triggers into their own feed, linking to the original anchors
-  wishlist:
+  concept:
     - audible notifications for SB
     - "friends online" list
+    - look into Chrome/FF browser alerts instead of browser tab changes

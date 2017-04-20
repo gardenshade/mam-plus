@@ -65,7 +65,7 @@ MP =
         do console.groupEnd if MP_DEBUG is on
 
     # Function that inserts the MAM+ settings
-    insertSettings: ->
+    insertSettings : ->
         console.group 'MP.insertSettings()' if MP_DEBUG is on
 
         # Function for constructing the table from an object

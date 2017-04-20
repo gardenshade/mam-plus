@@ -14,3 +14,11 @@ MP_HELPERS =
     # Insert a node after a node
     insertAfter: (newNode,refNode) ->
         refNode.parentNode.insertBefore newNode,refNode.nextSibling
+
+    # Returns the occurrence rate of char/str/etc in any indexable array
+    count: (arr,find) ->
+        [count,index] = [-1,0]
+        while index isnt -1
+            index = arr.indexOf find,index+1
+            count++
+        return count
