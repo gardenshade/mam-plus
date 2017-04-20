@@ -101,7 +101,15 @@ MP =
 
         # Function for setting the settings states
         setSettings = (result) ->
-            console.log result
+            element = document.getElementById result.id
+            cases =
+                'checkbox' : -> GM_setValue element,on if result.checked
+                'textbox'  : ->
+                    inp = element.value
+                    if inp isnt ''
+                        GM_setValue element,on
+                        GM_setValue "#{element}_val",inp
+            do cases[result.type] if cases[result.type]
 
         # Function that loops over the settings object
         logicLoop = (obj,func) ->
@@ -109,6 +117,33 @@ MP =
                 Object.keys( obj[page] ).forEach (pref) ->
                     result = obj[page][pref]
                     func result if typeof result is 'object'
+
+        # Function that saves the values of the settings table
+        saveSettings = (timer) ->
+            console.group 'saveSettings()'
+            savestate = document.querySelector '.mp_savestate'
+
+            # Reset timer & message
+            savestate.style.opacity = '0'
+            window.clearTimeout timer
+
+            console.log 'Saving...'
+
+            # Turn off all known features
+            for feature in do GM_listValues
+                if GM_getValue feature isnt 'mp_version'
+                    GM_setValue GM_listValues()[feature],off
+
+            # Loop over the features and enable as requested
+            logicLoop MP_SETTINGS,setSettings
+            console.log 'Saved!'
+
+            # Display the confirmation message
+            savestate.style.opacity = '1'
+            try
+                timer = window.setTimeout (-> savestate.style.opacity = '0'),2345
+            catch e
+                console.warn e if MP_DEBUG is on
 
         # Create new table elements
         settingNav   = document.querySelector '#mainBody > table'
@@ -128,6 +163,12 @@ MP =
         settingTitle.innerHTML = 'MAM+ Settings'
         settingTable.innerHTML = buildTable MP_SETTINGS
         logicLoop MP_SETTINGS,getSettings
+
+        submitBtn = document.querySelector '#mp_submit'
+        try
+            submitBtn.addEventListener 'click',(-> saveSettings ssTimer),false
+        catch e
+            console.warn e if MP_DEBUG is on
 
         do console.groupEnd if MP_DEBUG is on
 

@@ -55,7 +55,24 @@ MP_STYLE =
                 padding: 5px;
             }
             .mp_textInput::placeholder{
-                color: '''+@phColor+'''
+                color: '''+@phColor+''';
+            }
+            #mp_submit{
+                border: '''+@btnBorder+''';
+                color: '''+@btnColor+''';
+                background-image: radial-gradient(at center center, rgba(136, 136, 136, 0) 0px, rgba(136, 136, 136, 0) 25%, rgba(136, 136, 136, 0) 62%, rgba(136, 136, 136, 0.65098) 100%);
+                box-sizing: border-box;
+                padding: 0 8px;
+                display: inline-block;
+                height: 25px;
+                line-height: 25px;
+                cursor: pointer;
+            }
+            #mp_submit ~ .mp_savestate{
+                font-weight: bold;
+                color: green;
+                padding: 0 20px;
+                cursor: default;
             }
             '''
         return @theme
