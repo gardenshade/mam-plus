@@ -69,12 +69,29 @@ MP =
         console.group 'MP.insertSettings()' if MP_DEBUG is on
 
         # Function for constructing the table from an object
-        buildSettings = (obj) ->
+        buildTable = (obj) ->
             # Build the first part of the table
             outp = '<tbody><tr><td class="row1" colspan="2">Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.</td></tr>'
             # For every Page listed in the Object
-            ### The really confusing logic loop goes here ###
-            return outp
+            outp += 'logicLoop'
+
+        # Function for retrieving the settings states
+        getSettings = (result) ->
+            cases =
+                'checkbox' : document.getElementById( result.id ).setAttribute 'checked'
+                'textbox'  : document.getElementById( result.id ).value = GM_getValue "#{result.id}_val"
+            do cases[result.type] if cases[result.type]
+
+        # Function for setting the settings states
+        setSettings = (result) ->
+            console.log result
+
+        # Function that loops over the settings object
+        logicLoop = (obj,func) ->
+            Object.keys( obj ).forEach (page) ->
+                Object.keys( obj[page] ).forEach (pref) ->
+                    result = obj[page][pref]
+                    func result if typeof result is 'object'
 
         # Create new table elements
         settingNav   = document.querySelector '#mainBody > table'
@@ -92,7 +109,10 @@ MP =
 
         # Insert text into the table elements
         settingTitle.innerHTML = 'MAM+ Settings'
-        settingTable.innerHTML = buildSettings MP_SETTINGS
+        settingTable.innerHTML = buildTable MP_SETTINGS
+
+        logicLoop MP_SETTINGS,getSettings
+
 
         do console.groupEnd if MP_DEBUG is on
 
