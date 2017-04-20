@@ -72,14 +72,31 @@ MP =
         buildTable = (obj) ->
             # Build the first part of the table
             outp = '<tbody><tr><td class="row1" colspan="2">Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.</td></tr>'
-            # For every Page listed in the Object
-            outp += 'logicLoop'
+
+            # Loop over the settings object manually, because I don't know
+            # how to work this into logicLoop()
+            Object.keys( obj ).forEach (page) ->
+                # Insert the section title
+                outp += "<tr><td class='row2'>#{obj[page].pageTitle}</td><td class='row1'>"
+                # Create the required input field based on the setting
+                Object.keys( obj[page] ).forEach (pref) ->
+                    result = obj[page][pref]
+                    cases =
+                        'checkbox' : -> outp += "<input type='checkbox' id='#{result.id}' value='true'>#{result.desc}<br>"
+                        'textbox'  : -> outp += "<span class='mp_setTag'>#{result.tag}:</span> <input type='text' id='#{result.id}' placeholder='#{result.placeholder}' class='mp_textInput' size='25'>#{result.desc}<br>"
+                    do cases[result.type] if cases[result.type]
+                # Close the row
+                outp += '</td></tr>'
+            # Add the save button & last part of the table
+            outp += '<tr><td class="row1" colspan="2"><div id="mp_submit">Save M+ Settings</div><span class="mp_savestate" style="opacity:0">Saved!</span></td></tr></tbody>'
+            return outp
 
         # Function for retrieving the settings states
         getSettings = (result) ->
+            element = document.getElementById result.id
             cases =
-                'checkbox' : document.getElementById( result.id ).setAttribute 'checked'
-                'textbox'  : document.getElementById( result.id ).value = GM_getValue "#{result.id}_val"
+                'checkbox' : -> element.setAttribute 'checked','checked' if element?
+                'textbox'  : -> element.value = GM_getValue "#{result.id}_val" if element?
             do cases[result.type] if cases[result.type]
 
         # Function for setting the settings states
@@ -110,9 +127,7 @@ MP =
         # Insert text into the table elements
         settingTitle.innerHTML = 'MAM+ Settings'
         settingTable.innerHTML = buildTable MP_SETTINGS
-
         logicLoop MP_SETTINGS,getSettings
-
 
         do console.groupEnd if MP_DEBUG is on
 

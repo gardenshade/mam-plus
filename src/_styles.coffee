@@ -6,9 +6,10 @@ MP_STYLE =
             .querySelector 'head link[href*="ICGstation"]'
             .getAttribute 'href'
         if siteTheme.indexOf('dark') > 0
-            @.theme     = 'dark'
-            @.btnBorder = '1px solid #bbaa77'
-            @.btnColor  = '#aaa'
+            @theme     = 'dark'
+            @btnBorder = '1px solid #bbaa77'
+            @btnColor  = '#aaa'
+            @phColor   = '#8d5d5d'
         GM_addStyle '''
             .mp_notification{
                 position: fixed;
@@ -46,9 +47,20 @@ MP_STYLE =
             .mp_hide_browse #menu .mmTorrents li:first-of-type{
                 display: none;
             }
+            .mp_setTag{
+                display: inline-block;
+                min-width:120px;
+            }
+            .mp_textInput{
+                padding: 5px;
+            }
+            .mp_textInput::placeholder{
+                color: '''+@phColor+'''
+            }
             '''
-        return @.theme
+        return @theme
     # Default Values
     theme     : 'light'
     btnBorder : '1px solid #d0d0d0'
     btnColor  : '#000'
+    phColor   : '#575757'
