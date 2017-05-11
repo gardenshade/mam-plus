@@ -9,7 +9,9 @@ MP_HELPERS =
 
     # Set a whole bunch of attributes at once
     setAttr : (el,attrs) ->
-        el.setAttribute key,attrs[key] for key in attrs
+        for key in attrs
+            el.setAttribute key,attrs[key]
+            return
 
     # Insert a node after a node
     insertAfter: (newNode,refNode) ->

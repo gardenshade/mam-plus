@@ -73,11 +73,9 @@ MP =
             # Build the first part of the table
             outp = '<tbody><tr><td class="row1" colspan="2">Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.</td></tr>'
 
-            # Loop over the settings object manually, because I don't know
-            # how to work this into logicLoop()
             Object.keys( obj ).forEach (page) ->
                 # Insert the section title
-                outp += "<tr><td class='row2'>#{obj[page].pageTitle}</td><td class='row1' align='left'>"
+                outp += "<tr><td class='row2'>#{obj[page].pageTitle}</td><td class='row1'>"
                 # Create the required input field based on the setting
                 Object.keys( obj[page] ).forEach (pref) ->
                     result = obj[page][pref]
@@ -88,30 +86,38 @@ MP =
                 # Close the row
                 outp += '</td></tr>'
             # Add the save button & last part of the table
-            outp += '<tr><td class="row1" colspan="2"  align="left"><div id="mp_submit">Save M+ Settings</div><span class="mp_savestate" style="opacity:0">Saved!</span></td></tr></tbody>'
+            outp += '<tr><td class="row1" colspan="2"><div id="mp_submit">Save M+ Settings</div><span class="mp_savestate" style="opacity:0">Saved!</span></td></tr></tbody>'
             return outp
 
         # Function for retrieving the settings states
-        getSettings = (result) ->
-            element = document.getElementById result.id
-            cases =
-                'checkbox' : -> element.setAttribute 'checked','checked' if element
-                'textbox'  : -> element.value = GM_getValue "#{result.id}_val" if element
-            do cases[result.type] if cases[result.type]
+        getSettings = (obj) ->
+            Object.keys( obj ).forEach (page) ->
+                Object.keys( obj[page] ).forEach (pref) ->
+                    ppref = obj[page][pref]
+                    if ppref isnt null and typeof ppref is 'object'
+                        element = document.getElementById ppref.id
+                        cases =
+                            'checkbox' : -> element.setAttribute 'checked','checked'
+                            'textbox'  : -> element.value = GM_getValue "#{element}_val"
+                        do cases[ppref.type] if cases[ppref.type] and GM_getValue ppref.id
 
         # Function for setting the settings states
         setSettings = (result) ->
-            element = document.getElementById result.id
-            cases =
-                'checkbox' : -> GM_setValue element,on if result.checked
-                'textbox'  : ->
-                    inp = element.value
-                    if inp isnt ''
-                        GM_setValue element,on
-                        GM_setValue "#{element}_val",inp
-            do cases[result.type] if cases[result.type]
+            Object.keys( obj ).forEach (page) ->
+                Object.keys( obj[page] ).forEach (pref) ->
+                    ppref = obj[page][pref]
+                    if ppref isnt null and typeof ppref is 'object'
+                        element = document.getElementById ppref.id
+                        cases =
+                            'checkbox' : -> GM_setValue ppref.id,on if element.checked
+                            'textbox'  : ->
+                                inp = element.value
+                                if inp isnt ''
+                                    GM_setValue ppref.id,on
+                                    GM_setValue "#{ppref.id}_val",inp
+                        do cases[ppref.type] if cases[ppref.type]
 
-        # Function that loops over the settings object
+        # CURRENTLY UNUSED
         logicLoop = (obj,func) ->
             Object.keys( obj ).forEach (page) ->
                 Object.keys( obj[page] ).forEach (pref) ->
@@ -131,12 +137,16 @@ MP =
 
             # Turn off all known features
             for feature in do GM_listValues
-                if GM_getValue feature isnt 'mp_version'
+                if GM_listValues()[feature] isnt 'mp_version'
                     GM_setValue GM_listValues()[feature],off
 
+            ### CODE BREAKS HERE ###
+
             # Loop over the features and enable as requested
-            logicLoop MP_SETTINGS,setSettings
+            setSettings MP_SETTINGS
             console.log 'Saved!'
+
+            ### END CODE BREAK ###
 
             # Display the confirmation message
             savestate.style.opacity = '1'
@@ -153,17 +163,22 @@ MP =
         # Insert table elements after the Pref navbar
         MP_HELPERS.insertAfter settingTitle,settingNav
         MP_HELPERS.insertAfter settingTable,settingTitle
-        MP_HELPERS.setAttr settingTable,{
-            'class'       : 'coltable'
-            'cellspacing' : '1'
-            'style'       : 'width:100%;min-width:100%;max-width:100%;'
-        }
+        # CURENTLY BROKEN
+        ###MP_HELPERS.setAttr settingTable,{
+            'class':'coltable',
+            'cellspacing':'1',
+            'style':'width:100%;min-width:100%;max-width:100%;'
+        }###
+        settingTable.setAttribute 'class','coltable'
+        settingTable.setAttribute 'cellspacing','1'
+        settingTable.setAttribute 'style','width:100%;min-width:100%;max-width:100%;'
 
         # Insert text into the table elements
         settingTitle.innerHTML = 'MAM+ Settings'
         settingTable.innerHTML = buildTable MP_SETTINGS
-        logicLoop MP_SETTINGS,getSettings
+        getSettings MP_SETTINGS
 
+        ssTimer = ''
         submitBtn = document.querySelector '#mp_submit'
         try
             submitBtn.addEventListener 'click',(-> saveSettings ssTimer),false

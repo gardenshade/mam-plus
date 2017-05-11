@@ -1,8 +1,12 @@
 
 BUGS:
-  - SB settings not being read properly for no reason in some browsers???
-  - browser tab doesn't update in background because SB pauses
-  - topic count not triggering browser count?
+  DEV:
+    - Code fails at setSettings()
+    - MP_HELPERS.setAttr is not working
+  PROD:
+    - SB settings not being read properly for no reason in some browsers???
+    - browser tab doesn't update in background because SB pauses
+    - topic count not triggering browser count?
 
 TWEAKS:
   planned:
