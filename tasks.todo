@@ -12,6 +12,7 @@ TWEAKS:
   wishlist:
     - use keyboard to navigate Prev & Next pages
     - open all new users in new tabs with click of a button
+    - gray out points purchases that would put you over a limit (VIP, no points, etc)
   concept:
     - store all `pageLoad` calls in array so that it only needs to run once
     - collapse freeleech sections

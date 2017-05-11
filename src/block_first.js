@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MAM Plus Dev
-// @namespace    https://greasyfork.org/en/users/36444
+// @namespace    https://github.com/gardenshade
 // @version      3.0.0
 // @description  Lots of tiny fixes for MAM
 // @author       GardenShade

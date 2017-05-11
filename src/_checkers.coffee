@@ -1,8 +1,10 @@
 MP_CHECK =
     version : ->
         getImportantVer = (val) ->
-            val = val.split '.'
-            "#{val[0]}.#{val[1]}"
+            if val?
+                val = val.split '.'
+                "#{val[0]}.#{val[1]}"
+            else val = 0
         prevImportantVer = getImportantVer MP.PREV_VER
         importantVersion = getImportantVer MP.VERSION
         # Debug stuff

@@ -77,7 +77,7 @@ MP =
             # how to work this into logicLoop()
             Object.keys( obj ).forEach (page) ->
                 # Insert the section title
-                outp += "<tr><td class='row2'>#{obj[page].pageTitle}</td><td class='row1'>"
+                outp += "<tr><td class='row2'>#{obj[page].pageTitle}</td><td class='row1' align='left'>"
                 # Create the required input field based on the setting
                 Object.keys( obj[page] ).forEach (pref) ->
                     result = obj[page][pref]
@@ -88,15 +88,15 @@ MP =
                 # Close the row
                 outp += '</td></tr>'
             # Add the save button & last part of the table
-            outp += '<tr><td class="row1" colspan="2"><div id="mp_submit">Save M+ Settings</div><span class="mp_savestate" style="opacity:0">Saved!</span></td></tr></tbody>'
+            outp += '<tr><td class="row1" colspan="2"  align="left"><div id="mp_submit">Save M+ Settings</div><span class="mp_savestate" style="opacity:0">Saved!</span></td></tr></tbody>'
             return outp
 
         # Function for retrieving the settings states
         getSettings = (result) ->
             element = document.getElementById result.id
             cases =
-                'checkbox' : -> element.setAttribute 'checked','checked' if element?
-                'textbox'  : -> element.value = GM_getValue "#{result.id}_val" if element?
+                'checkbox' : -> element.setAttribute 'checked','checked' if element
+                'textbox'  : -> element.value = GM_getValue "#{result.id}_val" if element
             do cases[result.type] if cases[result.type]
 
         # Function for setting the settings states
