@@ -11,8 +11,9 @@ BUGS:
 TWEAKS:
   planned:
     - stretch SB to fill full page
+    - move input bar to bottom of SB page
     - set to ONLY show torrent OR zip, not both
-    - add toggle for bold/italic emphasis
+    - add toggle for bold/italic SB emphasis
   wishlist:
     - use keyboard to navigate Prev & Next pages
     - open all new users in new tabs with click of a button
@@ -24,7 +25,6 @@ TWEAKS:
     - points reminder when in range
     - torrent list improvements (ex. split tags into searchable tag icons)
 
-
 FEATURES:
   planned:
     - make OP posts more visible in forums
@@ -33,7 +33,8 @@ FEATURES:
     - add keywords for torrent pages & make triggered matches more visible
     - add anchors to all shoutbox posts
     - copy keyword triggers into their own feed, linking to the original anchors
+    - look into Chrome/FF browser alerts instead of browser tab changes
   concept:
     - audible notifications for SB
     - "friends online" list
-    - look into Chrome/FF browser alerts instead of browser tab changes
+    - "portable" SB

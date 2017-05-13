@@ -102,7 +102,7 @@ MP =
                         do cases[ppref.type] if cases[ppref.type] and GM_getValue ppref.id
 
         # Function for setting the settings states
-        setSettings = (result) ->
+        setSettings = (obj) ->
             Object.keys( obj ).forEach (page) ->
                 Object.keys( obj[page] ).forEach (pref) ->
                     ppref = obj[page][pref]
@@ -135,18 +135,19 @@ MP =
 
             console.log 'Saving...'
 
-            # Turn off all known features
-            for feature in do GM_listValues
-                if GM_listValues()[feature] isnt 'mp_version'
-                    GM_setValue GM_listValues()[feature],off
+            # For some reason I can't convert this to coffeescript that works
+            `for( let item in GM_listValues() ){
+                console.log( GM_listValues()[item] )
+                if( GM_listValues()[item] !== 'mp_version' ){
+                    GM_setValue( GM_listValues()[item],false );
+                }
+            }`
 
-            ### CODE BREAKS HERE ###
+            console.log 'values >>',do GM_listValues
 
             # Loop over the features and enable as requested
             setSettings MP_SETTINGS
             console.log 'Saved!'
-
-            ### END CODE BREAK ###
 
             # Display the confirmation message
             savestate.style.opacity = '1'
