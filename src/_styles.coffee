@@ -60,7 +60,7 @@ MP_STYLE =
             #mp_submit{
                 border: '''+@btnBorder+''';
                 color: '''+@btnColor+''';
-                background-image: radial-gradient(at center center, rgba(136, 136, 136, 0) 0px, rgba(136, 136, 136, 0) 25%, rgba(136, 136, 136, 0) 62%, rgba(136, 136, 136, 0.65098) 100%);
+                background-image: '''+@btnBack+''';
                 box-sizing: border-box;
                 padding: 0 8px;
                 display: inline-block;
@@ -74,10 +74,18 @@ MP_STYLE =
                 padding: 0 20px;
                 cursor: default;
             }
+            a.mp_button_clone{
+                border: '''+@btnBorder+''';
+                color: '''+@btnColor+''';
+                background-image: '''+@btnBack+''';
+                box-sizing: border-box;
+                padding: 0 4px;
+            }
             '''
         return @theme
     # Default Values
     theme     : 'light'
     btnBorder : '1px solid #d0d0d0'
     btnColor  : '#000'
+    btnBack   : 'radial-gradient(at center center, rgba(136, 136, 136, 0) 0px, rgba(136, 136, 136, 0) 25%, rgba(136, 136, 136, 0) 62%, rgba(136, 136, 136, 0.65098) 100%)'
     phColor   : '#575757'

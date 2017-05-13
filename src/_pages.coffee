@@ -39,11 +39,25 @@ MP_PAGE =
         console.groupEnd()
     browse: (page) ->
         console.group "Applying (#{page}) settings..."
+
         do MP.processResults if page is 'browse'
         console.log 'No functions for requests' if page is 'requests'
+
         console.groupEnd()
     torrent: ->
         console.group 'Applying Torrent settings...'
+
+        authors     = document.querySelectorAll '#mainBody tr:nth-child(2) td:last-of-type a'
+        rawTitle    = document.querySelector '#mainBody h1'
+        seriesTitle = document.querySelector '#mainBody tr:nth-child(3) td:last-of-type a'
+        bookCover   = document.querySelector '#posterImage'
+        torrentID   = Number MP.pagePath.split('/')[2]
+        bookTitle   = MP_HELPERS.redoSpaces rawTitle.textContent
+
+        console.log '>',title for title in [authors,rawTitle,seriesTitle,bookCover,torrentID,bookTitle] if MP_DEBUG is on
+
+        MP.addGoodreadsBtns authors,bookTitle,seriesTitle if GM_getValue 'mp_gr_btns'
+
         console.groupEnd()
     settings: ->
         console.group 'Applying Preference Page settings...'

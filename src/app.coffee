@@ -226,8 +226,113 @@ MP =
 
         do createToggle if GM_getValue 'mp_hide_snatched'
 
+    # Function that adds Goodreads links to each book page
+    addGoodreadsBtns: (authorTitle,bookTitle,seriesTitle) ->
+        bookURL = null
+        seriesURL = null
+        authorURL = null
+        buttons = []
+        targetRow = document.querySelector('#download').parentNode
+        category  = document.querySelector('#cat').textContent
 
+        # Internal function for returning GR-formatted authors
+        smartAuth = (inp) ->
+            inp = MP_HELPERS.strToArr inp
+            [outp,i] = ['',0]
+            while i < inp.length
+                if inp[i].length < 2
+                    # Don't add a space if two initials are adjacent
+                    if inp[i + 1].length < 2
+                    then outp += inp[i]
+                    else outp += inp[i] + ' '
+                else outp += inp[i] + ' '
+                i++
+            return outp.trim()
 
+        # Internal function for returning a title that was split with a dash
+        checkDashes = (theTitle,theAuth) ->
+            if theTitle.indexOf ' - ' isnt -1
+                console.log '> Book title contains a dash' if MP_DEBUG is on
+                bookSplit = theTitle.split ' - '
+                # If the front of the dash matches the author, use the back
+                if bookSplit[0] is theAuth
+                    console.log '> String before dash is author; using string behind dash' if MP_DEBUG is on
+                    bookSplit[1]
+                else
+                    bookSplit[0]
+            else
+                theTitle
+
+        # Internal function for building Goodreads URLs
+        buildURL = (type,inp) ->
+            # Only allow GR search types
+            if ~['title','author','series','on'].indexOf(type)
+                # Correct the book & series searches
+                if type is 'book' then type = 'title'
+                else if type is 'series'
+                    type = 'on'
+                    inp += ', #'
+                # Fix apostrophe issue and return a full URL
+                return 'https://www.goodreads.com/search?q='+encodeURIComponent(inp).replace( '\'','&apos;' )+'&search_type=books&search%5Bfield%5D='+type
+
+        # Internal functino to return a button element
+        makeBtn = (desc,url) -> "<a class='mp_button_clone' href='#{url}' target='_blank'>#{desc}</a> "
+
+        # Function for processing title content
+        processTitle = (type,rawTitle,urlTar) ->
+            title = ''
+            desc = ''
+            if type is 'book'
+
+                ### BREAKING: title is undefined ###
+
+                desc = 'Title'
+                # Check the title for brackets & shorten it
+                title = MP_HELPERS.trimStr( MP_HELPERS.bracketRemover(rawTitle),50 )
+                # Check the title for dash divider
+                title = checkDashes( title,author )
+
+                ### END BREAK ###
+
+            else if type is 'author'
+                desc = 'Author'
+                # Only use a few authors
+                i = 0
+                while i < rawTitle.length and i < 3
+                    title += rawTitle[i].textContent + ' '
+                    i++
+
+                # Check author for initials
+                title = smartAuth( title )
+            else if type is 'series'
+                desc = 'Series'
+                title = MP_HELPERS.redoSpaces( rawTitle.textContent )
+            urlTar = buildURL( type,title )
+            buttons.splice 0,0,makeBtn desc,urlTar
+            console.log "> #{type}: #{title} (#{urlTar})"
+            title
+
+        # If the torrent page is a book category...
+        if category.indexOf('Ebooks') is 0 or category.indexOf('Audiobooks') is 0
+            buttonRow   = targetRow.parentNode.insertRow targetRow.rowIndex
+            titleCell   = buttonRow.insertCell 0
+            contentCell = buttonRow.insertCell 1
+            titleCell.innerHTML = 'Search Goodreads'
+
+            series = processTitle 'series',seriesTitle,seriesURL if seriesTitle?
+            author = processTitle 'author',authorTitle,authorURL if authorTitle.length isnt 0
+            book   = processTitle 'book',bookTitle,bookURL if bookTitle?
+            if book? and author?
+                bothURL = buildURL 'on',"#{book} #{author}"
+                buttons.splice 0,0,makeBtn 'Title + Author',bothURL
+
+            contentCell.innerHTML += button for button in buttons
+
+            titleCell.setAttribute 'class','rowhead'
+            contentCell.setAttribute 'class','row1'
+
+            console.log '[M+] Added Goodreads buttons!'
+        else console.log '[M+] Category does not require Goodreads button'
 
 
 # Start the script
