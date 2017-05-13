@@ -38,7 +38,9 @@ MP_PAGE =
         console.group 'Applying Shoutbox settings...'
         console.groupEnd()
     browse: (page) ->
-        console.group "Applying Browse (#{page}) settings..."
+        console.group "Applying (#{page}) settings..."
+        do MP.processResults if page is 'browse'
+        console.log 'No functions for requests' if page is 'requests'
         console.groupEnd()
     torrent: ->
         console.group 'Applying Torrent settings...'

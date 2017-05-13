@@ -24,3 +24,8 @@ MP_HELPERS =
             index = arr.indexOf find,index+1
             count++
         return count
+
+    # Logs a message about a counted result
+    reportCount: (did,num,thing) ->
+        thing += 's' if num isnt 1
+        console.log '>',did,num,thing

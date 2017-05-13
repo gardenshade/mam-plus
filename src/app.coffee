@@ -6,7 +6,8 @@ MP =
     UPDATE_LIST : [
         'Completely rewrote back-end for <em>n</em>th time'
         'Improved error handling'
-        'Minimized all the code, so hopefully it\'ll run faster!'
+        'Minimized all the code, so hopefully it\'ll run faster!',
+        'The "Toggle Snatched" button is now <em>before</em> the "Clear New" button'
     ]
     BUG_LIST    : []
     # VARIABLES
@@ -129,6 +130,8 @@ MP =
             console.group 'saveSettings()'
             savestate = document.querySelector '.mp_savestate'
 
+
+
             # Reset timer & message
             savestate.style.opacity = '0'
             window.clearTimeout timer
@@ -179,6 +182,53 @@ MP =
             console.warn e if MP_DEBUG is on
 
         do console.groupEnd if MP_DEBUG is on
+
+    # Function that loops over torrent results
+    processResults: ->
+        console.log 'processResults()' if MP_DEBUG is on
+        visible = on
+        # Internal function for toggling Snatched button
+        toggleSnatched = (btn,state) ->
+            console.log 'toggling snatched'
+            snatchList = document.querySelectorAll '#searchResults tr[id^="tdr"] td div[class^="browse"]'
+            MP_HELPERS.reportCount 'Hiding',snatchList.length,'snatched torrent' if state is on
+            MP_HELPERS.reportCount 'Showing',snatchList.length,'snatched torrent' if state is off
+            for snatch of snatchList
+                row = snatchList[snatch].parentElement.parentElement
+                if state is on
+                    visible = off
+                    row.style.display = 'none'
+                    btn.innerHTML = 'Show Snatched'
+                else
+                    visible = on
+                    row.removeAttribute 'style'
+                    btn.innerHTML = 'Hide Snatched'
+                console.log row if MP_DEBUG is on
+
+        # Internal function to create the Snatched toggle button
+        createToggle = ->
+            console.log 'creating toggle'
+            clearNewBtn = document.querySelector '#resetNewIcon'
+            toggleBtn   = document.createElement 'h1'
+
+            clearNewBtn.parentElement.insertBefore toggleBtn,clearNewBtn
+            MP_HELPERS.setAttr toggleBtn,{
+                'id'   : 'mp_snatchedToggle',
+                'class': 'torFormButton',
+                'role' : 'button'
+            }
+            toggleBtn.innerHTML = 'Hide Snatched'
+
+            try
+                toggleBtn.addEventListener 'click',(-> toggleSnatched toggleBtn,visible),no
+            catch e
+                console.warn e if MP_DEBUG is on
+
+        do createToggle if GM_getValue 'mp_hide_snatched'
+
+
+
+
 
 # Start the script
 do MP.run
