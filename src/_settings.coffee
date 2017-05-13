@@ -60,19 +60,19 @@ MP_SETTINGS =
             type : 'textbox'
             tag  : 'Block Users'
             desc : 'Hides messages from the listed users in the shoutbox'
-            placeholder : 'ex. 1234,108303,10000'
+            placeholder : 'ex. 1234, 108303, 10000'
         priorityUsers :
             id   : 'mp_priority_users'
             type : 'textbox'
             tag  : 'Emphasize Users'
             desc : 'Emphasizes messages from the listed users in the shoutbox'
-            placeholder : 'ex. 6,25420,77618'
+            placeholder : 'ex. 6, 25420, 77618'
         keywords :
             id   : 'mp_shout_keywords'
             type : 'textbox'
             tag  : 'Keyword Alerts'
             desc : 'Emphasizes messages containing key words'
-            placeholder : 'ex. GardenShade,sci-fi,rhombus'
+            placeholder : 'ex. GardenShade, sci-fi, rhombus'
     # VAULT SETTINGS
     vault :
         pageTitle : 'Mil. Vault'

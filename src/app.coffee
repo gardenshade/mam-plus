@@ -135,15 +135,11 @@ MP =
 
             console.log 'Saving...'
 
-            # For some reason I can't convert this to coffeescript that works
-            `for( let item in GM_listValues() ){
-                console.log( GM_listValues()[item] )
-                if( GM_listValues()[item] !== 'mp_version' ){
-                    GM_setValue( GM_listValues()[item],false );
-                }
-            }`
+            for feature of do GM_listValues
+                if GM_listValues()[feature] isnt 'mp_version'
+                    GM_setValue GM_listValues()[feature],off
 
-            console.log 'values >>',do GM_listValues
+            console.log 'Known settings:',GM_listValues()
 
             # Loop over the features and enable as requested
             setSettings MP_SETTINGS
@@ -164,15 +160,11 @@ MP =
         # Insert table elements after the Pref navbar
         MP_HELPERS.insertAfter settingTitle,settingNav
         MP_HELPERS.insertAfter settingTable,settingTitle
-        # CURENTLY BROKEN
-        ###MP_HELPERS.setAttr settingTable,{
+        MP_HELPERS.setAttr settingTable,{
             'class':'coltable',
             'cellspacing':'1',
             'style':'width:100%;min-width:100%;max-width:100%;'
-        }###
-        settingTable.setAttribute 'class','coltable'
-        settingTable.setAttribute 'cellspacing','1'
-        settingTable.setAttribute 'style','width:100%;min-width:100%;max-width:100%;'
+        }
 
         # Insert text into the table elements
         settingTitle.innerHTML = 'MAM+ Settings'
