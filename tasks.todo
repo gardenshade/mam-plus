@@ -37,6 +37,8 @@ TWEAKS:
     - points reminder when in range
     - torrent list improvements (ex. split tags into searchable tag icons)
     - make entire userclasses filterable in SB
+    - make dates more easily parseable
+    - insert comma separators where necessary
 
 FEATURES:
   planned:
@@ -51,3 +53,6 @@ FEATURES:
     - audible notifications for SB
     - "friends online" list
     - "portable" SB
+    - keep track of who you gift to
+    - text expansion in SB for quick replies
+    - reply/quote options in SB

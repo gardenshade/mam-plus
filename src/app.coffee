@@ -130,8 +130,6 @@ MP =
             console.group 'saveSettings()'
             savestate = document.querySelector '.mp_savestate'
 
-
-
             # Reset timer & message
             savestate.style.opacity = '0'
             window.clearTimeout timer
