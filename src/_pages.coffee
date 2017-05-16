@@ -54,9 +54,13 @@ MP_PAGE =
         torrentID   = Number MP.pagePath.split('/')[2]
         bookTitle   = MP_HELPERS.redoSpaces rawTitle.textContent
 
-        console.log '>',title for title in [authors,rawTitle,seriesTitle,bookCover,torrentID,bookTitle] if MP_DEBUG is on
+        console.log 'Extracting...',title for title in [authors,rawTitle,seriesTitle,bookCover,torrentID,bookTitle] if MP_DEBUG is on
 
+        # Add goodreads buttons if enabled
         MP.addGoodreadsBtns authors,bookTitle,seriesTitle if GM_getValue 'mp_gr_btns'
+
+        # Move the bookmark icon if enabled
+        MP.moveBookmark rawTitle,torrentID
 
         console.groupEnd()
     settings: ->

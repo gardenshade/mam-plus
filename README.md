@@ -13,6 +13,7 @@ In case you want to modify the script and/or contribute to it, follow the below 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/en/download/)
+- Gulp: `npm install -g gulp-cli`
 
 ### Instructions
 

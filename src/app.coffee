@@ -226,10 +226,10 @@ MP =
 
     # Function that adds Goodreads links to each book page
     addGoodreadsBtns: (authorTitle,bookTitle,seriesTitle) ->
-        bookURL = null
+        bookURL   = null
         seriesURL = null
         authorURL = null
-        buttons = []
+        buttons   = []
         targetRow = document.querySelector('#download').parentNode
         category  = document.querySelector('#cat').textContent
 
@@ -249,7 +249,8 @@ MP =
 
         # Internal function for returning a title that was split with a dash
         checkDashes = (theTitle,theAuth) ->
-            if theTitle.indexOf ' - ' isnt -1
+            console.log "checkDashes(#{theTitle}, #{theAuth}, #{theTitle.indexOf(' - ')})" if MP_DEBUG is on
+            if theTitle.indexOf(' - ') isnt -1
                 console.log '> Book title contains a dash' if MP_DEBUG is on
                 bookSplit = theTitle.split ' - '
                 # If the front of the dash matches the author, use the back
@@ -263,11 +264,12 @@ MP =
 
         # Internal function for building Goodreads URLs
         buildURL = (type,inp) ->
+            console.log "buildURL(#{type}, #{inp})" if MP_DEBUG is on
             # Only allow GR search types
+            if type is 'book' then type = 'title'
             if ~['title','author','series','on'].indexOf(type)
-                # Correct the book & series searches
-                if type is 'book' then type = 'title'
-                else if type is 'series'
+                # Correct the series searches
+                if type is 'series'
                     type = 'on'
                     inp += ', #'
                 # Fix apostrophe issue and return a full URL
@@ -281,16 +283,11 @@ MP =
             title = ''
             desc = ''
             if type is 'book'
-
-                ### BREAKING: title is undefined ###
-
                 desc = 'Title'
                 # Check the title for brackets & shorten it
                 title = MP_HELPERS.trimStr( MP_HELPERS.bracketRemover(rawTitle),50 )
                 # Check the title for dash divider
                 title = checkDashes( title,author )
-
-                ### END BREAK ###
 
             else if type is 'author'
                 desc = 'Author'
@@ -332,6 +329,14 @@ MP =
             console.log '[M+] Added Goodreads buttons!'
         else console.log '[M+] Category does not require Goodreads button'
 
+    # Function that moves the bookmark button
+    moveBookmark: (tar,tarID) ->
+        if torID isnt 0 and not isNaN torID
+            # Hide original bookmark
+            document.querySelector '#mainBody td.rowhead a[href^="/bookmark.php?"]'
+                .style.display = 'none'
 
+            if MP_STYLE.theme is dark
+                return
 # Start the script
 do MP.run
