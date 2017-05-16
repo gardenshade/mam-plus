@@ -8,6 +8,7 @@ MP =
         'Improved error handling'
         'Minimized all the code, so hopefully it\'ll run faster!',
         'The "Toggle Snatched" button is now <em>before</em> the "Clear New" button'
+        'Maximum gift amount of points is now determined by the userclass max gift amount'
     ]
     BUG_LIST    : []
     # VARIABLES

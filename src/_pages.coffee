@@ -91,6 +91,15 @@ MP_PAGE =
         console.groupEnd()
     user: ->
         console.group 'Applying User Page settings...'
+
+        # Set the gift amount to the highest possible amount if enabled
+        if GM_getValue 'mp_gift_default'
+            pointBox  = document.querySelector '#bonusgift'
+            maxPoints = pointBox.getAttribute 'max'
+            pointBox.value = maxPoints
+
+            console.log "[M+] Set the default gift amount to #{maxPoints}"
+
         console.groupEnd()
     vault: (page) ->
         console.group "Applying Vault (#{page}) settings..."

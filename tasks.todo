@@ -8,8 +8,6 @@ BUGS:
     - topic count not triggering browser count?
 
 RE-IMPLEMENT:
-  - largest gift selection
-  - SKIP message+keyword alert
   - SB block users
   - SB emphasize users
   - SB keyword alerts
