@@ -8,8 +8,6 @@ BUGS:
     - topic count not triggering browser count?
 
 RE-IMPLEMENT:
-  - simplify vault
-  - largest vault selection
   - largest gift selection
   - SKIP message+keyword alert
   - SB block users

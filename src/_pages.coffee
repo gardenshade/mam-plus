@@ -75,6 +75,9 @@ MP_PAGE =
         if GM_getValue('mp_placeholder_covers') and not bookCover.querySelector 'img'
             MP.fakeCover bookCover,'missing'
 
+        # Create floating list of files if enabled
+        ### MP.fileList NO SETTING YET ###
+
         console.groupEnd()
     settings: ->
         console.group 'Applying Preference Page settings...'
@@ -91,6 +94,47 @@ MP_PAGE =
         console.groupEnd()
     vault: (page) ->
         console.group "Applying Vault (#{page}) settings..."
+        vaultPage = document.querySelector '#mainBody'
+
+        # Simplify the vault pages if enabled
+        if GM_getValue 'mp_simple_vault'
+            # clone the important parts and reset the page
+            donateBtn = vaultPage.querySelector 'form'
+            donateTbl = vaultPage.querySelector 'table:last-of-type'
+            vaultPage.innerHTML = ''
+
+            # add the donate button if it exists
+            if donateBtn?
+                newDonate = donateBtn.cloneNode true
+                vaultPage.appendChild newDonate
+                newDonate.classList.add 'mp_vaultClone'
+            else vaultPage.innerHTML = '<h1>Come back tomorrow!</h1>'
+
+            # add the donate table if it exists
+            if donateTbl?
+                newTable = donateTbl.cloneNode true
+                vaultPage.appendChild newTable
+                newTable.classList.add 'mp_vaultClone'
+            else vaultPage.style.paddingBottom = '25px'
+
+            console.log '[M+] Simplified the vault page!'
+
+        # Only run these checks on the donate page
+        if page is 'donate'
+            # Set the donation amount by default if enabled
+            if GM_getValue 'mp_donate_default'
+                vaultPage.querySelector 'form option:last-of-type'
+                    .selected = yes
+                console.log '[M+] Overwrote the default donation amount!'
+            # Set up donation reminder if enabled
+            ###if GM_getValue 'mp_donate_reminder'
+                timer = vaultPage.querySelector 'form input:first-of-type'
+                donator = vaultPage.querySelector 'form input:last-of-type'
+                try
+                    donator.addEventListener 'click',( () -> GM_setValue('mp_last_donate_time',timer.value) )
+                catch e
+                    console.warn e if MP_DEBUG is on###
+
         console.groupEnd()
 
 

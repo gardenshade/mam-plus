@@ -96,6 +96,17 @@ MP_STYLE =
                 color: #777;
                 text-align: center;
             }
+            .mp_vaultClone{
+                margin-top: 20px;
+            }
+            .mp_vaultClone input,.mp_vaultClone select{
+                font-size: 1.5em;
+                display: inline-block;
+                margin-right: 10px;
+            }
+            .mp_vaultClone br{
+                display: none;
+            }
             '''
         return @theme
     # Default Values

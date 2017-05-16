@@ -348,5 +348,26 @@ MP =
             cover.innerHTML += '<div class="mp_cover">(no image)</div>'
             console.log '[M+] Added empty cover!'
 
+    # Function that intializes a floating list of files
+    fileList: () ->
+        ###document.querySelector 'body'
+            .innerHTML += '<div class="mp_fileList"></div>'
+
+        fileList = document.querySelector '.mp_fileList'###
+
+        # Need to do this without JQ
+        ###$ '.mp_fileList'
+            .load '/tor/filelist.php?torrentid=3514'###
+
+        # Style for .mp_styleList
+        ###position:'fixed',
+        overflow:'scroll',
+        background:'black',
+        height:'200px',
+        top:0,
+        right:0,
+        transition:'all 500ms ease',
+        'z-index':99980###
+
 # Start the script
 do MP.run
