@@ -81,6 +81,12 @@ MP_STYLE =
                 box-sizing: border-box;
                 padding: 0 4px;
             }
+            #mp_bookmark{
+                display: inline-block;
+                position: relative;
+                top: 3px;
+                padding-left: 20px;
+            }
             '''
         return @theme
     # Default Values

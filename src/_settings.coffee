@@ -26,6 +26,10 @@ MP_SETTINGS =
             id   : 'mp_short_info'
             type : 'checkbox'
             desc : 'Shorten the Vault link text'
+        debug :
+            id   : 'mp_debug'
+            type : 'checkbox'
+            desc : 'Error log (<em>Click this checkbox to enable verbose logging to the console</em>)'
     # BROWSE / REQUESTS SETTINGS
     browse :
         pageTitle : 'Browse &amp; Search'

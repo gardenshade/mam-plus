@@ -16,6 +16,6 @@
 
 var MP = {};
 // This should be user-setable eventually
-var MP_DEBUG = true;
+var MP_DEBUG = GM_getValue('mp_debug') ? true : false;
 
 try {

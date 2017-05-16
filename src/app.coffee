@@ -330,13 +330,16 @@ MP =
         else console.log '[M+] Category does not require Goodreads button'
 
     # Function that moves the bookmark button
-    moveBookmark: (tar,tarID) ->
+    moveBookmark: (tar,torID) ->
         if torID isnt 0 and not isNaN torID
             # Hide original bookmark
             document.querySelector '#mainBody td.rowhead a[href^="/bookmark.php?"]'
                 .style.display = 'none'
 
-            if MP_STYLE.theme is dark
-                return
+            iconURL = if MP_STYLE.theme is 'dark' then '//cdn.myanonamouse.net/imagebucket/108303_mark_white.gif' else '//cdn.myanonamouse.net/imagebucket/108303_mark_black.gif'
+
+            tar.innerHTML += "<a id='mp_bookmark' href='/bookmark.php?torrent=#{String(torID)}'><img src='#{iconURL}'></a>"
+            console.log '[M+] Moved the bookmark icon!'
+        else console.warn "[M+] ERROR: Can't build bookmark! Expected number at position [2] of #{pagePath} but received #{torID}"
 # Start the script
 do MP.run
