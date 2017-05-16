@@ -8,9 +8,6 @@ BUGS:
     - topic count not triggering browser count?
 
 RE-IMPLEMENT:
-  - Bookmark relocation
-    - bookmark to SVG
-  - placeholder for no-covers
   - simplify vault
   - largest vault selection
   - largest gift selection

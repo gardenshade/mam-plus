@@ -6,16 +6,24 @@ MP_PAGE =
         dateInfo  = document.querySelector '#preNav .tP'
 
         # Hide the banner image, if enabled
-        document.body.classList.add 'mp_hide_banner' if GM_getValue 'mp_hide_banner'
+        if GM_getValue 'mp_hide_banner'
+            document.body.classList.add 'mp_hide_banner'
+            console.log '[M+] Hid the banner image!'
 
         # Hide the home button, if enabled
-        document.body.classList.add 'mp_hide_home' if GM_getValue 'mp_hide_home'
+        if GM_getValue 'mp_hide_home'
+            document.body.classList.add 'mp_hide_home'
+            console.log '[M+] Hid the home button!'
 
         # Hide the browse button, if enabled
-        document.body.classList.add 'mp_hide_browse' if GM_getValue 'mp_hide_browse'
+        if GM_getValue 'mp_hide_browse'
+            document.body.classList.add 'mp_hide_browse'
+            console.log '[M+] Hid the browse button!'
 
         # Make the vault link go to the donation page, if enabled
-        vaultLink.setAttribute 'href','/millionaires/donate.php' if GM_getValue 'mp_vault_link'
+        if GM_getValue 'mp_vault_link'
+            vaultLink.setAttribute 'href','/millionaires/donate.php'
+            console.log '[M+] Made the vault text link to the donate page!'
 
         # Shorten the vault link & date info
         if GM_getValue 'mp_short_info'
@@ -29,6 +37,7 @@ MP_PAGE =
             newText = (newText/1e6).toFixed 3
             # Update the vault text
             vaultLink.textContent = "Vault: #{newText} million"
+            console.log '[M+] Shortened the vault number!'
 
         console.groupEnd()
     home: ->
@@ -60,7 +69,11 @@ MP_PAGE =
         MP.addGoodreadsBtns authors,bookTitle,seriesTitle if GM_getValue 'mp_gr_btns'
 
         # Move the bookmark icon if enabled
-        MP.moveBookmark rawTitle,torrentID
+        MP.moveBookmark rawTitle,torrentID if GM_getValue 'mp_move_bookmark'
+
+        # Create "missing cover" cover if enabled
+        if GM_getValue('mp_placeholder_covers') and not bookCover.querySelector 'img'
+            MP.fakeCover bookCover,'missing'
 
         console.groupEnd()
     settings: ->

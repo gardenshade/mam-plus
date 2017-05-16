@@ -87,6 +87,15 @@ MP_STYLE =
                 top: 3px;
                 padding-left: 20px;
             }
+            .mp_cover{
+                display: inline-block;
+                width: 130px;
+                height: 200px;
+                line-height: 200px;
+                background: #333;
+                color: #777;
+                text-align: center;
+            }
             '''
         return @theme
     # Default Values

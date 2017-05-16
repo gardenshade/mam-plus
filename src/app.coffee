@@ -341,5 +341,12 @@ MP =
             tar.innerHTML += "<a id='mp_bookmark' href='/bookmark.php?torrent=#{String(torID)}'><img src='#{iconURL}'></a>"
             console.log '[M+] Moved the bookmark icon!'
         else console.warn "[M+] ERROR: Can't build bookmark! Expected number at position [2] of #{pagePath} but received #{torID}"
+
+    # Function that creates fake covers
+    fakeCover: (cover, type) ->
+        if type is 'missing'
+            cover.innerHTML += '<div class="mp_cover">(no image)</div>'
+            console.log '[M+] Added empty cover!'
+
 # Start the script
 do MP.run
