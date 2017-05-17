@@ -1,11 +1,11 @@
 # An object full of helper functions
 MP_HELPERS =
     # Currently unused
-    timestamp : ->
+    ###timestamp : ->
         theDate = new Date()
             .toUTCString()
             .split(' ')
-        return theDate[2]+' '+theDate[1]
+        return theDate[2]+' '+theDate[1]###
 
     # Set a whole bunch of attributes at once
     setAttr : (el,attrs) ->
@@ -66,3 +66,23 @@ MP_HELPERS =
             .replace(/<.*?>/g, '')
             .replace(/\(.*?\)/g, '')
             .trim()
+
+    # Waits for the page to load before running the desired function
+    pageLoad : (func,timer) ->
+        timeout = no
+        # set up fallback timer in case page takes too long to indicate it loaded
+        fallback = setTimeout((() ->
+            console.log 'Page has timed out' if MP_DEBUG is on
+            timeout = yes
+            do func
+        ),timer)
+        # wait for the page to load
+        try
+            document.onreadystatechange = () ->
+                if document.readyState is 'completed'
+                    console.log 'Page has loaded' if MP_DEBUG is on
+                    # remove the fallback
+                    clearTimeout fallback
+                    do func
+        catch e
+            console.warn e if MP_DEBUG is on

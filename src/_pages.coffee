@@ -42,9 +42,15 @@ MP_PAGE =
         console.groupEnd()
     home: ->
         console.group 'Applying Home settings...'
+
+        do MP.initShoutbox
+
         console.groupEnd()
     shoutbox: ->
         console.group 'Applying Shoutbox settings...'
+
+        do MP.initShoutbox
+
         console.groupEnd()
     browse: (page) ->
         console.group "Applying (#{page}) settings..."
@@ -95,10 +101,11 @@ MP_PAGE =
         # Set the gift amount to the highest possible amount if enabled
         if GM_getValue 'mp_gift_default'
             pointBox  = document.querySelector '#bonusgift'
-            maxPoints = pointBox.getAttribute 'max'
-            pointBox.value = maxPoints
+            if pointBox?
+                maxPoints = pointBox.getAttribute 'max'
+                pointBox.value = maxPoints
 
-            console.log "[M+] Set the default gift amount to #{maxPoints}"
+                console.log "[M+] Set the default gift amount to #{maxPoints}"
 
         console.groupEnd()
     vault: (page) ->

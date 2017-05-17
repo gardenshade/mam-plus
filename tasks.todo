@@ -7,11 +7,6 @@ BUGS:
     - browser tab doesn't update in background because SB pauses
     - topic count not triggering browser count?
 
-RE-IMPLEMENT:
-  - SB block users
-  - SB emphasize users
-  - SB keyword alerts
-
 TWEAKS:
   planned:
     - stretch SB to fill full page

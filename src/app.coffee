@@ -9,6 +9,8 @@ MP =
         'Minimized all the code, so hopefully it\'ll run faster!',
         'The "Toggle Snatched" button is now <em>before</em> the "Clear New" button'
         'Maximum gift amount of points is now determined by the userclass max gift amount'
+        'Removed shoutbox alerts from the tab title. That feature will be reworked later'
+        '[Bug] Made the script stop trying to run the Max Gift stuff on your own userpage'
     ]
     BUG_LIST    : []
     # VARIABLES
@@ -93,6 +95,7 @@ MP =
 
         # Function for retrieving the settings states
         getSettings = (obj) ->
+            console.group 'getSettings()' if MP_DEBUG is on
             Object.keys( obj ).forEach (page) ->
                 Object.keys( obj[page] ).forEach (pref) ->
                     ppref = obj[page][pref]
@@ -100,11 +103,13 @@ MP =
                         element = document.getElementById ppref.id
                         cases =
                             'checkbox' : -> element.setAttribute 'checked','checked'
-                            'textbox'  : -> element.value = GM_getValue "#{element}_val"
+                            'textbox'  : -> element.value = GM_getValue "#{ppref.id}_val"
                         do cases[ppref.type] if cases[ppref.type] and GM_getValue ppref.id
+            console.endGroup if MP_DEBUG is on
 
         # Function for setting the settings states
         setSettings = (obj) ->
+            console.group 'setSettings()' if MP_DEBUG is on
             Object.keys( obj ).forEach (page) ->
                 Object.keys( obj[page] ).forEach (pref) ->
                     ppref = obj[page][pref]
@@ -118,13 +123,14 @@ MP =
                                     GM_setValue ppref.id,on
                                     GM_setValue "#{ppref.id}_val",inp
                         do cases[ppref.type] if cases[ppref.type]
+            console.endGroup if MP_DEBUG is on
 
         # CURRENTLY UNUSED
-        logicLoop = (obj,func) ->
+        ###logicLoop = (obj,func) ->
             Object.keys( obj ).forEach (page) ->
                 Object.keys( obj[page] ).forEach (pref) ->
                     result = obj[page][pref]
-                    func result if typeof result is 'object'
+                    func result if typeof result is 'object'###
 
         # Function that saves the values of the settings table
         saveSettings = (timer) ->
@@ -153,6 +159,7 @@ MP =
                 timer = window.setTimeout (-> savestate.style.opacity = '0'),2345
             catch e
                 console.warn e if MP_DEBUG is on
+            console.endGroup
 
         # Create new table elements
         settingNav   = document.querySelector '#mainBody > table'
@@ -349,7 +356,7 @@ MP =
             cover.innerHTML += '<div class="mp_cover">(no image)</div>'
             console.log '[M+] Added empty cover!'
 
-    # Function that intializes a floating list of files
+    # Function that initializes a floating list of files
     fileList: () ->
         ###document.querySelector 'body'
             .innerHTML += '<div class="mp_fileList"></div>'
@@ -369,6 +376,119 @@ MP =
         right:0,
         transition:'all 500ms ease',
         'z-index':99980###
+
+    # Function that processes the shoutbox
+    initShoutbox: () ->
+        console.group 'Initializing shoutbox...'
+
+        # Internal function for retrieving shoutbox settings
+        getShoutParams = (getValue,allow) ->
+            console.log "Running... getShoutParams( #{getValue}, #{allow} )" if MP_DEBUG is on
+            arr = []
+            if GM_getValue getValue
+                vals = GM_getValue "#{getValue}_val"
+                    .split ','
+                for val in vals
+                    if allow is 'num'
+                        if not isNaN Number val
+                            arr.push Number val
+                    else if allow is 'str'
+                        arr.push val
+
+            arr = if arr[0]? then arr else no
+            console.log 'Result >',arr if MP_DEBUG is on
+            return arr
+
+        # Internal function to change the style of shouts
+        changeMsg = (tar,type) ->
+            console.log "Running... changeMsg( #{tar.id}, #{type} )" if MP_DEBUG is on
+            cases =
+                'hide'  : () ->
+                    tar.style.filter  = 'blur(3px)'
+                    tar.style.opacity = '0.3'
+                'show'  : () ->
+                    tar.style.filter  = 'blur(0)'
+                    tar.style.opacity = '0.5'
+                'emph'  : () -> tar.style.fontStyle = 'italic'
+                'alert' : () -> tar.style.color = 'red'
+            do cases[type] if cases[type]
+
+        # Internal logic for matching user shouts against settings
+        findUserShouts = (shout,procList,type) ->
+            # if the setting isn't empty
+            if procList isnt no
+                for proc in procList
+                    shoutTag = shout
+                        .querySelector 'a:nth-of-type(2)'
+                        .href.split '/'
+                    if Number shoutTag[shoutTag.length-1] is procList[proc]
+                        # hide messages from ignored users
+                        if type is 'ignore'
+                            changeMsg shout,'hide'
+                            # show/hide messages on hover
+                            try
+                                shout.addEventListener 'mouseenter',((event) -> changeMsg event.target,'show' )
+                                shout.addEventListener 'mouseleave',((event) -> changeMsg event.target,'hide' )
+                            catch e
+                                if MP_DEBUG is on then console.warn e else return
+                        # emphasize shouts from priority users
+                        else if type is 'priority'
+                            changeMsg shout,'emph'
+
+        # Internal logic for matching keywords in shouts against settings
+        findKeywords = (shout,procList) ->
+            # if the setting isn't empty
+            if procList isnt no
+                buildExpr = ''
+                # select text after (user class)
+                shoutTxt = shout.textContent.split ')'
+                MP_HELPERS.arrToStr shoutTxt.splice 0,1
+                shoutTxt += ''
+                # build regex logic with all user-defined keywords
+                key = 0
+                while key < procList.length
+                    buildExpr += '\\b'+procList[key]+'\\b'
+                    buildExpr += '|' if key+1 isnt procList.length
+                    key++
+                # define the regex and make it case insensitive
+                expr = new RegExp buildExpr,'i'
+                # style the text if a word is found
+                changeMsg shout,'alert' if shoutTxt.search(expr) > 0
+
+        # Internal function for iterating through shouts
+        processShouts = (Processes,callback) ->
+            # select any shouts that haven't been processed yet and process them
+            shouts = document.querySelectorAll '#sbf div:not(.mp_processed)'
+            for shout in shouts
+                # possibly redundant?
+                if not shout.classList.contains 'mp_processed'
+                    # add the processed class and search the shout
+                    shout.classList.add 'mp_processed'
+                    findUserShouts shout,Processes.ignore,'ignore'
+                    findUserShouts shout,Processes.priority,'priority'
+                    findKeywords   shout,Processes.keywords
+            do callback if callback
+
+        # Init shoutbox checks if at least one shoutbox setting is enabled
+        if GM_getValue('mp_block_users') or GM_getValue('mp_priority_users') or GM_getValue('mp_shout_keywords')
+            console.log 'Shoutbox settings exist' if MP_DEBUG is on
+            # check if the shoutbox exists on the page
+            sbox = document.querySelector '#sbf'
+            if sbox
+                console.log 'Page has shoutbox' if MP_DEBUG is on
+                Processes = new Object
+                # load information stored in user's settings
+                Processes.ignore   = getShoutParams 'mp_block_users','num'
+                Processes.priority = getShoutParams 'mp_priority_users','num'
+                Processes.keywords = getShoutParams 'mp_shout_keywords','str'
+
+                # wait for page to load
+                MP_HELPERS.pageLoad (() ->
+                    # process the initial shouts, then periodically check & process new shouts
+                    processShouts Processes, () -> window.setInterval (() -> processShouts(Processes,no)),500
+                ),2340
+
+        console.groupEnd
 
 # Start the script
 do MP.run
