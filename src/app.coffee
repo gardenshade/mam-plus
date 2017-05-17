@@ -2,7 +2,7 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Apr 19th'
+    TIMESTAMP   : 'May 17th'
     UPDATE_LIST : [
         'Completely rewrote back-end for <em>n</em>th time'
         'Improved error handling'
@@ -10,9 +10,11 @@ MP =
         'The "Toggle Snatched" button is now <em>before</em> the "Clear New" button'
         'Maximum gift amount of points is now determined by the userclass max gift amount'
         'Removed shoutbox alerts from the tab title. That feature will be reworked later'
-        '[Bug] Made the script stop trying to run the Max Gift stuff on your own userpage'
+        'Told the script not to run the Max Gift stuff on your own userpage'
     ]
-    BUG_LIST    : []
+    BUG_LIST    : [
+        'Discovered that the shoutbox top-to-bottom feature only works in Chrome. Fixing this will have to wait until my big SB update, as it would require hijacking the SB to fix anyway'
+    ]
     # VARIABLES
     errorLog : []
     pagePath : window.location.pathname
@@ -188,6 +190,8 @@ MP =
             console.warn e if MP_DEBUG is on
 
         do console.groupEnd if MP_DEBUG is on
+
+        console.log '[M+] Added the MAM+ Settings table!'
 
     # Function that loops over torrent results
     processResults: ->
@@ -381,6 +385,8 @@ MP =
     initShoutbox: () ->
         console.group 'Initializing shoutbox...'
 
+        sbox = document.querySelector '#sbf'
+
         # Internal function for retrieving shoutbox settings
         getShoutParams = (getValue,allow) ->
             console.log "Running... getShoutParams( #{getValue}, #{allow} )" if MP_DEBUG is on
@@ -409,7 +415,7 @@ MP =
                 'show'  : () ->
                     tar.style.filter  = 'blur(0)'
                     tar.style.opacity = '0.5'
-                'emph'  : () -> tar.style.fontStyle = 'italic'
+                'emph'  : () -> tar.style.fontWeight = 'bold'
                 'alert' : () -> tar.style.color = 'red'
             do cases[type] if cases[type]
 
@@ -421,7 +427,7 @@ MP =
                     shoutTag = shout
                         .querySelector 'a:nth-of-type(2)'
                         .href.split '/'
-                    if Number shoutTag[shoutTag.length-1] is procList[proc]
+                    if Number(shoutTag[shoutTag.length-1]) is proc
                         # hide messages from ignored users
                         if type is 'ignore'
                             changeMsg shout,'hide'
@@ -469,11 +475,13 @@ MP =
                     findKeywords   shout,Processes.keywords
             do callback if callback
 
+        # Switch the shoutbox to top-to-bottom mode if enabled
+        sbox.classList.add 'mp_flipShout' if GM_getValue 'mp_sb_order'
+
         # Init shoutbox checks if at least one shoutbox setting is enabled
         if GM_getValue('mp_block_users') or GM_getValue('mp_priority_users') or GM_getValue('mp_shout_keywords')
             console.log 'Shoutbox settings exist' if MP_DEBUG is on
             # check if the shoutbox exists on the page
-            sbox = document.querySelector '#sbf'
             if sbox
                 console.log 'Page has shoutbox' if MP_DEBUG is on
                 Processes = new Object

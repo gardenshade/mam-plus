@@ -9,11 +9,11 @@ MP_SETTINGS =
         hideBanner :
             id   : 'mp_hide_banner'
             type : 'checkbox'
-            desc : 'Remove the header image. (Not recommended if the below is enabled)'
+            desc : 'Remove the header image. (<em>Not recommended if the below is enabled</em>)'
         hideHome :
             id   : 'mp_hide_home'
             type : 'checkbox'
-            desc : 'Remove the home button. (Not recommended if the above is enabled)'
+            desc : 'Remove the home button. (<em>Not recommended if the above is enabled</em>)'
         hideBrowse :
             id   : 'mp_hide_browse'
             type : 'checkbox'
@@ -55,10 +55,10 @@ MP_SETTINGS =
     # SHOUTBOX SETTINGS
     shoutbox :
         pageTitle : 'Shoutbox'
-        tabNotify :
-            id   : 'mp_tab_notify'
+        sbOrder :
+            id   : 'mp_sb_order'
             type : 'checkbox'
-            desc : 'Show the current number of messages + keyword alerts in the browser tab'
+            desc : 'Read the shoutbox from top-to-bottom. (<em><span style="color:red">Warning: only supported in Chrome for now</span></em>)'
         blockUsers :
             id   : 'mp_block_users'
             type : 'textbox'

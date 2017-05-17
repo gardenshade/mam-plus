@@ -53,6 +53,11 @@ MP_STYLE =
             }
             .mp_textInput{
                 padding: 5px;
+                margin-right: 5px;
+                margin-top: 5px;
+            }
+            .mp_textInput ~ .mp_textInput{
+                margin-top: 0;
             }
             .mp_textInput::placeholder{
                 color: '''+@phColor+''';
@@ -106,6 +111,10 @@ MP_STYLE =
             }
             .mp_vaultClone br{
                 display: none;
+            }
+            #sbf.mp_flipShout{
+                display: flex;
+                flex-direction: column-reverse;
             }
             '''
         return @theme

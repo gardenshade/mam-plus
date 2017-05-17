@@ -2,7 +2,6 @@ MP_CHECK =
     version : ->
         # Debug stuff
         if MP_DEBUG is yes
-            importantVersion = do Math.random
             console.group 'MP_CHECK.version()'
             console.log "PREV_VER: #{MP.PREV_VER} (#{prevImportantVer})"
             console.log "VERSION: #{MP.VERSION} (#{importantVersion})"

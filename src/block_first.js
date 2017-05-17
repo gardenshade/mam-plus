@@ -6,6 +6,8 @@
 // @author       GardenShade
 // @include      https://myanonamouse.net/*
 // @include      https://www.myanonamouse.net/*
+// @updateURL    https://github.com/gardenshade/mam-plus/raw/master/build/release/MAM_Plus_Dev.user.js
+// @icon         http://i.imgur.com/dX44pSv.png
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues
