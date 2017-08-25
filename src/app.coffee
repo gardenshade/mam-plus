@@ -2,7 +2,7 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'May 17th'
+    TIMESTAMP   : 'Aug 25th'
     UPDATE_LIST : [
         'Completely rewrote back-end for <em>n</em>th time'
         'Improved error handling'

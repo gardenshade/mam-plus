@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         MAM Plus Dev
+// @name         MAM Plus
 // @namespace    https://github.com/gardenshade
-// @version      3.0.0
+// @version      3.0.1
 // @description  Lots of tiny fixes for MAM
 // @author       GardenShade
 // @include      https://myanonamouse.net/*

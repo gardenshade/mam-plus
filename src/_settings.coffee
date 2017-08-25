@@ -55,10 +55,6 @@ MP_SETTINGS =
     # SHOUTBOX SETTINGS
     shoutbox :
         pageTitle : 'Shoutbox'
-        sbOrder :
-            id   : 'mp_sb_order'
-            type : 'checkbox'
-            desc : 'Read the shoutbox from top-to-bottom. (<em><span style="color:red">Warning: only supported in Chrome for now</span></em>)'
         blockUsers :
             id   : 'mp_block_users'
             type : 'textbox'
@@ -71,12 +67,6 @@ MP_SETTINGS =
             tag  : 'Emphasize Users'
             desc : 'Emphasizes messages from the listed users in the shoutbox'
             placeholder : 'ex. 6, 25420, 77618'
-        keywords :
-            id   : 'mp_shout_keywords'
-            type : 'textbox'
-            tag  : 'Keyword Alerts'
-            desc : 'Emphasizes messages containing key words'
-            placeholder : 'ex. GardenShade, sci-fi, rhombus'
     # VAULT SETTINGS
     vault :
         pageTitle : 'Mil. Vault'

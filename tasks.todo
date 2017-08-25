@@ -3,13 +3,11 @@ BUGS:
   DEV:
     - 
   PROD:
-    - SB settings not being read properly for no reason in some browsers???
-    - browser tab doesn't update in background because SB pauses
-    - topic count not triggering browser count?
+    - keyword lists that end with a comma match EVERYTHING
+    - need to strip whitespace from keyword matching
 
 TWEAKS:
   planned:
-    - stretch SB to fill full page
     - move input bar to bottom of SB page
     - set to ONLY show torrent OR zip, not both
     - add toggle for bold/italic SB emphasis
@@ -17,6 +15,7 @@ TWEAKS:
     - use keyboard to navigate Prev & Next pages
     - open all new users in new tabs with click of a button
     - gray out points purchases that would put you over a limit (VIP, no points, etc)
+    - make your own uploads more distinct in search page (topicid=45691)
   concept:
     - store all `pageLoad` calls in array so that it only needs to run once
     - collapse freeleech sections
@@ -26,6 +25,7 @@ TWEAKS:
     - make entire userclasses filterable in SB
     - make dates more easily parseable
     - insert comma separators where necessary
+    - allow users to change MAM+ SB settings from SB  
 
 FEATURES:
   planned:
@@ -43,3 +43,4 @@ FEATURES:
     - keep track of who you gift to
     - text expansion in SB for quick replies
     - reply/quote options in SB
+    - hover over username in SB to highlight recent posts by that user?

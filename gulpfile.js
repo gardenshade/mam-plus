@@ -10,7 +10,7 @@ var userDir = require( './user-settings.json' ).userDir;
 // VARIABLES
 var env, csIn, csOut, jsIn;
 // DEFAULTS
-if( userDir===undefined ){ userDir='.'; }
+if( userDir===undefined ){ userDir='build'; }
 env = 'dev';
 
 // SOURCES
