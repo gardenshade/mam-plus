@@ -112,10 +112,6 @@ MP_STYLE =
             .mp_vaultClone br{
                 display: none;
             }
-            #sbf.mp_flipShout{
-                display: flex;
-                flex-direction: column-reverse;
-            }
             '''
         return @theme
     # Default Values

@@ -476,7 +476,7 @@ MP =
             do callback if callback
 
         # Switch the shoutbox to top-to-bottom mode if enabled
-        sbox.classList.add 'mp_flipShout' if GM_getValue 'mp_sb_order'
+        # sbox.classList.add 'mp_flipShout' if GM_getValue 'mp_sb_order'
 
         # Init shoutbox checks if at least one shoutbox setting is enabled
         if GM_getValue('mp_block_users') or GM_getValue('mp_priority_users') or GM_getValue('mp_shout_keywords')
