@@ -1,40 +1,6 @@
 MP_CHECK =
     version : ->
         # Debug stuff
-        ###if MP_DEBUG is yes
-            console.group 'MP_CHECK.version()'
-            console.log "PREV_VER: #{MP.PREV_VER} (#{prevImportantVer})"
-            console.log "VERSION: #{MP.VERSION} (#{importantVersion})"
-        getImportantVer = (val) ->
-            if val?
-                val = val.split '.'
-                "#{val[0]}.#{val[1]}"
-            else val = 0
-        prevImportantVer = getImportantVer MP.PREV_VER
-        importantVersion = getImportantVer MP.VERSION
-        # Check to see if this is the first run since an update
-        if prevImportantVer isnt importantVersion
-            console.log 'Dif versions; making notification...' if MP_DEBUG is on
-            # this is not the first time the script has ever run
-            if prevImportantVer
-                console.log 'Not a first-time run' if MP_DEBUG is on
-                console.log "mp_alerts: #{GM_getValue('mp_alerts')}" if MP_DEBUG is on
-                # the notification was not disabled
-                if GM_getValue('mp_alerts') is on
-                    MP.triggerNote 'update'
-            # this is the first time the script has run
-            else
-                console.log 'First-time run' if MP_DEBUG is on
-                # enable GR buttons, etc, by default
-                GM_setValue 'mp_gr_btns',true
-                GM_setValue 'mp_alerts',true
-                MP.triggerNote 'firstRun'
-            # store the current version
-            GM_setValue 'mp_version',MP.VERSION
-            console.groupEnd() if MP_DEBUG is yes
-            return###
-
-        # Debug stuff
         if MP_DEBUG is yes
             console.group 'MP_CHECK.version()'
             console.log "PREV_VER: #{MP.PREV_VER}"
