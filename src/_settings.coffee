@@ -47,7 +47,7 @@ MP_SETTINGS =
         moveBookmark :
             id   : 'mp_move_bookmark'
             type : 'checkbox'
-            desc : 'Move the bookmark icon up to the title'
+            desc : 'Replace the bookmark icon with a new graphic'
         placeholderCovers :
             id   : 'mp_placeholder_covers'
             type : 'checkbox'

@@ -2,9 +2,16 @@ MP_STYLE =
     # THIS SHOULD EVENTUALLY BE INSERTED INTO A STYLESHEET
     # Then reference with .mp_dark and .mp_light, etc
     setStyle : ->
+        # Fetch current theme
         siteTheme = document
             .querySelector 'head link[href*="ICGstation"]'
             .getAttribute 'href'
+        # Default Values
+        theme     : 'light'
+        btnBorder : '1px solid #d0d0d0'
+        btnColor  : '#000'
+        btnBack   : 'radial-gradient(at center center, rgba(136, 136, 136, 0) 0px, rgba(136, 136, 136, 0) 25%, rgba(136, 136, 136, 0) 62%, rgba(136, 136, 136, 0.65098) 100%)'
+        phColor   : '#575757'
         if siteTheme.indexOf('dark') > 0
             @theme     = 'dark'
             @btnBorder = '1px solid #bbaa77'
@@ -112,11 +119,24 @@ MP_STYLE =
             .mp_vaultClone br{
                 display: none;
             }
+            a[class^="mp_mark_"]{
+                position:relative;
+                top:4px;
+                left:5px;
+            }
+            a[id^="torBookmark"].mp_mark_dark{
+                background:url(//cdn.myanonamouse.net/imagebucket/108303_mark_white.gif) no-repeat;
+                
+            }
+            a[id^="torBookmark"].mp_mark_light{
+                background:url(//cdn.myanonamouse.net/imagebucket/108303_mark_black.gif) no-repeat;
+            }
+            a[id^="torDeBookmark"].mp_mark_dark{
+                background:url(//cdn.myanonamouse.net/imagebucket/108303/mark_white_del.gif) no-repeat;
+                
+            }
+            a[id^="torDeBookmark"].mp_mark_light{
+                background:url(//cdn.myanonamouse.net/imagebucket/108303/mark_black_del.gif) no-repeat;
+            }
             '''
         return @theme
-    # Default Values
-    theme     : 'light'
-    btnBorder : '1px solid #d0d0d0'
-    btnColor  : '#000'
-    btnBack   : 'radial-gradient(at center center, rgba(136, 136, 136, 0) 0px, rgba(136, 136, 136, 0) 25%, rgba(136, 136, 136, 0) 62%, rgba(136, 136, 136, 0.65098) 100%)'
-    phColor   : '#575757'

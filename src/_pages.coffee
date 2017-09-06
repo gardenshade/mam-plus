@@ -68,14 +68,15 @@ MP_PAGE =
         bookCover   = document.querySelector '#posterImage'
         torrentID   = Number MP.pagePath.split('/')[2]
         bookTitle   = MP_HELPERS.redoSpaces rawTitle.textContent
-
         console.log 'Extracting...',title for title in [authors,rawTitle,seriesTitle,bookCover,torrentID,bookTitle] if MP_DEBUG is on
-
         # Add goodreads buttons if enabled
         MP.addGoodreadsBtns authors,bookTitle,seriesTitle if GM_getValue 'mp_gr_btns'
-
-        # Move the bookmark icon if enabled
-        MP.moveBookmark rawTitle,torrentID if GM_getValue 'mp_move_bookmark'
+        # Replace the bookmark icon if enabled
+        if GM_getValue 'mp_move_bookmark'
+            MP.moveBookmark rawTitle,torrentID
+            setInterval () ->
+                MP.moveBookmark(rawTitle,torrentID)
+            , 100
 
         # Create "missing cover" cover if enabled
         if GM_getValue('mp_placeholder_covers') and not bookCover.querySelector 'img'

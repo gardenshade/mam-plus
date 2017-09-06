@@ -2,18 +2,12 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Aug 25th'
+    TIMESTAMP   : 'Sep 6th'
     UPDATE_LIST : [
-        'Completely rewrote back-end for <em>n</em>th time'
-        'Improved error handling'
-        'Minimized all the code, so hopefully it\'ll run faster!',
-        'The "Toggle Snatched" button is now <em>before</em> the "Clear New" button'
-        'Maximum gift amount of points is now determined by the userclass max gift amount'
-        'Removed shoutbox alerts from the tab title. That feature will be reworked later'
-        'Told the script not to run the Max Gift stuff on your own userpage'
+        'MAM now displays the bookmark icon beside the title; the MAM+ feature now targets this location and simply replaces the icon'
+        'Added a corresponding "remove bookmark" icon'
     ]
     BUG_LIST    : [
-        'Discovered that the shoutbox top-to-bottom feature only works in Chrome. Fixing this will have to wait until my big SB update, as it would require hijacking the SB to fix anyway'
     ]
     # VARIABLES
     errorLog : []
@@ -343,16 +337,13 @@ MP =
 
     # Function that moves the bookmark button
     moveBookmark: (tar,torID) ->
+        # The page is a valid book
         if torID isnt 0 and not isNaN torID
-            # Hide original bookmark
-            document.querySelector '#mainBody td.rowhead a[href^="/bookmark.php?"]'
-                .style.display = 'none'
+            # Choose the new icon
+            document.querySelector '#mainBody > a[id*="Bookmark"]'
+                .setAttribute 'class',"mp_mark_#{MP_STYLE.theme}"
 
-            iconURL = if MP_STYLE.theme is 'dark' then '//cdn.myanonamouse.net/imagebucket/108303_mark_white.gif' else '//cdn.myanonamouse.net/imagebucket/108303_mark_black.gif'
-
-            tar.innerHTML += "<a id='mp_bookmark' href='/bookmark.php?torrent=#{String(torID)}'><img src='#{iconURL}'></a>"
-            console.log '[M+] Moved the bookmark icon!'
-        else console.warn "[M+] ERROR: Can't build bookmark! Expected number at position [2] of #{pagePath} but received #{torID}"
+            console.log '[M+] Updated the bookmark icon!'
 
     # Function that creates fake covers
     fakeCover: (cover, type) ->
