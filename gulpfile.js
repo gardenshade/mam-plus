@@ -35,12 +35,12 @@ gulp.task( 'coffee', function(){
 // When v3.0 is ready for release, this should output a non-Dev-titled userscript as well
 gulp.task( 'js', function(){
     gulp.src( jsIn )
-        .pipe( concat('MAM_Plus_Dev.user.js') )
+        .pipe( concat('MAM_Plus.user.js') )
             .on( 'error', gutil.log )
         .pipe( gif( env==='release',uglify({ preserveComments: 'license' }) ) )
             .on( 'error', gutil.log )
         .pipe( gulp.dest( 'build/'+env ) )
-        .pipe( gulp.dest( userDir+'/MAM_Plus_Dev' ) );
+        .pipe( gulp.dest( userDir+'/MAM_Plus' ) );
 } );
 /*=== SET RELEASE ===*/
 gulp.task( 'setRelease', function(){
