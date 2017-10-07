@@ -4,7 +4,7 @@ The MAM+ userscript, converted to CoffeeScript and published in a more official 
 
 ## Installation
 
-As long as you have a userscript browser extension installed, you can simply __[click here](https://github.com/gardenshade/mam-plus/raw/master/build/release/MAM_Plus_Dev.user.js)__ to install the script. Popular browser extensions include:
+As long as you have a userscript browser extension installed, you can simply __[click here](https://github.com/gardenshade/mam-plus/raw/master/build/release/MAM_Plus.user.js)__ to install the script. Popular browser extensions include:
 - [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/): Firefox
 - [Violentmonkey](https://violentmonkey.github.io/get-it/): Chrome & Opera
 - [Tampermonkey](https://tampermonkey.net/): most other browsers
