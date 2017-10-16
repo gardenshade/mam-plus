@@ -3,41 +3,34 @@ BUGS:
   DEV:
     - 
   PROD:
-    - keyword lists that end with a comma match EVERYTHING
-    - need to strip whitespace from keyword matching
+    -
 
 TWEAKS:
   planned:
-    - move input bar to bottom of SB page
-    - set to ONLY show torrent OR zip, not both
-    - add toggle for bold/italic SB emphasis
+    - move download button and make it more prominent
   wishlist:
     - use keyboard to navigate Prev & Next pages
     - open all new users in new tabs with click of a button
     - gray out points purchases that would put you over a limit (VIP, no points, etc)
     - make your own uploads more distinct in search page (topicid=45691)
   concept:
-    - store all `pageLoad` calls in array so that it only needs to run once
     - collapse freeleech sections
-    - notify of new freeleech picks
+    - reminder of new freeleech picks
     - points reminder when in range
     - torrent list improvements (ex. split tags into searchable tag icons)
     - make entire userclasses filterable in SB
-    - make dates more easily parseable
     - insert comma separators where necessary
-    - allow users to change MAM+ SB settings from SB  
+    - allow users to change MAM+ SB settings from SB
+    - click/hover/??? username in shoutbox to block/emphasize user
 
 FEATURES:
   planned:
     - make OP posts more visible in forums
     - floating list of torrent files
   wishlist:
-    - add keywords for torrent pages & make triggered matches more visible
-    - add anchors to all shoutbox posts
-    - copy keyword triggers into their own feed, linking to the original anchors
-    - look into Chrome/FF browser alerts instead of browser tab changes (requires unpausing shoutbox when in background)
+    - add keywords for torrent search pages & make triggered matches more visible
+    - add anchors to all shoutbox posts & copy keyword triggers into their own feed, linking to the original anchors
   concept:
-    - audible notifications for SB
     - "friends online" list
     - "portable" SB
     - keep track of who you gift to

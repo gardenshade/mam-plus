@@ -26,6 +26,16 @@ In case you want to modify the script and/or contribute to it, follow the below 
 - Clone this project to your computer
 - Open a terminal window in your project folder, and run `npm install`
 
+#### For Violentmonkey:
+
+- In Chrome, ensure that the Violentmonkey extension has access to file URLs
+- Make sure your terminal window is open to this project folder, and run `gulp`
+- Drag and drop the resulting file from `build/MAM_Plus_Dev` to your browser
+- On the installation page, open `Options` and select `Track local file`
+- Click `Confirm Installation` and **do not close the installation page**
+- As long as `gulp` is running and the installation page is open, any changes you save will be compiled automatically. Simply refresh the browser to see your changes
+- When the script is ready to be released, run `gulp release`
+
 #### For Greasemonkey:
 
 - Create a new file called `user-settings.json` in the project folder
@@ -38,14 +48,4 @@ In case you want to modify the script and/or contribute to it, follow the below 
     - Set the includes to `https://myanonamouse.net/*` & `https://www.myanonamouse.net/*`
 - Make sure your terminal window is open to this project folder, and run `gulp`
 - As long as `gulp` is running, any changes you save will be compiled automatically. Simply refresh the browser to see your changes
-- When the script is ready to be released, run `gulp release`
-
-#### For Violentmonkey:
-
-- In Chrome, ensure that the Violentmonkey extension has access to file URLs
-- Make sure your terminal window is open to this project folder, and run `gulp`
-- Drag and drop the resulting file from `build/MAM_Plus_Dev` to your browser
-- On the installation page, open `Options` and select `Track local file`
-- Click `Confirm Installation` and **do not close the installation page**
-- As long as `gulp` is running and the installation page is open, any changes you save will be compiled automatically. Simply refresh the browser to see your changes
 - When the script is ready to be released, run `gulp release`

@@ -43,10 +43,8 @@ MP_STYLE =
                 z-index: 99999;
             }
             .mp_hide_banner #header{
-                display: none;
-            }
-            .mp_hide_banner body{
-                padding-top: 15px;
+                visibility: hidden;
+                height: 10px;
             }
             .mp_hide_home #menu .homeLink{
                 display: none;
@@ -58,7 +56,8 @@ MP_STYLE =
                 display: inline-block;
                 min-width:120px;
             }
-            .mp_textInput{
+            .mp_textInput,
+            .mp_dropInput{
                 padding: 5px;
                 margin-right: 5px;
                 margin-top: 5px;

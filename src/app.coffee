@@ -2,10 +2,14 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Sep 6th'
+    TIMESTAMP   : 'Oct 16th'
     UPDATE_LIST : [
-        'MAM now displays the bookmark icon beside the title; the MAM+ feature now targets this location and simply replaces the icon'
-        'Added a corresponding "remove bookmark" icon'
+        'NEW: You can now choose to hide either the Torrent or the Zip download link'
+        'User Emphasis is now "highlighting" instead of bolding'
+        'Added setting for custom User Emphasis style'
+        'Fixed bug where padding was no longer being applied when hiding the header image'
+        'Removed "Max Vault Donation" setting because it was incorporated into MAM'
+        'Moved Error Logging setting to new "Other" section'
     ]
     BUG_LIST    : [
     ]
@@ -82,6 +86,10 @@ MP =
                     cases =
                         'checkbox' : -> outp += "<input type='checkbox' id='#{result.id}' value='true'>#{result.desc}<br>"
                         'textbox'  : -> outp += "<span class='mp_setTag'>#{result.tag}:</span> <input type='text' id='#{result.id}' placeholder='#{result.placeholder}' class='mp_textInput' size='25'>#{result.desc}<br>"
+                        'dropdown'    : ->
+                            outp += "<span class='mp_setTag'>#{result.tag}:</span> <select id='#{result.id}' class='mp_dropInput'>"
+                            outp += "<option value='#{key}'>#{val}</option>" for key,val of result.options
+                            outp += "</select>#{result.desc}<br>"
                     do cases[result.type] if cases[result.type]
                 # Close the row
                 outp += '</td></tr>'
@@ -100,6 +108,7 @@ MP =
                         cases =
                             'checkbox' : -> element.setAttribute 'checked','checked'
                             'textbox'  : -> element.value = GM_getValue "#{ppref.id}_val"
+                            'dropdown' : -> element.value = GM_getValue "#{ppref.id}"
                         do cases[ppref.type] if cases[ppref.type] and GM_getValue ppref.id
             console.endGroup if MP_DEBUG is on
 
@@ -118,15 +127,9 @@ MP =
                                 if inp isnt ''
                                     GM_setValue ppref.id,on
                                     GM_setValue "#{ppref.id}_val",inp
+                            'dropdown' :  -> GM_setValue ppref.id,element.value
                         do cases[ppref.type] if cases[ppref.type]
             console.endGroup if MP_DEBUG is on
-
-        # CURRENTLY UNUSED
-        ###logicLoop = (obj,func) ->
-            Object.keys( obj ).forEach (page) ->
-                Object.keys( obj[page] ).forEach (pref) ->
-                    result = obj[page][pref]
-                    func result if typeof result is 'object'###
 
         # Function that saves the values of the settings table
         saveSettings = (timer) ->
@@ -343,13 +346,27 @@ MP =
             document.querySelector '#mainBody > a[id*="Bookmark"]'
                 .setAttribute 'class',"mp_mark_#{MP_STYLE.theme}"
 
-            console.log '[M+] Updated the bookmark icon!'
-
     # Function that creates fake covers
     fakeCover: (cover, type) ->
         if type is 'missing'
             cover.innerHTML += '<div class="mp_cover">(no image)</div>'
             console.log '[M+] Added empty cover!'
+
+    # Function that only shows the Torrent OR Zip download links
+    simpleDownload: (showLink) ->
+
+        if showLink is 'tor'
+            theLink  = document.querySelector('#dlNormal').href
+            showLink = 'Torrent'
+        else if showLink is 'zip'
+            theLink  = document.querySelector('#dlZip').href
+            showLink = 'ZIP'
+
+        document
+            .querySelector '#download'
+            .innerHTML = "<h1 class='torFormButton'><a href='#{theLink}'>#{showLink}</a></h1>"
+
+        console.log '[M+] Simplified the download link!'
 
     # Function that initializes a floating list of files
     fileList: () ->
@@ -406,7 +423,11 @@ MP =
                 'show'  : () ->
                     tar.style.filter  = 'blur(0)'
                     tar.style.opacity = '0.5'
-                'emph'  : () -> tar.style.fontWeight = 'bold'
+                'emph'  : () ->
+                    console.log GM_getValue('mp_priority_style_val') if MP_DEBUG
+                    if not GM_getValue ('mp_priority_style_val')
+                        tar.style.background = 'rgba(125,125,125,0.3)'
+                    else tar.style.background = 'rgba('+GM_getValue('mp_priority_style_val')+')'
                 'alert' : () -> tar.style.color = 'red'
             do cases[type] if cases[type]
 

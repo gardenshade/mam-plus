@@ -77,10 +77,15 @@ MP_PAGE =
             setInterval () ->
                 MP.moveBookmark(rawTitle,torrentID)
             , 100
+            console.log '[M+] Updated the bookmark icon!'
 
         # Create "missing cover" cover if enabled
         if GM_getValue('mp_placeholder_covers') and not bookCover.querySelector 'img'
             MP.fakeCover bookCover,'missing'
+
+        # Simplify the download button if enabled
+        if GM_getValue('mp_simple_download') isnt 'false'
+            MP.simpleDownload GM_getValue 'mp_simple_download'
 
         # Create floating list of files if enabled
         ### MP.fileList NO SETTING YET ###
@@ -138,11 +143,6 @@ MP_PAGE =
 
         # Only run these checks on the donate page
         if page is 'donate'
-            # Set the donation amount by default if enabled
-            if GM_getValue 'mp_donate_default'
-                vaultPage.querySelector 'form option:last-of-type'
-                    .selected = yes
-                console.log '[M+] Overwrote the default donation amount!'
             # Set up donation reminder if enabled
             ###if GM_getValue 'mp_donate_reminder'
                 timer = vaultPage.querySelector 'form input:first-of-type'
