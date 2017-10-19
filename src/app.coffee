@@ -2,14 +2,9 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Oct 16th'
+    TIMESTAMP   : 'Oct 19th'
     UPDATE_LIST : [
-        'NEW: You can now choose to hide either the Torrent or the Zip download link'
-        'User Emphasis is now "highlighting" instead of bolding'
-        'Added setting for custom User Emphasis style'
-        'Fixed bug where padding was no longer being applied when hiding the header image'
-        'Removed "Max Vault Donation" setting because it was incorporated into MAM'
-        'Moved Error Logging setting to new "Other" section'
+        'Hopefully squashed bug causing all download links to be "Undefined". It was like 3 words...'
     ]
     BUG_LIST    : [
     ]
