@@ -84,7 +84,7 @@ MP_PAGE =
             MP.fakeCover bookCover,'missing'
 
         # Simplify the download button if enabled
-        if GM_getValue('mp_simple_download') isnt 'false'
+        if GM_getValue('mp_simple_download') isnt 'false' and GM_getValue('mp_simple_download') isnt undefined
             MP.simpleDownload GM_getValue 'mp_simple_download'
 
         # Create floating list of files if enabled
