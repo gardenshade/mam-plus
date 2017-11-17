@@ -2,9 +2,9 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Oct 19th'
+    TIMESTAMP   : 'Nov 17th'
     UPDATE_LIST : [
-        'Hopefully squashed bug causing all download links to be "Undefined". It was like 3 words...'
+        'The script now adds a cookie in your browser, simply letting the site know you use MAM+ (which should hopefully make life easier for the site devs)'
     ]
     BUG_LIST    : [
     ]
@@ -15,6 +15,8 @@ MP =
     # Function that starts the app
     run :  ->
         console.group "Welcome to MAM+ v#{@.VERSION}!"
+
+        document.cookie = 'mp_enabled=1;domain=myanonamouse.net'
 
         do MP_STYLE.setStyle
         console.log "Theme is #{MP_STYLE.theme}"

@@ -13,6 +13,8 @@ TWEAKS:
     - open all new users in new tabs with click of a button
     - gray out points purchases that would put you over a limit (VIP, no points, etc)
     - make your own uploads more distinct in search page (topicid=45691)
+    - allow custom theming of shoutbox alerts for different types of alert
+    - Load style settings from Custom User CSS string to allow swapping themes
   concept:
     - collapse freeleech sections
     - reminder of new freeleech picks
