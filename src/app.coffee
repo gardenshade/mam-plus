@@ -16,7 +16,7 @@ MP =
     run :  ->
         console.group "Welcome to MAM+ v#{@.VERSION}!"
 
-        document.cookie = 'mp_enabled=1;domain=myanonamouse.net'
+        document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/'
 
         do MP_STYLE.setStyle
         console.log "Theme is #{MP_STYLE.theme}"
