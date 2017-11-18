@@ -2,7 +2,7 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Nov 17th'
+    TIMESTAMP   : 'Nov 18th'
     UPDATE_LIST : [
         'Fixed an issue where the Simple DL Button wasn\'t 100% clickable'
     ]
