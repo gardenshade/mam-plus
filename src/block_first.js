@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MAM Plus
 // @namespace    https://github.com/gardenshade
-// @version      3.0.7
+// @version      3.0.8
 // @description  Lots of tiny fixes for MAM
 // @author       GardenShade
 // @include      https://myanonamouse.net/*
@@ -16,7 +16,6 @@
 // ==/UserScript==
 
 var MP = {};
-// This should be user-setable eventually
 var MP_DEBUG = GM_getValue('mp_debug') ? true : false;
 
 try {

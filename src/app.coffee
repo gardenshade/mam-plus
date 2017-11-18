@@ -4,7 +4,7 @@ MP =
     PREV_VER    : GM_getValue 'mp_version'
     TIMESTAMP   : 'Nov 17th'
     UPDATE_LIST : [
-        'The script now adds a cookie in your browser, simply letting the site know you use MAM+ (which should hopefully make life easier for the site devs)'
+        'Fixed an issue where the Simple DL Button wasn\'t 100% clickable'
     ]
     BUG_LIST    : [
     ]
@@ -361,7 +361,7 @@ MP =
 
         document
             .querySelector '#download'
-            .innerHTML = "<h1 class='torFormButton'><a href='#{theLink}'>#{showLink}</a></h1>"
+            .innerHTML = "<h1><a class='torFormButton mp_formButton' href='#{theLink}'>#{showLink}</a></h1>"
 
         console.log '[M+] Simplified the download link!'
 

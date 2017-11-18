@@ -123,6 +123,10 @@ MP_STYLE =
                 top:4px;
                 left:5px;
             }
+            .mp_formButton{
+                display:inline;
+                border-color: '''+@btnColor+''';
+            }
             a[id^="torBookmark"].mp_mark_dark{
                 background:url(//cdn.myanonamouse.net/imagebucket/108303_mark_white.gif) no-repeat;
                 
