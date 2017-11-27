@@ -2,9 +2,9 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Nov 18th'
+    TIMESTAMP   : 'Nov 27th'
     UPDATE_LIST : [
-        'Fixed an issue where the Simple DL Button wasn\'t 100% clickable'
+        'Fixed issue where a site change broke the ability to hide the banner'
     ]
     BUG_LIST    : [
     ]

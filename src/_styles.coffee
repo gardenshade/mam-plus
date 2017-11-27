@@ -42,7 +42,7 @@ MP_STYLE =
                 cursor: pointer;
                 z-index: 99999;
             }
-            .mp_hide_banner #header{
+            .mp_hide_banner #msb{
                 visibility: hidden;
                 height: 10px;
             }
