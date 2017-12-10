@@ -236,8 +236,10 @@ MP =
         seriesURL = null
         authorURL = null
         buttons   = []
-        targetRow = document.querySelector('#download').parentNode
-        category  = document.querySelector('#cat').textContent
+        targetRow = document.querySelector('#submitInfo').parentNode
+        # ======BROKEN======
+        # category  = document.querySelector('#cat').textContent
+        # ======BROKEN======
 
         # Internal function for returning GR-formatted authors
         smartAuth = (inp) ->
@@ -314,7 +316,8 @@ MP =
             title
 
         # If the torrent page is a book category...
-        if category.indexOf('Ebooks') is 0 or category.indexOf('Audiobooks') is 0
+        # ======BROKEN======
+        ###if category.indexOf('Ebooks') is 0 or category.indexOf('Audiobooks') is 0
             buttonRow   = targetRow.parentNode.insertRow targetRow.rowIndex
             titleCell   = buttonRow.insertCell 0
             contentCell = buttonRow.insertCell 1
@@ -333,7 +336,25 @@ MP =
             contentCell.setAttribute 'class','row1'
 
             console.log '[M+] Added Goodreads buttons!'
-        else console.log '[M+] Category does not require Goodreads button'
+        else console.log '[M+] Category does not require Goodreads button'###
+        # ======BROKEN======
+
+        # Temporarily displaying buttons no matter the category
+        targetRow.insertAdjacentHTML 'afterend','<div class="torDetRow"><div class="torDetLeft">Search Goodreads</div><div class="torDetRight mp_grRow"><span class="flex"></span></div></div>'
+
+        # series = processTitle 'series',seriesTitle,seriesURL if seriesTitle.length isnt 0
+        # author = processTitle 'author',authorTitle,authorURL if authorTitle.length isnt 0
+        # book   = processTitle 'book',bookTitle,bookURL if bookTitle?
+        # if book? and author?
+        #     bothURL = buildURL 'on',"#{book} #{author}"
+        #     buttons.splice 0,0,makeBtn 'Title + Author',bothURL
+
+        document.querySelector('.mp_grRow span').innerHTML += button for button in buttons
+
+        # titleCell.setAttribute 'class','rowhead'
+        # contentCell.setAttribute 'class','row1'
+
+        # console.log '[M+] Added Goodreads buttons!'
 
     # Function that moves the bookmark button
     moveBookmark: (tar,torID) ->

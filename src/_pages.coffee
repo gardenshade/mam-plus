@@ -62,20 +62,22 @@ MP_PAGE =
     torrent: ->
         console.group 'Applying Torrent settings...'
 
-        authors     = document.querySelectorAll '#mainBody tr:nth-child(2) td:last-of-type a'
-        rawTitle    = document.querySelector '#mainBody h1'
-        seriesTitle = document.querySelector '#mainBody tr:nth-child(3) td:last-of-type a'
-        bookCover   = document.querySelector '#posterImage'
+        authors     = document.querySelectorAll '#torDetMainCon .torAuthors a'
+        bookTitle   = document.querySelector '#torDetMainCon .TorrentTitle'
+        series = document.querySelectorAll '#Series a'
+        bookCover   = document.querySelector '#torDetPoster'
         torrentID   = Number MP.pagePath.split('/')[2]
-        bookTitle   = MP_HELPERS.redoSpaces rawTitle.textContent
-        console.log 'Extracting...',title for title in [authors,rawTitle,seriesTitle,bookCover,torrentID,bookTitle] if MP_DEBUG is on
+
+        console.log auth.text for auth in authors
+        console.log seri.text for seri in series
+
         # Add goodreads buttons if enabled
-        MP.addGoodreadsBtns authors,bookTitle,seriesTitle if GM_getValue 'mp_gr_btns'
+        MP.addGoodreadsBtns authors,bookTitle,series if GM_getValue 'mp_gr_btns'
         # Replace the bookmark icon if enabled
         if GM_getValue 'mp_move_bookmark'
-            MP.moveBookmark rawTitle,torrentID
+            MP.moveBookmark bookTitle,torrentID
             setInterval () ->
-                MP.moveBookmark(rawTitle,torrentID)
+                MP.moveBookmark(bookTitle,torrentID)
             , 100
             console.log '[M+] Updated the bookmark icon!'
 
