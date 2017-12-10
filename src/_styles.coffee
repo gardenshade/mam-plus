@@ -6,18 +6,18 @@ MP_STYLE =
         siteTheme = document
             .querySelector 'head link[href*="ICGstation"]'
             .getAttribute 'href'
-        # Default Values
-        theme     : 'light'
-        btnBorder : '1px solid #d0d0d0'
-        btnColor  : '#000'
-        btnBack   : 'radial-gradient(at center center, rgba(136, 136, 136, 0) 0px, rgba(136, 136, 136, 0) 25%, rgba(136, 136, 136, 0) 62%, rgba(136, 136, 136, 0.65098) 100%)'
-        phColor   : '#575757'
         if siteTheme.indexOf('dark') > 0
             @theme     = 'dark'
             @btnBorder = '1px solid #bbaa77'
             @btnColor  = '#aaa'
             @btnBack   = 'radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%)'
             @phColor   = '#8d5d5d'
+        else
+            @theme     = 'light'
+            @btnBorder = '1px solid #d0d0d0'
+            @btnColor  = '#000'
+            @btnBack   = 'radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%)'
+            @phColor   = '#575757'
         GM_addStyle '''
             .mp_notification{
                 position: fixed;

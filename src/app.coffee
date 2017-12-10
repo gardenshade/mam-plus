@@ -5,7 +5,8 @@ MP =
     TIMESTAMP   : 'Dec 10th'
     UPDATE_LIST : [
         'Updated Goodreads buttons for new torrent page'
-        'Fixed button styling issue'
+        'Fixed button styling issue [GH #1]'
+        'Fixed light theme styling issue'
     ]
     BUG_LIST    : [
     ]
