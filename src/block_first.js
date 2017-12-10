@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         MAM Plus 3.1
+// @name         MAM Plus
 // @namespace    https://github.com/gardenshade
 // @version      3.1.0
 // @description  Lots of tiny fixes for MAM
