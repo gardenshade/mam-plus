@@ -2,9 +2,10 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Nov 27th'
+    TIMESTAMP   : 'Dec 10th'
     UPDATE_LIST : [
-        'Fixed issue where a site change broke the ability to hide the banner'
+        'Updated Goodreads buttons for new torrent page'
+        'Fixed button styling issue'
     ]
     BUG_LIST    : [
     ]
@@ -293,7 +294,7 @@ MP =
             if type is 'book'
                 desc = 'Title'
                 # Check the title for brackets & shorten it
-                title = MP_HELPERS.trimStr( MP_HELPERS.bracketRemover(rawTitle),50 )
+                title = MP_HELPERS.trimStr( MP_HELPERS.bracketRemover(rawTitle.textContent),50 )
                 # Check the title for dash divider
                 title = checkDashes( title,author )
 
@@ -302,14 +303,14 @@ MP =
                 # Only use a few authors
                 i = 0
                 while i < rawTitle.length and i < 3
-                    title += rawTitle[i].textContent + ' '
+                    title += rawTitle[i].text+' '
                     i++
 
                 # Check author for initials
                 title = smartAuth( title )
             else if type is 'series'
                 desc = 'Series'
-                title = MP_HELPERS.redoSpaces( rawTitle.textContent )
+                title += sTitle.text+' ' for sTitle in rawTitle
             urlTar = buildURL( type,title )
             buttons.splice 0,0,makeBtn desc,urlTar
             console.log "> #{type}: #{title} (#{urlTar})"
@@ -340,21 +341,19 @@ MP =
         # ======BROKEN======
 
         # Temporarily displaying buttons no matter the category
+
         targetRow.insertAdjacentHTML 'afterend','<div class="torDetRow"><div class="torDetLeft">Search Goodreads</div><div class="torDetRight mp_grRow"><span class="flex"></span></div></div>'
 
-        # series = processTitle 'series',seriesTitle,seriesURL if seriesTitle.length isnt 0
-        # author = processTitle 'author',authorTitle,authorURL if authorTitle.length isnt 0
-        # book   = processTitle 'book',bookTitle,bookURL if bookTitle?
-        # if book? and author?
-        #     bothURL = buildURL 'on',"#{book} #{author}"
-        #     buttons.splice 0,0,makeBtn 'Title + Author',bothURL
+        series = processTitle 'series',seriesTitle,seriesURL if seriesTitle.length isnt 0
+        author = processTitle 'author',authorTitle,authorURL if authorTitle.length isnt 0
+        book   = processTitle 'book',bookTitle,bookURL if bookTitle?
+        if book? and author?
+            bothURL = buildURL 'on',"#{book} #{author}"
+            buttons.splice 0,0,makeBtn 'Title + Author',bothURL
 
         document.querySelector('.mp_grRow span').innerHTML += button for button in buttons
 
-        # titleCell.setAttribute 'class','rowhead'
-        # contentCell.setAttribute 'class','row1'
-
-        # console.log '[M+] Added Goodreads buttons!'
+        console.log '[M+] Added Goodreads buttons!'
 
     # Function that moves the bookmark button
     moveBookmark: (tar,torID) ->

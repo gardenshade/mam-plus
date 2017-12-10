@@ -60,6 +60,8 @@ MP_HELPERS =
         return inp
 
     bracketRemover : (inp) ->
+        console.log 'bracket remover'
+        console.log inp
         return inp
             .replace(/{+.*?}+/g, '')
             .replace(/\[\[|\]\]/g, '')

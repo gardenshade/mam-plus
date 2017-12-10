@@ -16,6 +16,7 @@ MP_STYLE =
             @theme     = 'dark'
             @btnBorder = '1px solid #bbaa77'
             @btnColor  = '#aaa'
+            @btnBack   = 'radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%)'
             @phColor   = '#8d5d5d'
         GM_addStyle '''
             .mp_notification{
@@ -91,6 +92,7 @@ MP_STYLE =
                 background-image: '''+@btnBack+''';
                 box-sizing: border-box;
                 padding: 0 4px;
+                margin-right: 5px;
             }
             #mp_bookmark{
                 display: inline-block;
