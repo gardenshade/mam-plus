@@ -1,4 +1,26 @@
 MP_SETTINGS =
+    # TEMPLATES
+    # templates :
+    #     pageTitle : 'Templates'
+    #     checkbox :
+    #         id   : 'mp_check'
+    #         type : 'checkbox'
+    #         desc : 'Description'
+    #     dropdown :
+    #         id   : 'mp_drop'
+    #         type : 'dropdown'
+    #         tag  : 'Simple descriptor'
+    #         options:
+    #             false: 'Disabled'
+    #             op1: 'Option1'
+    #             op2: 'Option2'
+    #         desc : 'Full description'
+    #     textbox :
+    #         id   : 'mp_text'
+    #         type : 'textbox'
+    #         tag  : 'Simple descriptor'
+    #         desc : 'Full description'
+    #         placeholder : 'Placeholder'
     # GLOBAL SETTINGS
     global :
         pageTitle : 'Global'
@@ -44,24 +66,10 @@ MP_SETTINGS =
             id   : 'mp_gr_btns'
             type : 'checkbox'
             desc : 'Enable the MAM-to-Goodreads buttons'
-        # moveBookmark :
-        #     id   : 'mp_move_bookmark'
-        #     type : 'checkbox'
-        #     desc : 'Replace the bookmark icon with a new graphic'
-        # placeholderCovers :
-        #     id   : 'mp_placeholder_covers'
-        #     type : 'checkbox'
-        #     desc : 'Display a placeholder cover for torrents with no picture'
-        # simpleDownload :
-        #     id   : 'mp_simple_download'
-        #     type : 'dropdown'
-        #     tag  : 'Simple DL Button'
-        #     options:
-        #         false: 'Disabled'
-        #         tor: 'Torrent Only'
-        #         zip: 'Zip Only'
-        #     desc : 'Option to show only one download link. (<em>Also makes the button more visible</em>)'
-
+        moveBookmark :
+            id   : 'mp_move_bookmark'
+            type : 'checkbox'
+            desc : 'Replace the bookmark icon with a new graphic'
     # SHOUTBOX SETTINGS
     shoutbox :
         pageTitle : 'Shoutbox'

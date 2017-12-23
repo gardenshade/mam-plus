@@ -4,8 +4,8 @@ MP =
     PREV_VER    : GM_getValue 'mp_version'
     TIMESTAMP   : 'Dec 23th'
     UPDATE_LIST : [
-        'Temporarily hid Torrent Page settings that no longer work due to the new page style'
-        'Added the option to create a plaintext list of the displayed search results. Most people will want to leave this off.'
+        'Removed the Simple Download function completely. This should fix the issue where the download button breaks if it\'s in the first position. [GH #27]'
+        'Removed the Placeholder Cover setting completely'
     ]
     BUG_LIST    : [
     ]
@@ -396,49 +396,6 @@ MP =
             # Choose the new icon
             document.querySelector '#mainBody > a[id*="Bookmark"]'
                 .setAttribute 'class',"mp_mark_#{MP_STYLE.theme}"
-
-    # Function that creates fake covers
-    fakeCover: (cover, type) ->
-        if type is 'missing'
-            cover.innerHTML += '<div class="mp_cover">(no image)</div>'
-            console.log '[M+] Added empty cover!'
-
-    # Function that only shows the Torrent OR Zip download links
-    simpleDownload: (showLink) ->
-
-        if showLink is 'tor'
-            theLink  = document.querySelector('#dlNormal').href
-            showLink = 'Torrent'
-        else if showLink is 'zip'
-            theLink  = document.querySelector('#dlZip').href
-            showLink = 'ZIP'
-
-        document
-            .querySelector '#download'
-            .innerHTML = "<h1><a class='torFormButton mp_formButton' href='#{theLink}'>#{showLink}</a></h1>"
-
-        console.log '[M+] Simplified the download link!'
-
-    # Function that initializes a floating list of files
-    fileList: () ->
-        ###document.querySelector 'body'
-            .innerHTML += '<div class="mp_fileList"></div>'
-
-        fileList = document.querySelector '.mp_fileList'###
-
-        # Need to do this without JQ
-        ###$ '.mp_fileList'
-            .load '/tor/filelist.php?torrentid=3514'###
-
-        # Style for .mp_styleList
-        ###position:'fixed',
-        overflow:'scroll',
-        background:'black',
-        height:'200px',
-        top:0,
-        right:0,
-        transition:'all 500ms ease',
-        'z-index':99980###
 
     # Function that processes the shoutbox
     initShoutbox: () ->

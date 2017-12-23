@@ -65,7 +65,6 @@ MP_PAGE =
         authors   = document.querySelectorAll '#torDetMainCon .torAuthors a'
         bookTitle = document.querySelector '#torDetMainCon .TorrentTitle'
         series    = document.querySelectorAll '#Series a'
-        bookCover = document.querySelector '#torDetPoster'
         torrentID = Number MP.pagePath.split('/')[2]
 
         # Add goodreads buttons if enabled
@@ -77,14 +76,6 @@ MP_PAGE =
                 MP.moveBookmark(bookTitle,torrentID)
             , 100
             console.log '[M+] Updated the bookmark icon!'
-
-        # Create "missing cover" cover if enabled
-        if GM_getValue('mp_placeholder_covers') and not bookCover.querySelector 'img'
-            MP.fakeCover bookCover,'missing'
-
-        # Simplify the download button if enabled
-        if GM_getValue('mp_simple_download') isnt 'false' and GM_getValue('mp_simple_download') isnt undefined
-            MP.simpleDownload GM_getValue 'mp_simple_download'
 
         # Create floating list of files if enabled
         ### MP.fileList NO SETTING YET ###
