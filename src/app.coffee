@@ -2,11 +2,10 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Dec 10th'
+    TIMESTAMP   : 'Dec 23th'
     UPDATE_LIST : [
-        'Updated Goodreads buttons for new torrent page'
-        'Fixed button styling issue [GH #1]'
-        'Fixed light theme styling issue'
+        'Temporarily hid Torrent Page settings that no longer work due to the new page style'
+        'Added the option to create a plaintext list of the displayed search results. Most people will want to leave this off.'
     ]
     BUG_LIST    : [
     ]
@@ -230,7 +229,41 @@ MP =
             catch e
                 console.warn e if MP_DEBUG is on
 
+        plaintextResults = ->
+            plainText = '### PLAINTEXT ###<br>'
+            resultList = document.querySelectorAll('#searchResults tr[id^=tdr]')
+
+            for result in resultList
+                title = result.querySelector('.title').text
+                sTitle = ''
+                aTitle = ''
+                seriesList = result.querySelectorAll('.series')
+                authorList = result.querySelectorAll('.author')
+                
+                if seriesList.length > 0
+                    for series in seriesList
+                        sTitle += series.text+' / '
+                    sTitle = sTitle.substring 0,sTitle.length-3
+                    sTitle = "(#{sTitle})"
+                if authorList.length > 0
+                    aTitle = 'BY '
+                    for author in authorList
+                        aTitle += author.text+' AND '
+                    aTitle = aTitle.substring 0,aTitle.length-5
+
+                plainText += "#{title} #{sTitle} #{aTitle}<br>"
+
+            document
+                .querySelector '#searchResults > h1'
+                .insertAdjacentHTML 'afterend',"<div class='mp_plaintextSearch'>#{plainText}\#\#\#\#\#\#\#\#</div>"
+
+            console.log '[M+] Inserted plaintext search results!'
+
         do createToggle if GM_getValue 'mp_hide_snatched'
+
+        # TEMP
+        if GM_getValue 'mp_plaintext_search'
+            MP_HELPERS.pageLoad plaintextResults,3000
 
     # Function that adds Goodreads links to each book page
     addGoodreadsBtns: (authorTitle,bookTitle,seriesTitle) ->

@@ -62,14 +62,11 @@ MP_PAGE =
     torrent: ->
         console.group 'Applying Torrent settings...'
 
-        authors     = document.querySelectorAll '#torDetMainCon .torAuthors a'
-        bookTitle   = document.querySelector '#torDetMainCon .TorrentTitle'
-        series = document.querySelectorAll '#Series a'
-        bookCover   = document.querySelector '#torDetPoster'
-        torrentID   = Number MP.pagePath.split('/')[2]
-
-        console.log auth.text for auth in authors
-        console.log seri.text for seri in series
+        authors   = document.querySelectorAll '#torDetMainCon .torAuthors a'
+        bookTitle = document.querySelector '#torDetMainCon .TorrentTitle'
+        series    = document.querySelectorAll '#Series a'
+        bookCover = document.querySelector '#torDetPoster'
+        torrentID = Number MP.pagePath.split('/')[2]
 
         # Add goodreads buttons if enabled
         MP.addGoodreadsBtns authors,bookTitle,series if GM_getValue 'mp_gr_btns'

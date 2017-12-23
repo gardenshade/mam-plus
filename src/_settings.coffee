@@ -33,6 +33,10 @@ MP_SETTINGS =
             id   : 'mp_hide_snatched'
             type : 'checkbox'
             desc : 'Enable the Hide Snatched button'
+        plaintextSearch :
+            id   : 'mp_plaintext_search'
+            type : 'checkbox'
+            desc : 'Insert plaintext search results at top of page'
     # TORRENT SETTINGS
     torrent :
         pageTitle : 'Torrent Page'
@@ -40,23 +44,23 @@ MP_SETTINGS =
             id   : 'mp_gr_btns'
             type : 'checkbox'
             desc : 'Enable the MAM-to-Goodreads buttons'
-        moveBookmark :
-            id   : 'mp_move_bookmark'
-            type : 'checkbox'
-            desc : 'Replace the bookmark icon with a new graphic'
-        placeholderCovers :
-            id   : 'mp_placeholder_covers'
-            type : 'checkbox'
-            desc : 'Display a placeholder cover for torrents with no picture'
-        simpleDownload :
-            id   : 'mp_simple_download'
-            type : 'dropdown'
-            tag  : 'Simple DL Button'
-            options:
-                false: 'Disabled'
-                tor: 'Torrent Only'
-                zip: 'Zip Only'
-            desc : 'Option to show only one download link. (<em>Also makes the button more visible</em>)'
+        # moveBookmark :
+        #     id   : 'mp_move_bookmark'
+        #     type : 'checkbox'
+        #     desc : 'Replace the bookmark icon with a new graphic'
+        # placeholderCovers :
+        #     id   : 'mp_placeholder_covers'
+        #     type : 'checkbox'
+        #     desc : 'Display a placeholder cover for torrents with no picture'
+        # simpleDownload :
+        #     id   : 'mp_simple_download'
+        #     type : 'dropdown'
+        #     tag  : 'Simple DL Button'
+        #     options:
+        #         false: 'Disabled'
+        #         tor: 'Torrent Only'
+        #         zip: 'Zip Only'
+        #     desc : 'Option to show only one download link. (<em>Also makes the button more visible</em>)'
 
     # SHOUTBOX SETTINGS
     shoutbox :
