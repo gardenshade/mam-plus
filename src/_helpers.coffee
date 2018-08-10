@@ -34,6 +34,7 @@ MP_HELPERS =
     redoSpaces : (inp) ->
         @arrToStr @strToArr(inp,'ws'),yes
 
+    # Converts an array to a string
     arrToStr : (inp,end) ->
         [i,str] = [0,'']
         while i < inp.length
@@ -43,6 +44,7 @@ MP_HELPERS =
             i++
         return str
 
+    # Converts a string to an array
     strToArr : (inp,splitPoint) ->
         outp = []
 
@@ -53,12 +55,14 @@ MP_HELPERS =
         outp.push item for item in inp
         return outp
 
+    # Trims a string longer than a specified char limit, to a full word
     trimStr : (inp,max) ->
         if inp.length > max
             inp = inp.substring 0,max+1
             inp = inp.substring 0,Math.min inp.length,inp.lastIndexOf(' ')
         return inp
 
+    # Removes brackets & all contained words from a string
     bracketRemover : (inp) ->
         console.log 'bracket remover'
         console.log inp
@@ -69,7 +73,44 @@ MP_HELPERS =
             .replace(/\(.*?\)/g, '')
             .trim()
 
+    # Returns a promise when RAF resolves successfully
+    aniframePromise : () ->
+        return new Promise( (resolve) ->
+            requestAnimationFrame resolve)
+
+    # Checks to see if an element exists, then resolves a promise when it exists
+    checkElemLoad : (selector) ->
+        if document.queryselector( selector ) is null
+            return @aniframePromise().then(
+                () -> @checkElemLoad selector
+            )
+        else
+            return Promise.resolve true
+
+    # Runs a function when changes are made to an element
+    observeElem : (tar, config) ->
+        if config is 'default'
+            config =
+                attributes : yes
+                childList : yes
+                characterData : yes
+                subtree : yes
+        observer = new MutationObserver (cb) -> console.log('>>>>>>>>>>')
+        observer.observe tar,config
+        return observer
+
+    # Clones an element into a different location
+    cloneItem : (elem, tar, attrObj) ->
+        newElem = elem.cloneNode yes
+        if attrObj is null
+            attrObj =
+                'class' : 'mp_clone'
+        @setAttr newElem,attrObj
+        tar.appendChild newElem
+
+
     # Waits for the page to load before running the desired function
+    # FIXME: this should be replaced with checkElemLoad() in most instances
     pageLoad : (func,timer) ->
         timeout = no
         # set up fallback timer in case page takes too long to indicate it loaded

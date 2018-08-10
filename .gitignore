@@ -6,3 +6,5 @@ user-settings.json
 build/staging
 build/dev
 *.sublime*
+*.code-*
+.vscode

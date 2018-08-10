@@ -15,10 +15,21 @@
   "homepage": "https://github.com/gardenshade/mam-plus#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-coffee": "^2.3.4",
+    "gulp-coffee": "^2.3.5",
     "gulp-concat": "^2.6.1",
     "gulp-if": "^2.0.2",
     "gulp-uglify": "^2.1.2",
     "gulp-util": "^3.0.8"
-  }
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "greasemonkey": true,
+      "es6": true
+    }
+  },
+  "eslintIgnore": [
+    "src/block_first.js",
+    "src/block_last.js"
+  ]
 }

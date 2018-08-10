@@ -32,10 +32,9 @@ gulp.task( 'coffee', function(){
         .pipe( gulp.dest( csOut ) );
 } );
 /*=== JAVASCRIPT ===*/
-// When v3.0 is ready for release, this should output a non-Dev-titled userscript as well
 gulp.task( 'js', function(){
     gulp.src( jsIn )
-        .pipe( concat('MAM_Plus.user.js') )
+        .pipe( gif( env==='release',concat('MAM_Plus.user.js'),concat('MAM_Plus_dev.user.js') ) )
             .on( 'error', gutil.log )
         .pipe( gif( env==='release',uglify({ preserveComments: 'license' }) ) )
             .on( 'error', gutil.log )

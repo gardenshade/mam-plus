@@ -2,10 +2,9 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Dec 23th'
+    TIMESTAMP   : 'Aug 10th'
     UPDATE_LIST : [
-        'Removed the Simple Download function completely. This should fix the issue where the download button breaks if it\'s in the first position. [GH #27]'
-        'Removed the Placeholder Cover setting completely'
+        'ENHANCE: You can now specify a default amount of points to auto-fill into the gift box on torrent pages (this does not auto-submit them).'
     ]
     BUG_LIST    : [
     ]
@@ -239,7 +238,7 @@ MP =
                 aTitle = ''
                 seriesList = result.querySelectorAll('.series')
                 authorList = result.querySelectorAll('.author')
-                
+
                 if seriesList.length > 0
                     for series in seriesList
                         sTitle += series.text+' / '
@@ -390,12 +389,39 @@ MP =
         console.log '[M+] Added Goodreads buttons!'
 
     # Function that moves the bookmark button
-    moveBookmark: (tar,torID) ->
+    moveBookmark: (torID) ->
         # The page is a valid book
         if torID isnt 0 and not isNaN torID
-            # Choose the new icon
-            document.querySelector '#mainBody > a[id*="Bookmark"]'
-                .setAttribute 'class',"mp_mark_#{MP_STYLE.theme}"
+            # Get the original bookmark
+            origMark = document.querySelector '.torDetLeft [title*=bookmark]'
+
+            # Clone & move the bookmark button
+            MP_HELPERS.cloneItem origMark,document.querySelector('#download .torDetInnerBottom'),{ 'class':"mp_mark_#{MP_STYLE.theme}" }
+
+            # Change style of download button & hide old bookmark
+            document.querySelector '[title=Download]'
+                .classList.add 'mp_dl'
+            # document.querySelector origMark
+            #     .style.display = 'none'
+
+            # Wait for bookmark state to update
+            console.log origMark
+            config =
+                attributes : yes
+                childList : yes
+                characterData : yes
+                subtree : yes
+            cb = (mutationsList) ->
+                console.info mutationsList
+                for mutation in mutationsList
+                    if mutation.type is 'childList'
+                        console.log '>>>> childList'
+                        console.log '>>>> '+mutation.addedNodes[0] if mutation.addedNodes.length is 1
+                        console.log '>>>> '+mutation.removedNodes[0] if mutation.removedNodes.length is 1
+                return
+            observer = new MutationObserver cb
+            observer.observe document.querySelector('#torDetMainCon'),config
+            return
 
     # Function that processes the shoutbox
     initShoutbox: () ->

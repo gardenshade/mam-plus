@@ -70,6 +70,12 @@ MP_SETTINGS =
             id   : 'mp_move_bookmark'
             type : 'checkbox'
             desc : 'Replace the bookmark icon with a new graphic'
+        torgiftDefault :
+            id   : 'mp_torgift_default'
+            type : 'textbox'
+            tag  : 'Default Gift Amount'
+            desc : 'Autofills the Gift box with a specified number of points.<br>(<em>Or the max allowable value, whichever is lower</em>)'
+            placeholder : 'ex. 5000, max'
     # SHOUTBOX SETTINGS
     shoutbox :
         pageTitle : 'Shoutbox'

@@ -71,11 +71,20 @@ MP_PAGE =
         MP.addGoodreadsBtns authors,bookTitle,series if GM_getValue 'mp_gr_btns'
         # Replace the bookmark icon if enabled
         if GM_getValue 'mp_move_bookmark'
-            MP.moveBookmark bookTitle,torrentID
-            setInterval () ->
-                MP.moveBookmark(bookTitle,torrentID)
-            , 100
+            MP.moveBookmark torrentID
             console.log '[M+] Updated the bookmark icon!'
+
+        # Set the gift amount to the highest possible amount if enabled
+        if GM_getValue 'mp_torgift_default'
+            torpointBox  = document.querySelector '#thanksArea input[name=points]'
+            if torpointBox?
+                userSetPoints = GM_getValue 'mp_torgift_default_val'
+                maxPoints = torpointBox.getAttribute 'max'
+                if userSetPoints <=maxPoints and not isNaN userSetPoints
+                    maxPoints = userSetPoints
+                torpointBox.value = maxPoints
+
+                console.log "[M+] Set the default gift amount to #{maxPoints}"
 
         # Create floating list of files if enabled
         ### MP.fileList NO SETTING YET ###
@@ -132,7 +141,7 @@ MP_PAGE =
             console.log '[M+] Simplified the vault page!'
 
         # Only run these checks on the donate page
-        if page is 'donate'
+        # if page is 'donate'
             # Set up donation reminder if enabled
             ###if GM_getValue 'mp_donate_reminder'
                 timer = vaultPage.querySelector 'form input:first-of-type'
@@ -143,5 +152,3 @@ MP_PAGE =
                     console.warn e if MP_DEBUG is on###
 
         console.groupEnd()
-
-

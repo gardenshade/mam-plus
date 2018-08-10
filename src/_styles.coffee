@@ -94,11 +94,8 @@ MP_STYLE =
                 padding: 0 4px;
                 margin-right: 5px;
             }
-            #mp_bookmark{
-                display: inline-block;
-                position: relative;
-                top: 3px;
-                padding-left: 20px;
+            .mp_dl{
+                border-radius: 5px 0 0 5px;
             }
             .mp_cover{
                 display: inline-block;
@@ -122,7 +119,7 @@ MP_STYLE =
             }
             a[class^="mp_mark_"]{
                 position:relative;
-                top:4px;
+                top:8px;
                 left:5px;
             }
             .mp_formButton{
@@ -131,14 +128,14 @@ MP_STYLE =
             }
             a[id^="torBookmark"].mp_mark_dark{
                 background:url(//cdn.myanonamouse.net/imagebucket/108303_mark_white.gif) no-repeat;
-                
+
             }
             a[id^="torBookmark"].mp_mark_light{
                 background:url(//cdn.myanonamouse.net/imagebucket/108303_mark_black.gif) no-repeat;
             }
             a[id^="torDeBookmark"].mp_mark_dark{
                 background:url(//cdn.myanonamouse.net/imagebucket/108303/mark_white_del.gif) no-repeat;
-                
+
             }
             a[id^="torDeBookmark"].mp_mark_light{
                 background:url(//cdn.myanonamouse.net/imagebucket/108303/mark_black_del.gif) no-repeat;
