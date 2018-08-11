@@ -86,7 +86,8 @@ MP_STYLE =
                 padding: 0 20px;
                 cursor: default;
             }
-            a.mp_button_clone{
+            a.mp_button_clone,
+            .mp_plainBtn{
                 border: '''+@btnBorder+''';
                 color: '''+@btnColor+''';
                 background-image: '''+@btnBack+''';
@@ -139,6 +140,21 @@ MP_STYLE =
             }
             a[id^="torDeBookmark"].mp_mark_light{
                 background:url(//cdn.myanonamouse.net/imagebucket/108303/mark_black_del.gif) no-repeat;
+            }
+            .mp_plainBtn{
+                display: inline-block;
+                margin-bottom: 7px;
+            }
+            .mp_plainBtn:hover{
+                cursor: pointer;
+                color: red;
+            }
+            .mp_plainBtn:active{
+                color: green;
+            }
+            .mp_plaintextSearch{
+                width: 100%;
+                height: 175px;
             }
             '''
         return @theme

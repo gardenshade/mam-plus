@@ -2,11 +2,15 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Aug 10th'
+    TIMESTAMP   : 'Aug 11th'
     UPDATE_LIST : [
-        'ENHANCE: You can now specify a default amount of points to auto-fill into the gift box on torrent pages (this does not auto-submit them).'
+        'ENHANCE: You can now specify a default amount of points to auto-fill into the gift box on torrent pages (this does not auto-submit them)'
+        'ENHANCE: The plaintext search results now include narrators (indicated by "FT")'
+        'ENHANCE: Plaintext results can be copied to your clipboard via a button'
+        'ENHANCE: Plaintext results can be toggled open/closed. The state is remembered'
     ]
     BUG_LIST    : [
+        'Deliberately disabled the partially implemented "Move Bookmark" feature'
     ]
     # VARIABLES
     errorLog : []
@@ -229,15 +233,28 @@ MP =
                 console.warn e if MP_DEBUG is on
 
         plaintextResults = ->
-            plainText = '### PLAINTEXT ###<br>'
+            toggleState = GM_getValue 'mp_plaintext_toggle_state'
+            display = 'none'
+            buttonText = 'Show Plaintext'
+
+            if not toggleState?
+                GM_setValue 'mp_plaintext_toggle_state',off
+
+            if toggleState is on
+                display = 'block'
+                buttonText = 'Hide Plaintext'
+
+            plainText = ''
             resultList = document.querySelectorAll('#searchResults tr[id^=tdr]')
 
             for result in resultList
                 title = result.querySelector('.title').text
                 sTitle = ''
                 aTitle = ''
+                nTitle = ''
                 seriesList = result.querySelectorAll('.series')
                 authorList = result.querySelectorAll('.author')
+                narratList = result.querySelectorAll('.narrator')
 
                 if seriesList.length > 0
                     for series in seriesList
@@ -249,12 +266,36 @@ MP =
                     for author in authorList
                         aTitle += author.text+' AND '
                     aTitle = aTitle.substring 0,aTitle.length-5
+                if narratList.length > 0
+                    nTitle = 'FT '
+                    for narrator in narratList
+                        nTitle += narrator.text+' AND '
+                    nTitle = nTitle.substring 0,nTitle.length-5
 
-                plainText += "#{title} #{sTitle} #{aTitle}<br>"
+                plainText += "#{title} #{sTitle} #{aTitle} #{nTitle}\n"
 
             document
                 .querySelector '#searchResults > h1'
-                .insertAdjacentHTML 'afterend',"<div class='mp_plaintextSearch'>#{plainText}\#\#\#\#\#\#\#\#</div>"
+                .insertAdjacentHTML 'afterend',"<div class='mp_plainBtn mp_toggle'>#{buttonText}</div><div class='mp_plainBtn mp_copy'>Copy Plaintext</div><br><textarea class='mp_plaintextSearch' style='display:#{display}'>#{plainText}</textarea>"
+
+            document
+                .querySelector '.mp_copy'
+                .addEventListener 'click', (e) ->
+                    navigator.clipboard.writeText plainText
+                        .then -> console.log '[M+] Copied plaintext results to your clipboard!'
+            document
+                .querySelector '.mp_toggle'
+                .addEventListener 'click', (e) ->
+                    textbox = document.querySelector '.mp_plaintextSearch'
+                    if toggleState is off
+                        textbox.style.display = 'block'
+                        @innerHTML = 'Hide Plaintext'
+                        toggleState = on
+                    else
+                        textbox.style.display='none'
+                        @innerHTML='Show Plaintext'
+                        toggleState = off
+                    GM_setValue 'mp_plaintext_toggle_state',toggleState
 
             console.log '[M+] Inserted plaintext search results!'
 
@@ -390,6 +431,16 @@ MP =
 
     # Function that moves the bookmark button
     moveBookmark: (torID) ->
+
+        # FIXME:
+        # Obviously, this function should not return until completed...
+        # but this feature is half-fixed and not working.
+        #
+        # The moveBookmark setting entry is also disabled
+
+        return
+
+
         # The page is a valid book
         if torID isnt 0 and not isNaN torID
             # Get the original bookmark
