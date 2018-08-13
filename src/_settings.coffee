@@ -66,11 +66,10 @@ MP_SETTINGS =
             id   : 'mp_gr_btns'
             type : 'checkbox'
             desc : 'Enable the MAM-to-Goodreads buttons'
-        # FIXME:
-        ### moveBookmark :
+        moveBookmark :
             id   : 'mp_move_bookmark'
             type : 'checkbox'
-            desc : 'Replace the bookmark icon with a new graphic' ###
+            desc : 'Move the bookmark button to the Download area'
         torgiftDefault :
             id   : 'mp_torgift_default'
             type : 'textbox'
