@@ -427,6 +427,7 @@ MP =
     # Function that moves the bookmark button
     moveBookmark: (torID) ->
 
+        # Internal function for cloning the original bookmark
         cloneOrigMark = () ->
             NEW_MARK_TAR = document.querySelector '#download .torDetInnerBottom'
 
@@ -440,9 +441,16 @@ MP =
             .then (elem) ->
                 console.log elem
                 newMark = document.querySelector('#download [title*=mark]')
+
+                elem.style.display = 'none'
+
                 if newMark?
                     do newMark.remove
-                MP_HELPERS.cloneItem elem,NEW_MARK_TAR,{ 'class':"mp_mark_#{MP_STYLE.theme}" }
+                else
+                    document.querySelector '[title=Download]'
+                        .classList.add 'mp_dl'
+
+                MP_HELPERS.cloneItem elem,NEW_MARK_TAR,{ 'class':"mp_mark_#{MP_STYLE.theme}",'style':'display:inline-block' }
             .then () ->
                 observeOrig = MP_HELPERS.observeElem document.querySelector('.torDetLeft [id*=mark]').parentNode,cloneOrigMark
 
