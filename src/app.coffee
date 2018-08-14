@@ -2,10 +2,12 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Aug 13th'
+    TIMESTAMP   : 'Aug 14th'
     UPDATE_LIST : [
+        'FIX: Move bookmark feature is back! And it mostly works'
     ]
     BUG_LIST    : [
+        'Move bookmark feature only works for the first click per page load'
     ]
     # VARIABLES
     errorLog : []
