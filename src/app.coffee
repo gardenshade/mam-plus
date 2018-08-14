@@ -2,15 +2,12 @@ MP =
     # CONSTANTS
     VERSION     : GM_info.script.version
     PREV_VER    : GM_getValue 'mp_version'
-    TIMESTAMP   : 'Aug 11th'
+    TIMESTAMP   : 'Aug 14th'
     UPDATE_LIST : [
-        'ENHANCE: You can now specify a default amount of points to auto-fill into the gift box on torrent pages (this does not auto-submit them)'
-        'ENHANCE: The plaintext search results now include narrators (indicated by "FT")'
-        'ENHANCE: Plaintext results can be copied to your clipboard via a button'
-        'ENHANCE: Plaintext results can be toggled open/closed. The state is remembered'
+        'FIX: Move bookmark feature is back! And it mostly works'
     ]
     BUG_LIST    : [
-        'Deliberately disabled the partially implemented "Move Bookmark" feature'
+        'Move bookmark feature only works for the first click per page load'
     ]
     # VARIABLES
     errorLog : []
@@ -432,31 +429,44 @@ MP =
     # Function that moves the bookmark button
     moveBookmark: (torID) ->
 
-        # FIXME:
-        # Obviously, this function should not return until completed...
-        # but this feature is half-fixed and not working.
-        #
-        # The moveBookmark setting entry is also disabled
+        # Internal function for cloning the original bookmark
+        cloneOrigMark = () ->
+            NEW_MARK_TAR = document.querySelector '#download .torDetInnerBottom'
 
-        return
+            console.log '{{{ORIGINAL}}}'
+            console.log document.querySelector('.torDetLeft [id*=mark]')
+            console.log '{{{NEW}}}'
+            console.log document.querySelector('#download [title*=mark]')
 
+            # Wait for original bookmark to exist
+            MP_HELPERS.checkElemLoad '.torDetLeft [id*=mark]'
+            .then (elem) ->
+                console.log elem
+                newMark = document.querySelector('#download [title*=mark]')
+
+                elem.style.display = 'none'
+
+                if newMark?
+                    do newMark.remove
+                else
+                    document.querySelector '[title=Download]'
+                        .classList.add 'mp_dl'
+
+                MP_HELPERS.cloneItem elem,NEW_MARK_TAR,{ 'class':"mp_mark_#{MP_STYLE.theme}",'style':'display:inline-block' }
+            .then () ->
+                observeOrig = MP_HELPERS.observeElem document.querySelector('.torDetLeft [id*=mark]').parentNode,cloneOrigMark
 
         # The page is a valid book
         if torID isnt 0 and not isNaN torID
-            # Get the original bookmark
-            origMark = document.querySelector '.torDetLeft [title*=bookmark]'
-
-            # Clone & move the bookmark button
-            MP_HELPERS.cloneItem origMark,document.querySelector('#download .torDetInnerBottom'),{ 'class':"mp_mark_#{MP_STYLE.theme}" }
+            do cloneOrigMark
 
             # Change style of download button & hide old bookmark
-            document.querySelector '[title=Download]'
-                .classList.add 'mp_dl'
-            # document.querySelector origMark
-            #     .style.display = 'none'
+            # document.querySelector '[title=Download]'
+            #     .classList.add 'mp_dl'
+            # origMark.style.display = 'none'
 
             # Wait for bookmark state to update
-            console.log origMark
+            ### console.log origMark
             config =
                 attributes : yes
                 childList : yes
@@ -472,7 +482,9 @@ MP =
                 return
             observer = new MutationObserver cb
             observer.observe document.querySelector('#torDetMainCon'),config
-            return
+            return ###
+
+
 
     # Function that processes the shoutbox
     initShoutbox: () ->

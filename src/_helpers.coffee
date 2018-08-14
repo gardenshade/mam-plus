@@ -74,28 +74,22 @@ MP_HELPERS =
             .trim()
 
     # Returns a promise when RAF resolves successfully
-    aniframePromise : () ->
+    afTimer : () ->
         return new Promise( (resolve) ->
             requestAnimationFrame resolve)
 
     # Checks to see if an element exists, then resolves a promise when it exists
     checkElemLoad : (selector) ->
-        if document.queryselector( selector ) is null
-            return @aniframePromise().then(
+        if document.querySelector( selector ) is null
+            return @afTimer().then(
                 () -> @checkElemLoad selector
             )
         else
-            return Promise.resolve true
+            return Promise.resolve document.querySelector( selector )
 
     # Runs a function when changes are made to an element
-    observeElem : (tar, config) ->
-        if config is 'default'
-            config =
-                attributes : yes
-                childList : yes
-                characterData : yes
-                subtree : yes
-        observer = new MutationObserver (cb) -> console.log('>>>>>>>>>>')
+    observeElem : (tar, cb, config = { attributes:yes, childList:yes, characterData:yes, subtree:yes }) ->
+        observer = new MutationObserver cb
         observer.observe tar,config
         return observer
 
