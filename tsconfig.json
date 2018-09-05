@@ -1,0 +1,9 @@
+/*
+* This file exists to stop vscode from complaining that the TS input and JS output
+* are using the same identifiers. Use `package.json` for compiler settings
+*/
+{
+    "include": [
+        "src"
+    ]
+}

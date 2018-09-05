@@ -1,10 +1,10 @@
 # MAM+
 
-The MAM+ userscript, converted to CoffeeScript and published in a more official manner.
+The MAM+ userscript, now using Typescript and Gulp 4. Built on [userscript-typescript-template](https://github.com/gardenshade/userscript-typescript-template).
 
 ## Installation
 
-As long as you have a userscript browser extension installed, you can simply __[CLICK HERE](https://github.com/gardenshade/mam-plus/raw/master/build/release/MAM_Plus.user.js)__ to install the script. Popular browser extensions include:
+As long as you have a userscript browser extension installed, you can simply __[CLICK HERE](https://github.com/gardenshade/mam-plus/raw/master/release/MAM_Plus.user.js)__ to install the script. Popular browser extensions include:
 - [Tampermonkey](https://tampermonkey.net/): Recommended for Firefox v57+
 - [Violentmonkey](https://violentmonkey.github.io/get-it/): Recommended for Chrome
 
@@ -17,8 +17,8 @@ In case you want to modify the script and/or contribute to it, follow the below 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/en/download/)
-- Gulp: `npm install -g gulp-cli`
 - Google Chrome with [Violentmonkey](https://violentmonkey.github.io/get-it/)
+- tslint (not currently included because vscode has baked-in linting)
 
 ### Instructions
 
@@ -29,9 +29,12 @@ In case you want to modify the script and/or contribute to it, follow the below 
 - On the Chrome extensions page (found at chrome://extensions), ensure that the Violentmonkey extension has access to file URLs
 
 #### Workflow
-- Make sure your terminal window is open to this project folder, and run `gulp`
-- Drag and drop the resulting `MAM_Plus.user.js` file from `build/dev/` to your browser
-- On the installation page, click `Options` and select `Track local file`
-- Click `Confirm Installation` and **do not close the installation page**
-- As long as `gulp` is running and the installation page is open, any changes you save will be compiled automatically. Simply refresh the browser to see your changes
-- When the script is ready to be released, run `gulp release`
+This is a Typescript project, but vanilla JavaScript is valid Typescript, so don't let a lack of knowledge of TS keep you from contributing.
+
+To start developing, simply run `npm run build`. Assuming everything works, this will transpile the Typescript files into a single JavaScript file (in the `build/` dir) with a userscript header and inline sourcemaps. Additionally, the userscript will have `_dev` appended to its name, to differentiate between the developmental version and the release version.
+
+For continuous development, run `npm run watch`. This task may halt when Typescript encounters an error, but will otherwise retranspile the script every time you save.
+
+Drag the `_dev.user.js` file into Chrome and install with Violentmonkey. When you are using the Watch task, as long as you keep the userscript installation tab open any changes you save will be automatically loaded in your browser when you reload.
+
+When you are ready to release your script, use [`npm version <newversion>`](https://docs.npmjs.com/cli/version) to increment your script, then `npm run release`. This will output a minified JavaScript file without the `_dev` suffix.

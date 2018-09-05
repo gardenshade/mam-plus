@@ -2,9 +2,7 @@
 node_modules
 *.tmp*
 .sass-cache
-user-settings.json
-build/staging
-build/dev
+build
 *.sublime*
 *.code-*
 .vscode

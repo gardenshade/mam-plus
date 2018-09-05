@@ -1,0 +1,19 @@
+{
+    "extends": "tslint:latest",
+    "linterOptions": {
+        "exclude": [
+            "release/*.js",
+            "build/*.js"
+        ]
+    },
+    "defaultSeverity": "warn",
+    "rules": {
+        "quotemark": false,
+        "no-console": false,
+        "no-reference": false,
+        "whitespace": [true, "check-branch","check-decl","check-operator","check-module","check-separator","check-rest-spread","check-typecast","check-type-operator","check-preblock"],
+        "typedef-whitespace":false,
+        "no-namespace": false,
+        "no-internal-module": false
+    }
+}
