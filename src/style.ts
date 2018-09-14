@@ -1,3 +1,4 @@
+/// <reference path="check.ts" />
 interface StyleObj{
     name:string;
     btnBorder:string;
@@ -10,17 +11,18 @@ interface StyleObj{
  * Class for handling values and methods related to styles
  * @constructor Inits theme based on last saved value; can be called before page content is loaded
  */
-class Style {
+class MP_Style {
 
     private _siteTheme:string;
-    private _prevTheme:StyleObj;
+    private _prevTheme:StyleObj|null;
     private _theme:StyleObj;
 
         /**
+         * TODO:
          * (PRELOAD)
-         * Initialize default theme values
-         * Read previously used theme
-         * Update current theme
+         * x Initialize default theme values
+         * x Read previously used theme
+         * x Update current theme
          * (POSTLOAD)
          * Read current site theme
          * Check against current theme
@@ -28,8 +30,6 @@ class Style {
          */
 
     constructor() {
-
-        //  TODO: add ability
 
         // The light theme is the default theme, so use M+ Light values
         this._theme = {
@@ -39,20 +39,30 @@ class Style {
             placeholderColor: '#575757',
             btnBack: 'radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%)',
         };
+
+        // Get the previously used theme object
+        this._prevTheme = JSON.parse( this._getPrevTheme() );
+
+        // If the previous theme object exists, assume the current theme is identical
+        if( this._prevTheme !== null ){
+            this._theme = this._prevTheme;
+        }else{
+            MP_Check.elemLoad( 'head link[href*="ICGstation"]' )
+            .then( () => { GM_setValue('mp-style-theme',JSON.stringify(this._theme)) } );
+        }
     }
 
-    // private getPrevTheme():string {
-    //     return '';
-    // }
+    /** Returns the previous theme object if it exists */
+    private _getPrevTheme():string|null {
+        return GM_getValue( 'mp-style_theme' );
+    }
 
-    /**
-     * Returns a promise of the stylesheet name currently being used
-     */
+    /** Returns a promise of the stylesheet name currently being used */
     private _getSiteTheme():Promise<string> {
         return new Promise( (resolve) => {
             let siteTheme:string|null = document.querySelector('head link[href*="ICGstation"]')
                 .getAttribute('href');
-            if( siteTheme = typeof 'string' ){
+            if( siteTheme === typeof 'string' ){
                 resolve(siteTheme);
             }
         } );

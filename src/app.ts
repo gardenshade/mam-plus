@@ -22,7 +22,7 @@ namespace MP {
     export const PREV_VER:string = GM_getValue('mp_version');
     export let errorLog:string[] = [];
     export let pagePath:string = window.location.pathname;
-    export let mpCss:Style = new Style();
+    export let mpCss:MP_Style = new MP_Style();
 
     export const run = () => {
         console.group(`Welcome to MAM+ v${VERSION}!`);
