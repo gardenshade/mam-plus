@@ -17,10 +17,12 @@
     "clean": "npx gulp clean"
   },
   "devDependencies": {
+    "@types/greasemonkey": "0.0.28",
     "del": "^3.0.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-header": "^2.0.5",
     "gulp-inject-string": "^1.1.1",
+    "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-uglify-es": "^1.0.4",

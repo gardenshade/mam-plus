@@ -1,6 +1,7 @@
 const Gulp = require('gulp');
 const Del = require('del');
 const Ts = require('gulp-typescript');
+const Sass = require('gulp-sass');
 const Srcmap = require('gulp-sourcemaps');
 const Header = require('gulp-header');
 const Inject = require('gulp-inject-string')
@@ -10,7 +11,8 @@ const pkg = require('./package.json');
 
 const globs = {
     app: 'src/**/*.ts',
-    meta: 'metadata.txt'
+    meta: 'metadata.txt',
+    style: 'sass/**/*.scss'
 }
 
 const path = {
@@ -27,7 +29,8 @@ const path = {
 let tsSettings = {
     strict: true,
     target: "es6",
-    rootDir: "src"
+    rootDir: "src",
+    strictNullChecks: false,
 }
 
 let env = 'dev';
@@ -105,8 +108,8 @@ Gulp.task(
             * the last line of the main file
             */
             .pipe( Srcmap.init() )
-                // Inject timestamp
-                .pipe( Inject.replace( '##timestamp##', timestamp ) )
+                // Inject information
+                .pipe( Inject.replace( '##meta_timestamp##', timestamp ) )
                 // Compile typescript
                 .pipe( Ts( tsSettings ) )
             // Write sourcemap
@@ -123,8 +126,8 @@ Gulp.task(
         let timestamp = buildTime();
 
         return Gulp.src( globs.app )
-            // Inject timestamp
-            .pipe( Inject.replace( '##timestamp##', timestamp ) )
+            // Inject information
+            .pipe( Inject.replace( '##meta_timestamp##', timestamp ) )
             // Compile typescript
             .pipe( Ts( tsSettings ) )
             // Output the file
@@ -132,19 +135,49 @@ Gulp.task(
     }
 );
 
+/** Task to convert .scss files into .css files */
+Gulp.task(
+    'sass_dev', () => {
+        let loc = basePathEnv();
+        return new Promise( (resolve) => {
+            Gulp.src( globs.style )
+                .pipe( Srcmap.init() )
+                    .pipe( Sass().on( 'error', Sass.logError ) )
+                .pipe( Srcmap.write() )
+                .pipe( Gulp.dest( loc.dest ) );
+            resolve();
+        } );
+    }
+);
+/** Task to convert .scss files into .min.css files */
+Gulp.task(
+    'sass_build', () => {
+        let loc = basePathEnv();
+        return new Promise( ( resolve ) => {
+            Gulp.src( globs.style )
+                .pipe( Sass( {
+                    outputStyle: 'compressed'
+                } ).on( 'error', Sass.logError ) )
+                .pipe( Gulp.dest( loc.dest ) );
+            resolve();
+        });
+    }
+);
+
 /** NPM build task. Use for one-off development */
 Gulp.task(
-    'build', Gulp.series( 'clean','procTS_dev','insertHead' )
+    'build', Gulp.series('clean',Gulp.parallel( 'sass_dev', Gulp.series( 'procTS_dev', 'insertHead' )))
 );
 
 /** NPM watch task. Use for continual development */
 Gulp.task(
     'watch', () => {
         Gulp.watch( [globs.app, globs.meta], Gulp.series( 'procTS_dev', 'insertHead' ) );
+        Gulp.watch( globs.style, Gulp.series( 'sass_dev' ) );
     }
 );
 
 /** NPM release task. Use for publishing the compiled script */
 Gulp.task(
-    'release', Gulp.series( Gulp.parallel('clean','releaseEnv'), 'procTS_build','minify', 'insertHead' )
+    'release', Gulp.series( Gulp.parallel( 'clean', 'releaseEnv' ), Gulp.parallel( 'sass_build', Gulp.series( 'procTS_build', 'minify', 'insertHead' )) )
 );

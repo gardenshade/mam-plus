@@ -14,6 +14,7 @@
         "whitespace": [true, "check-branch","check-decl","check-operator","check-module","check-separator","check-rest-spread","check-typecast","check-type-operator","check-preblock"],
         "typedef-whitespace":false,
         "no-namespace": false,
-        "no-internal-module": false
+        "no-internal-module": false,
+        "object-literal-sort-keys":false,
     }
 }

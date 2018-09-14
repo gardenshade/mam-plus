@@ -4,13 +4,16 @@
 // @version      <%= pkg.version %>
 // @description  <%= pkg.description %>
 // @author       <%= pkg.author %>
+// @run-at       document-start
 // @include      https://myanonamouse.net/*
 // @include      https://www.myanonamouse.net/*
-// @icon         http://i.imgur.com/dX44pSv.png
+// @icon         https://i.imgur.com/dX44pSv.png
+// @resource     MP_CSS MAM_Plus.css
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
 // @grant        GM_info
+// @grant        GM_getResourceURL
 // ==/UserScript==
