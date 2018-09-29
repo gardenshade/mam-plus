@@ -1,5 +1,6 @@
 @import 'vars';
 
+// Notification box
 .mp_notification{
     position: fixed;
     padding: 20px 40px;
@@ -25,6 +26,8 @@
         z-index: 99999;
     }
 }
+
+// Hiding elements
 .mp_hide_banner #msb{
     visibility: hidden;
     height: 10px;
@@ -35,6 +38,8 @@
 .mp_hide_browse #menu .mmTorrents li:first-of-type{
     display: none;
 }
+
+//
 .mp_setTag{
     display: inline-block;
     min-width:120px;
@@ -49,24 +54,40 @@
     margin-top: 0;
 }
 .mp_textInput::placeholder{
-    color: #575757;
+    .mp_dark &{
+        color: $dark-placeholderColor;
+    }
+
+    .mp_light &{
+        color: $light-placeholderColor;
+    }
 }
 #mp_submit{
-    border: 1px solid #d0d0d0;
-    color: #000;
-    background-image: radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%);
     box-sizing: border-box;
     padding: 0 8px;
     display: inline-block;
     height: 25px;
     line-height: 25px;
     cursor: pointer;
-}
-#mp_submit ~ .mp_savestate{
-    font-weight: bold;
-    color: green;
-    padding: 0 20px;
-    cursor: default;
+
+    .mp_dark &{
+        border: $dark-btnBorder;
+        color: $dark-btnColor;
+        background-image: $dark-btnBack;
+    }
+
+    .mp_light &{
+        border: $light-btnBorder;
+        color: $light-btnColor;
+        background-image: $light-btnBack;
+    }
+
+    & ~ .mp_savestate{
+        font-weight: bold;
+        color: green;
+        padding: 0 20px;
+        cursor: default;
+    }
 }
 a.mp_button_clone,
 .mp_plainBtn{
@@ -76,6 +97,18 @@ a.mp_button_clone,
     box-sizing: border-box;
     padding: 0 4px;
     margin-right: 5px;
+
+    .mp_dark &{
+        border: $dark-btnBorder;
+        color: $dark-btnColor;
+        background-image: $dark-btnBack;
+    }
+
+    .mp_light &{
+        border: $light-btnBorder;
+        color: $light-btnColor;
+        background-image: $light-btnBack;
+    }
 }
 .mp_dl{
     border-radius: 5px 0 0 5px;
@@ -107,23 +140,31 @@ a[class^="mp_mark_"]{
     top:8px;
     left:5px;
 }
-a[id^="torBookmark"].mp_mark_dark{
-    background:url($bookmark-for-dark) no-repeat;
-
+a[id^="torBookmark"]{
+    .mp_dark &{
+        background:url($bookmark-for-dark) no-repeat;
+    }
+    .mp_light &{
+        background:url($bookmark-for-lite) no-repeat;
+    }
 }
-a[id^="torBookmark"].mp_mark_light{
-    background:url($bookmark-for-lite) no-repeat;
-}
-a[id^="torDeBookmark"].mp_mark_dark{
-    background:url($demark-for-dark) no-repeat;
-
-}
-a[id^="torDeBookmark"].mp_mark_light{
-    background:url($demark-for-lite) no-repeat;
+a[id^="torDeBookmark"]{
+    .mp_dark &{
+        background:url($demark-for-dark) no-repeat;
+    }
+    .mp_light &{
+        background:url($demark-for-lite) no-repeat;
+    }
 }
 .mp_formButton{
     display:inline;
-    border-color: #000;
+
+    .mp_dark &{
+        border: $dark-btnBorder;
+    }
+    .mp_light &{
+        border: $light-btnBorder;
+    }
 }
 .mp_plainBtn{
     display: inline-block;

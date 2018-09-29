@@ -1,6 +1,21 @@
+// M+ Styles
+
 $mp-back: #333;
 
+// DARK THEME
+
+$dark-btnBorder: 1px solid #bbaa77;
+$dark-btnColor: #aaa;
+$dark-placeholderColor: #8d5d5d;
+$dark-btnBack: radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%);
 $bookmark-for-dark: '//cdn.myanonamouse.net/imagebucket/108303_mark_white.gif';
-$bookmark-for-lite: '//cdn.myanonamouse.net/imagebucket/108303_mark_black.gif';
 $demark-for-dark: '//cdn.myanonamouse.net/imagebucket/108303/mark_white_del.gif';
+
+// LIGHT THEME
+
+$light-btnBorder: 1px solid #d0d0d0;
+$light-btnColor: #000;
+$light-placeholderColor: #575757;
+$light-btnBack: radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%);
+$bookmark-for-lite: '//cdn.myanonamouse.net/imagebucket/108303_mark_black.gif';
 $demark-for-lite: '//cdn.myanonamouse.net/imagebucket/108303/mark_black_del.gif';

@@ -2,11 +2,11 @@
  * Class containing common utility methods
  */
 
-class MP_Util {
+class Util {
     /**
      * Animation frame timer
      */
-    static afTimer():Promise<number> {
+    public static afTimer():Promise<number> {
         return new Promise( (resolve) => {
             requestAnimationFrame(resolve);
         } );
