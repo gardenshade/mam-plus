@@ -5,12 +5,10 @@
  * @constructor Inits theme based on last saved value; can be called before page content is loaded
  */
 class Style {
-
-    private _prevTheme:string|null;
-    private _theme:string;
+    private _theme: string;
+    private _prevTheme: string | undefined;
 
     constructor() {
-
         // The light theme is the default theme, so use M+ Light values
         this._theme = 'light';
 
@@ -18,32 +16,10 @@ class Style {
         this._prevTheme = this._getPrevTheme();
 
         // If the previous theme object exists, assume the current theme is identical
-        if( this._prevTheme !== null ) {
+        if (this._prevTheme !== undefined) {
             this._theme = this._prevTheme;
-        }
-    }
-
-    /** Sets the M+ theme based on the site theme */
-    public async alignToSiteTheme(): Promise<void> {
-        const theme:string = await this._getSiteCSS();
-        this._theme = (theme.indexOf('dark') > 0) ? 'dark' : 'light';
-        if (this._prevTheme !== this._theme) {
-            this._setPrevTheme();
-        }
-        // Inject the css class used by M+ for themeing
-        document.querySelector('head').classList.add(`mp_${this._theme}`);
-    }
-
-    /** Injects the stylesheet link into the header */
-    public injectLink():void {
-        const id:string = 'mp_css';
-        if( !document.getElementById(id) ) {
-            const link = document.createElement('link');
-            link.id = id;
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.href = GM_getResourceURL('MP_CSS');
-            document.querySelector('head').appendChild(link);
+        } else {
+            if (MP.DEBUG) { console.warn('no previous theme'); }
         }
     }
 
@@ -52,24 +28,55 @@ class Style {
         return this._theme;
     }
 
+    /** Allows the current theme to be set */
+    set theme(val: string) {
+        this._theme = val;
+    }
+
+    /** Sets the M+ theme based on the site theme */
+    public async alignToSiteTheme(): Promise<void> {
+        const theme: string = await this._getSiteCSS();
+        this._theme = (theme.indexOf('dark') > 0) ? 'dark' : 'light';
+        if (this._prevTheme !== this._theme) {
+            this._setPrevTheme();
+        }
+        // Inject the CSS class used by M+ for theming
+        const body: HTMLBodyElement | null = document.querySelector('body');
+        if (body) { body.classList.add(`mp_${this._theme}`); }
+    }
+
+    /** Injects the stylesheet link into the header */
+    public injectLink(): void {
+        const id: string = 'mp_css';
+        if (!document.getElementById(id)) {
+            const style: HTMLStyleElement = document.createElement('style');
+            style.id = id;
+            style.innerText = GM_getResourceText('MP_CSS');
+            document.querySelector('head')!.appendChild(style);
+        } else {
+            if (MP.DEBUG) { console.warn(`an element with the id "${id}" already exists`); }
+        }
+    }
+
     /** Returns the previous theme object if it exists */
-    private _getPrevTheme():string|null {
-        return GM_getValue( 'mp-style_theme' );
+    private _getPrevTheme(): string | undefined {
+        return GM_getValue('style_theme');
     }
 
     /** Saves the current theme for future reference */
-    private _setPrevTheme():void {
-        GM_setValue('mp-style_theme', this._theme);
+    private _setPrevTheme(): void {
+        GM_setValue('style_theme', this._theme);
     }
 
-    /** Returns a promise of the stylesheet name currently being used */
-    private _getSiteCSS():Promise<string> {
-        return new Promise( (resolve) => {
-            const siteTheme:string = document.querySelector('head link[href*="ICGstation"]')
+    private _getSiteCSS(): Promise<string> {
+        return new Promise((resolve) => {
+            const themeURL: string | null = document.querySelector('head link[href*="ICGstation"]')!
                 .getAttribute('href');
-            if( siteTheme === typeof 'string' ) {
-                resolve(siteTheme);
+            if (typeof themeURL === 'string') {
+                resolve(themeURL);
+            } else {
+                if (MP.DEBUG) { console.warn(`themeUrl is not a string: ${themeURL}`); }
             }
-        } );
+        });
     }
 }

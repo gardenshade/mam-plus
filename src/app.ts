@@ -2,10 +2,17 @@
 
 /**
  * BREAKING CHANGES INTRODUCED WHILE CODING
- * - FIXME: Search result ID changed on site, but not reflected in old build code.
- * - All styling is done via stylesheet. Use `.mp_dark` & `.mp_light` as needed.
- * - Settings are now named `mp-section_setting`
+ * FIXME: Search result ID changed on site, but not reflected in old build code.
+ * All styling is done via stylesheet. Use `.mp_dark` & `.mp_light` as needed.
+ * FIXME: Stylesheet hardcoded to v4 branch; change to main when needed
+ * Settings are now named `simplyLikeThis`
+ * Fused hide banner/home settings. Now uses a dropdown. 'hideHome'
+ * Browse/Search page is being updated and might have new DOM pointers/lazyload
+ * default user gift now uses dropdown.
  */
+
+// FIXME: this should be set in the settings
+GM_setValue('mp_debug', true);
 
 /**
  * Userscript namespace
@@ -17,6 +24,7 @@
  * @var pagePath: The current page URL without the site address
  */
 namespace MP {
+    export const DEBUG: boolean | undefined = (GM_getValue('mp_debug')) ? true : false;
     export const CHANGELOG:object = {
         UPDATE_LIST: [
             'CODE: Moved from Coffeescript to Typescript to allow for better practices and easier contribution. This likely introduced bugs.',
@@ -39,9 +47,6 @@ namespace MP {
         // Add a simple cookie to announce the script is being used
         document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/';
 
-        // Add the M+ stylesheet
-        GM_addStyle( GM_getResourceText( 'MP_CSS' ) );
-
         /**
          * AFTER PAGE LOAD
          * For anything that requires the DOM
@@ -49,10 +54,10 @@ namespace MP {
 
         window.addEventListener('load', () => {
             // Add custom CSS sheet
-            mpCss.injectLink();
             // When the page loads, get the current site theme
+            mpCss.injectLink();
             Check.elemLoad('head link[href*="ICGstation"]')
-            .then( mpCss.alignToSiteTheme );
+            .then( () => { mpCss.alignToSiteTheme(); } );
         });
 
         console.groupEnd();

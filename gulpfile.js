@@ -30,7 +30,9 @@ let tsSettings = {
     strict: true,
     target: "es6",
     rootDir: "src",
-    strictNullChecks: false,
+    forceConsistentCasingInFileNames: true,
+    noImplicitReturns: true,
+    noUnusedLocals: true,
 }
 
 let env = 'dev';

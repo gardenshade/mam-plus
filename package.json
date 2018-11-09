@@ -14,10 +14,12 @@
     "watch": "npx gulp watch",
     "build": "npx gulp build",
     "release": "npx gulp release",
-    "clean": "npx gulp clean"
+    "clean": "npx gulp clean",
+    "test": "npx jest"
   },
   "devDependencies": {
     "@types/greasemonkey": "0.0.28",
+    "@types/jest": "^23.3.9",
     "del": "^3.0.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-header": "^2.0.5",
@@ -26,7 +28,8 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-uglify-es": "^1.0.4",
-    "typescript": "^3.0.1"
-  },
-  "dependencies": {}
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "typescript": "^3.1.3"
+  }
 }

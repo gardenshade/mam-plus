@@ -7,13 +7,14 @@
 // @run-at       document-start
 // @include      https://myanonamouse.net/*
 // @include      https://www.myanonamouse.net/*
+// @connect      https://www.dropbox.com/*
 // @icon         https://i.imgur.com/dX44pSv.png
-// @resource     MP_CSS MAM_Plus.css
+// @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/v4_ts/release/main.css
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
 // @grant        GM_info
-// @grant        GM_getResourceURL
+// @grant        GM_getResourceText
 // ==/UserScript==
