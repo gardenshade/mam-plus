@@ -19,6 +19,7 @@
         "semicolon":[true, "always"],
         "max-line-length":false,
         "space-within-parens": false,
-        "variable-name": [true,"ban-keywords","check-format","allow-leading-underscore"]
+        "variable-name": [true,"ban-keywords","check-format","allow-leading-underscore"],
+        "interface-name": false,
     }
 }
