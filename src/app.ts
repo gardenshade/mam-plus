@@ -3,8 +3,9 @@
 /**
  * BREAKING CHANGES INTRODUCED WHILE CODING
  * FIXME: Search result ID changed on site, but not reflected in old build code.
- * All styling is done via stylesheet. Use `.mp_dark` & `.mp_light` as needed.
  * FIXME: Stylesheet hardcoded to v4 branch; change to main when needed
+ * FIXME: Goodreads links must be derefered
+ * All styling is done via stylesheet. Use `.mp_dark` & `.mp_light` as needed.
  * Settings are now named `simplyLikeThis`
  * Fused hide banner/home settings. Now uses a dropdown. 'hideHome'
  * Browse/Search page is being updated and might have new DOM pointers/lazyload
@@ -14,8 +15,7 @@
  */
 
 // FIXME: this should be set in the settings
-GM_setValue('mp_debug', true);
-GM_setValue('mp_alert', true);
+GM_setValue('debug', true);
 
 interface Log {
     UPDATE_LIST: string[];
@@ -32,7 +32,7 @@ interface Log {
  * @var pagePath: The current page URL without the site address
  */
 namespace MP {
-    export const DEBUG: boolean | undefined = (GM_getValue('mp_debug')) ? true : false;
+    export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:Log = {
         UPDATE_LIST: [
             'CODE: Moved from Coffeescript to Typescript to allow for better practices and easier contribution. This likely introduced bugs.',

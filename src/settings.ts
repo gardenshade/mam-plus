@@ -5,6 +5,7 @@
  * This class should handle the Preference Page insertion.
  */
 class Settings {
+
     public static obj: object = {
         /** TEMPLATE */
         // section: {
@@ -88,6 +89,11 @@ class Settings {
                 id: "goodreadsBtn",
                 type: "checkbox",
                 desc: "Enable the MAM-to-Goodreads buttons",
+            },
+            fetchRating: {
+                id: "fetchRating",
+                type: "checkbox",
+                desc: "Retrieve Goodreads rating info if possible",
             },
             torGiftDefault: {
                 id: "torGiftDefault",

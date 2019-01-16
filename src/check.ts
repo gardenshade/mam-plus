@@ -33,6 +33,8 @@ class Check {
         // Different versions; the script was updated
         if(this.newVer !== this.prevVer) {
             if(MP.DEBUG) { console.log('Script is new or updated'); }
+            // Store the new version
+            GM_setValue('mp_version',this.newVer);
             if( this.prevVer ) {
                 // The script has run before
                 if (MP.DEBUG) {
@@ -42,6 +44,9 @@ class Check {
                 // First-time run
                 if (MP.DEBUG) {
                     console.log('Script has never run'); console.groupEnd(); }
+                // Enable the most basic features
+                GM_setValue('goodreadsBtn',true);
+                GM_setValue('alerts',true);
                 return 'firstRun';
             }
         } else {
