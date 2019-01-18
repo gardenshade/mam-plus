@@ -1,4 +1,7 @@
 /// <reference path="style.ts" />
+/// <reference path="./modules/core.ts" />
+/// <reference path="./modules/global.ts" />
+/// <reference path="settings.ts" />
 
 /**
  * BREAKING CHANGES INTRODUCED WHILE CODING
@@ -6,7 +9,7 @@
  * FIXME: Stylesheet hardcoded to v4 branch; change to main when needed
  * FIXME: Goodreads links must be derefered
  * All styling is done via stylesheet. Use `.mp_dark` & `.mp_light` as needed.
- * Settings are now named `simplyLikeThis`
+ * Settings are now named `simplyLikeThis`; they now reside in classes
  * Fused hide banner/home settings. Now uses a dropdown. 'hideHome'
  * Browse/Search page is being updated and might have new DOM pointers/lazyload
  * default user gift now uses dropdown.
@@ -14,13 +17,43 @@
  * `MP_CHECK.version` renamed `Check.updated`
  */
 
+interface ArrayObject {
+    [key:string]: string[];
+}
+
+interface StringObject {
+    [key:string]: string;
+}
+
+interface FeatureSettings {
+    scope: 'global' | 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'other';
+    title: string;
+    type: 'checkbox'|'dropdown'|'textbox';
+    desc: string;
+}
+
+interface Feature {
+    settings: CheckboxSetting|DropdownSetting|TextboxSetting;
+}
+
+interface CheckboxSetting extends FeatureSettings{
+    type: 'checkbox';
+}
+
+interface DropdownSetting extends FeatureSettings {
+    type: 'dropdown';
+    tag: string;
+    options: StringObject;
+}
+
+interface TextboxSetting extends FeatureSettings {
+    type: 'textbox';
+    tag: string;
+    placeholder: string;
+}
+
 // FIXME: this should be set in the settings
 GM_setValue('debug', true);
-
-interface Log {
-    UPDATE_LIST: string[];
-    BUG_LIST: string[];
-}
 
 /**
  * Userscript namespace
@@ -33,10 +66,12 @@ interface Log {
  */
 namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
-    export const CHANGELOG:Log = {
+    export const CHANGELOG:ArrayObject = {
         UPDATE_LIST: [
             'CODE: Moved from Coffeescript to Typescript to allow for better practices and easier contribution. This likely introduced bugs.',
             'CODE: Script starts before the page loads and uses a CSS sheet to hopefully prevent flashing content. This likely introduced bugs. ',
+            'CODE: Made features modular. This hopefully speeds up development',
+            'FIX: Home page features were not running if navigated to via the Home button',
         ] as string[],
         BUG_LIST: [
             //
@@ -61,8 +96,26 @@ namespace MP {
         /**
          * BEFORE PAGE LOAD
          */
+
         // Notify the user if the script was updated
-        Util.notify( Check.updated(), CHANGELOG );
+        Check.updated()
+        .then( (result) => {
+            if(result){ Alerts.notify(result, CHANGELOG); }
+        } )
+
+        // Run global functions
+        const hideBrowse:HideBrowse = new HideBrowse();
+        console.log(hideBrowse.settings);
+
+        // Determine what page we're on
+        Check.page()
+        .then( (page) => {
+            if (MP.DEBUG) { console.log(`Currently on ${page} page`); }
+            if( page === 'settings' ){
+                const settings: Settings = new Settings();
+                console.log(settings);
+            }
+        } )
 
         /**
          * AFTER PAGE LOAD
