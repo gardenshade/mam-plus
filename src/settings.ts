@@ -1,36 +1,46 @@
+/// <reference path="check.ts" />
 /// <reference path="./modules/core.ts" />
 
 /**
- * TODO:
- * Turn this whole dang class into an actual class.
- * Settings should be fetched and set via this class.
- * This class should handle the Preference Page insertion.
+ * Class for handling settings and the Preferences page
+ * @method init: turns features' settings info into a useable table
  */
 class Settings {
 
-    constructor(){
-        if (MP.DEBUG) { console.group(`new Settings()`); }
-        Check.elemLoad('#mainBody > table')
-        .then( () => {
-            // Create new table elements
-            const settingNav: Element = document.querySelector('#mainBody > table')!;
-            const settingTitle: HTMLHeadingElement = document.createElement('h1');
-            const settingTable: HTMLTableElement = document.createElement('table');
+    public static init( result:boolean, settings:FeatureSettings[] ){
+        // This will only run if `Check.page('settings)` returns true & is passed here
+        if(result === true){
+            if (MP.DEBUG) { console.group(`new Settings()`); }
 
-            // Insert table elements after the Pref navbar
-            settingNav.insertAdjacentElement('afterend',settingTitle);
-            settingTitle.insertAdjacentElement('afterend',settingTable);
-            Util.setAttr( settingTable,{
-                'class': 'coltable',
-                'cellspacing':'1',
-                'style': 'width:100%;min-width:100%;max-width:100%;',
-            } )
-            // Insert content into the new table elements
-            .then( () => {
-                settingTitle.innerHTML = 'MAM+ Settings';
-                // This is where all the settings happen
-            } );
-        } );
+            //
+            //
+            //
+            //
+            console.log(settings);
+
+            // Make sure the settings table has loaded
+            Check.elemLoad('#mainBody > table')
+            .then(() => {
+                // Create new table elements
+                const settingNav: Element = document.querySelector('#mainBody > table')!;
+                const settingTitle: HTMLHeadingElement = document.createElement('h1');
+                const settingTable: HTMLTableElement = document.createElement('table');
+
+                // Insert table elements after the Pref navbar
+                settingNav.insertAdjacentElement('afterend', settingTitle);
+                settingTitle.insertAdjacentElement('afterend', settingTable);
+                Util.setAttr(settingTable, {
+                    'class': 'coltable',
+                    'cellspacing': '1',
+                    'style': 'width:100%;min-width:100%;max-width:100%;',
+                })
+                // Insert content into the new table elements
+                .then(() => {
+                    settingTitle.innerHTML = 'MAM+ Settings';
+                    // This is where all the settings happen
+                });
+            });
+        }
     }
 
     public static obj: object = {

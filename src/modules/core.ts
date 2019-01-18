@@ -23,7 +23,7 @@ class Alerts implements Feature{
         return this._settings;
     }
 
-    public static notify(kind: string | boolean, log: ArrayObject): Promise<any> {
+    public notify(kind: string | boolean, log: ArrayObject): Promise<any> {
         if (MP.DEBUG) { console.group(`Alerts.notify( ${kind} )`); }
 
         return new Promise((resolve) => {

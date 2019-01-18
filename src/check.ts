@@ -64,12 +64,15 @@ class Check {
     /**
      * Check to see what page is being accessed
      */
-    public static page():Promise<string>{
+    public static page(pageQuery?:ValidPage|'settings'):Promise<string|boolean>{
         if (MP.DEBUG) { console.group(`Check.page()`); }
         return new Promise( (resolve) => {
+            // Grab the URL and slice out the good bits
             const path:string = window.location.pathname;
             const pageStr:string = path.split('/')[1];
             const subPage:string|undefined = path.split('/')[2];
+            let currentPage: string;
+            // Create an object literal of sorts to use as a "switch"
             const cases:StringObject = {
                 ''           : 'home',
                 'index.php'  : 'home',
@@ -80,12 +83,25 @@ class Check {
                 'tor'        : subPage,
                 'millionaires': subPage,
             };
+        /* I can't figure out how to provide typing for an object-literal with
+         * functions inside it, so we use IFs on the subPage after the fact */
             if (MP.DEBUG) { console.log(`Page @ ${pageStr}\nSubpage @ ${subPage}`); }
             if( cases[pageStr] ){
                 if( cases[pageStr] === subPage ){
-                    resolve( subPage.split('.')[0] );
+                    currentPage = subPage.split('.')[0];
                 }else{
-                    resolve( cases[pageStr] );
+                    currentPage = cases[pageStr];
+                }
+                if (MP.DEBUG) { console.log(`Currently on ${currentPage} page`); }
+
+                // If we're just checking what page we're on, return the page
+                if (!pageQuery) {
+                    resolve(currentPage);
+                // If we're checking for a specific page, return TRUE/FALSE
+                } else if (pageQuery === currentPage) {
+                    resolve(true);
+                } else {
+                    resolve(false);
                 }
             }else{
                 if (MP.DEBUG) { console.warn(`pageStr case returns '${cases[pageStr]}'`); }

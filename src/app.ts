@@ -17,6 +17,8 @@
  * `MP_CHECK.version` renamed `Check.updated`
  */
 
+type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user';
+
 interface ArrayObject {
     [key:string]: string[];
 }
@@ -26,7 +28,7 @@ interface StringObject {
 }
 
 interface FeatureSettings {
-    scope: 'global' | 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'other';
+    scope: ValidPage|"global"|"other";
     title: string;
     type: 'checkbox'|'dropdown'|'textbox';
     desc: string;
@@ -83,49 +85,67 @@ namespace MP {
     export let errorLog:string[] = [];
     export let pagePath:string = window.location.pathname;
     export let mpCss:Style = new Style();
+    export let settingsGlob:FeatureSettings[] = [];
 
     export const run = () => {
-        /**
+        /************
          * PRE SCRIPT
-         */
+         ************/
         console.group(`Welcome to MAM+ v${VERSION}!!!`);
 
         // Add a simple cookie to announce the script is being used
         document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/';
 
-        /**
+        /**************
          * BEFORE PAGE LOAD
-         */
+         *
+         * Nearly all features belong here, as they should have internal checks
+         * for DOM elements as needed
+         **************/
+
+        // initialize core functions
+        const alerts:Alerts = new Alerts();
 
         // Notify the user if the script was updated
         Check.updated()
         .then( (result) => {
-            if(result){ Alerts.notify(result, CHANGELOG); }
+            if(result){ alerts.notify(result, CHANGELOG); }
         } )
 
-        // Run global functions
-        const hideBrowse:HideBrowse = new HideBrowse();
-        console.log(hideBrowse.settings);
+        // Initialize global functions
+        const hideBrowse: HideBrowse = new HideBrowse();
 
-        // Determine what page we're on
-        Check.page()
-        .then( (page) => {
-            if (MP.DEBUG) { console.log(`Currently on ${page} page`); }
-            if( page === 'settings' ){
-                const settings: Settings = new Settings();
-                console.log(settings);
+        /************
+         * SETTINGS
+         *
+         * Any feature above should have its settings pushed here
+         ************/
+
+        Check.page('settings')
+        .then(result => {
+            if (result === true) {
+                // Push all settings here
+                settingsGlob.push(
+                    alerts.settings,
+                    hideBrowse.settings,
+                );
+
+                // Initialize the settings page
+                Settings.init(result, settingsGlob);
             }
-        } )
+        });
 
-        /**
+        /******************
          * AFTER PAGE LOAD
-         * For anything that requires the DOM
-         */
+         * For things that explicitly require the DOM
+         ******************/
 
+        // CSS stuff
+        // TODO: Consider running this pre-DOM with internal element checks
         window.addEventListener('load', () => {
             // Add custom CSS sheet
-            // When the page loads, get the current site theme
             mpCss.injectLink();
+            // When the page loads, get the current site theme
             Check.elemLoad('head link[href*="ICGstation"]')
             .then( () => { mpCss.alignToSiteTheme(); } );
         });

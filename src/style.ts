@@ -2,7 +2,8 @@
 
 /**
  * Class for handling values and methods related to styles
- * @constructor Inits theme based on last saved value; can be called before page content is loaded
+ * @constructor Initializes theme based on last saved value; can be called before page content is loaded
+ * @method theme Gets or sets the current theme
  */
 class Style {
     private _theme: string;
