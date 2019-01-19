@@ -13,7 +13,7 @@
   */
 class Alerts implements Feature{
     private _settings:CheckboxSetting = {
-        scope: 'global',
+        scope: Scopes.global,
         title: 'alerts',
         type: 'checkbox',
         desc: 'Enable the MAM+ Alert panel for update information, etc.',
@@ -99,5 +99,19 @@ class Alerts implements Feature{
                 }
             }
         });
+    }
+}
+
+// FIXME: Delete this
+class Fake implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: Scopes.shoutbox,
+        title: 'fake',
+        type: 'checkbox',
+        desc: 'This is a fake feature for Scope testing only',
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
     }
 }

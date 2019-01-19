@@ -64,7 +64,7 @@ class Check {
     /**
      * Check to see what page is being accessed
      */
-    public static page(pageQuery?:ValidPage|'settings'):Promise<string|boolean>{
+    public static page(pageQuery?:ValidPage):Promise<string|boolean>{
         if (MP.DEBUG) { console.group(`Check.page()`); }
         return new Promise( (resolve) => {
             // Grab the URL and slice out the good bits

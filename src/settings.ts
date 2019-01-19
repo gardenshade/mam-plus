@@ -7,20 +7,66 @@
  */
 class Settings {
 
+    // Function for gathering the needed scopes
+    private static _getScopes(settings: FeatureSettings[]): Promise<SettingGlobObject>{
+        if (MP.DEBUG) { console.log(`_getScopes( settings )`); }
+        return new Promise( resolve => {
+            let scopeList:SettingGlobObject = {};
+            for( let setting of settings){
+                let index: number = Number(setting.scope);
+                // If the Scope exists, push the settings into the array
+                if (scopeList[index]) {
+                    scopeList[index].push(setting);
+                // Otherwise, create the array
+                }else{
+                    scopeList[index] = [setting]
+                }
+            }
+            if (MP.DEBUG) { console.log(scopeList); }
+            resolve(scopeList);
+        } );
+    }
+
+    // Function for constructing the table from an object
+    private static _buildTable( scopes:SettingGlobObject, settings: FeatureSettings[] ):Promise<string>{
+        if (MP.DEBUG) { console.log(`_buildTable( scopes,settings )`); }
+        return new Promise( resolve => {
+            let outp = '<tbody><tr><td class="row1" colspan="2">Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.</td></tr>';
+
+            /**
+             * TODO:
+             * Loop over the `scope` of `scopes`
+             * Add the settings for each scope
+             * ......But do it in a preset order somehow
+             */
+
+            /** Example SettingGlobObject
+             *
+             * object = {
+             *     0 : [                <- "Global Scope"
+             *         {setting1},
+             *         {setting3},
+             *     ],
+             *     3 : [                <- "Shoutbox Scope"
+             *         {setting2},
+             *         {setting7},
+             *     ],
+             * }
+             */
+
+            resolve(outp);
+        } );
+    }
+
     public static init( result:boolean, settings:FeatureSettings[] ){
         // This will only run if `Check.page('settings)` returns true & is passed here
         if(result === true){
             if (MP.DEBUG) { console.group(`new Settings()`); }
 
-            //
-            //
-            //
-            //
-            console.log(settings);
-
             // Make sure the settings table has loaded
             Check.elemLoad('#mainBody > table')
             .then(() => {
+                if (MP.DEBUG) { console.log(`Starting to build Settings table...`); }
                 // Create new table elements
                 const settingNav: Element = document.querySelector('#mainBody > table')!;
                 const settingTitle: HTMLHeadingElement = document.createElement('h1');
@@ -35,10 +81,12 @@ class Settings {
                     'style': 'width:100%;min-width:100%;max-width:100%;',
                 })
                 // Insert content into the new table elements
-                .then(() => {
+                .then( () => {
                     settingTitle.innerHTML = 'MAM+ Settings';
-                    // This is where all the settings happen
-                });
+                    this._getScopes( settings )
+                    .then( scopes => this._buildTable( scopes, settings ) )
+                    // .then( (result) => settingTable.innerHTML = result);
+                } );
             });
         }
     }

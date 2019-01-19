@@ -17,7 +17,17 @@
  * `MP_CHECK.version` renamed `Check.updated`
  */
 
-type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user';
+type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'settings';
+
+enum Scopes{
+    'global',
+    'browse',
+    'torrent',
+    'shoutbox',
+    'vault',
+    'user',
+    'other'
+}
 
 interface ArrayObject {
     [key:string]: string[];
@@ -27,8 +37,12 @@ interface StringObject {
     [key:string]: string;
 }
 
+interface SettingGlobObject {
+    [key:number]: FeatureSettings[]
+}
+
 interface FeatureSettings {
-    scope: ValidPage|"global"|"other";
+    scope: Scopes;
     title: string;
     type: 'checkbox'|'dropdown'|'textbox';
     desc: string;
@@ -105,6 +119,7 @@ namespace MP {
 
         // initialize core functions
         const alerts:Alerts = new Alerts();
+        const fake:Fake = new Fake();
 
         // Notify the user if the script was updated
         Check.updated()
@@ -127,6 +142,7 @@ namespace MP {
                 // Push all settings here
                 settingsGlob.push(
                     alerts.settings,
+                    fake.settings,
                     hideBrowse.settings,
                 );
 
