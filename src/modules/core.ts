@@ -13,9 +13,9 @@
   */
 class Alerts implements Feature{
     private _settings:CheckboxSetting = {
-        scope: Scopes.global,
-        title: 'alerts',
+        scope: SettingGroup.Global,
         type: 'checkbox',
+        title: 'alerts',
         desc: 'Enable the MAM+ Alert panel for update information, etc.',
     }
 
@@ -105,9 +105,9 @@ class Alerts implements Feature{
 // FIXME: Delete this
 class Fake implements Feature {
     private _settings: CheckboxSetting = {
-        scope: Scopes.shoutbox,
-        title: 'fake',
+        scope: SettingGroup.Shoutbox,
         type: 'checkbox',
+        title: 'fake',
         desc: 'This is a fake feature for Scope testing only',
     }
 

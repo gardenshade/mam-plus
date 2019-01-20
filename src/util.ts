@@ -24,4 +24,20 @@ class Util {
             resolve();
         });
     }
+
+    /**
+     * Returns the "length" of an Object
+     */
+    public static objectLength( obj:Object ):number{
+        return Object.keys(obj).length;
+    }
+
+    /**
+     * Forcefully empties any GM stored values
+     */
+    public static purgeSettings():void{
+        for ( let value of GM_listValues() ) {
+            GM_deleteValue(value);
+        }
+    }
 }

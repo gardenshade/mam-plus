@@ -1,4 +1,5 @@
 /// <reference path="check.ts" />
+/// <reference path="util.ts" />
 /// <reference path="./modules/core.ts" />
 
 /**
@@ -8,8 +9,8 @@
 class Settings {
 
     // Function for gathering the needed scopes
-    private static _getScopes(settings: FeatureSettings[]): Promise<SettingGlobObject>{
-        if (MP.DEBUG) { console.log(`_getScopes( settings )`); }
+    private static _getScopes(settings: AnyFeature[]): Promise<SettingGlobObject>{
+        if (MP.DEBUG) { console.log('_getScopes(',settings,')'); }
         return new Promise( resolve => {
             let scopeList:SettingGlobObject = {};
             for( let setting of settings){
@@ -22,43 +23,89 @@ class Settings {
                     scopeList[index] = [setting]
                 }
             }
-            if (MP.DEBUG) { console.log(scopeList); }
             resolve(scopeList);
         } );
     }
 
     // Function for constructing the table from an object
-    private static _buildTable( scopes:SettingGlobObject, settings: FeatureSettings[] ):Promise<string>{
-        if (MP.DEBUG) { console.log(`_buildTable( scopes,settings )`); }
+    private static _buildTable( page:SettingGlobObject ):Promise<string>{
+        if (MP.DEBUG) console.log('_buildTable(',page,')');
         return new Promise( resolve => {
             let outp = '<tbody><tr><td class="row1" colspan="2">Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.</td></tr>';
 
-            /**
-             * TODO:
-             * Loop over the `scope` of `scopes`
-             * Add the settings for each scope
-             * ......But do it in a preset order somehow
-             */
+            Object.keys(page).forEach( scope => {
+                let scopeNum:number = Number(scope);
+                // Insert the section title
+                outp += `<tr><td class='row2'>${SettingGroup[scopeNum]}</td><td class='row1'>`;
+                // Create the required input field based on the setting
+                Object.keys( page[scopeNum] ).forEach( (setting) => {
+                    let settingNumber:number = Number(setting);
+                    let item:AnyFeature = page[scopeNum][settingNumber]
 
-            /** Example SettingGlobObject
-             *
-             * object = {
-             *     0 : [                <- "Global Scope"
-             *         {setting1},
-             *         {setting3},
-             *     ],
-             *     3 : [                <- "Shoutbox Scope"
-             *         {setting2},
-             *         {setting7},
-             *     ],
-             * }
-             */
+                    const cases = {
+                        'checkbox': () => {
+                            outp += `<input type='checkbox' id='${item.title}' value='true'>${item.desc}<br>`;
+                        },
+                        'textbox': () => {
+                            outp += `<span class='mp_setTag'>${item.tag}:</span> <input type='text' id='${item.title}' placeholder='${item.placeholder}' class='mp_textInput' size='25'>${item.desc}<br>`;
+                        },
+                        'dropdown': () => {
+                            outp += `<span class='mp_setTag'>${item.tag}:</span> <select id='${item.tag}' class='mp_dropInput'>`;
+                            if(item.options){
+                                Object.keys(item.options).forEach((key) => {
+                                    outp += `<option value='${key}'>${item.options![key]}</option>`;
+                                });
+                            }
+                            outp += `</select>${item.desc}<br>`;
+                        },
+                    }
+                    if(item.type) cases[item.type]();
+                } );
+                // Close the row
+                outp += '</td></tr>';
+            } );
+            // Add the save button & last part of the table
+            outp += '<tr><td class="row1" colspan="2"><div id="mp_submit">Save M+ Settings</div><span class="mp_savestate" style="opacity:0">Saved!</span></td></tr></tbody>'
+
+            if (MP.DEBUG) console.log('RESULT:',outp);
 
             resolve(outp);
         } );
     }
 
-    public static init( result:boolean, settings:FeatureSettings[] ){
+    // Function for retrieving the current settings values
+    private static _getSettings( page: SettingGlobObject ){
+        // Util.purgeSettings();
+        let allValues: string[] = GM_listValues();
+        if (MP.DEBUG) {
+            console.log('_getSettings(',page,')\nStored GM keys:',allValues)
+        };
+        Object.keys( page ).forEach( scope => {
+            Object.keys( page[Number(scope)] ).forEach( setting => {
+                let pref = page[Number(scope)][Number(setting)];
+
+                if (MP.DEBUG) {console.log('Pref:',pref,'\nSet:',GM_getValue(`${pref.title}`),'\nValue:', GM_getValue(`${pref.title}_val`));}
+
+                if(pref !== undefined && typeof pref === 'object'){
+                    console.log('Setting');
+
+                    let elem: AnyHTML = document.getElementById(pref.title)!;
+                    const cases = {
+                        'checkbox': () => { elem.setAttribute('checked','checked') },
+                        'textbox': () => {
+                            elem.value = GM_getValue( `${pref.title}_val` );
+                        },
+                        'dropdown': () => {
+                            elem.value = GM_getValue( pref.title );
+                        },
+                    };
+                    if( cases[pref.type] && GM_getValue(pref.title) ) cases[pref.type]();
+                }
+            } );
+        } );
+    }
+
+    public static init( result:boolean, settings:AnyFeature[] ){
         // This will only run if `Check.page('settings)` returns true & is passed here
         if(result === true){
             if (MP.DEBUG) { console.group(`new Settings()`); }
@@ -66,11 +113,12 @@ class Settings {
             // Make sure the settings table has loaded
             Check.elemLoad('#mainBody > table')
             .then(() => {
-                if (MP.DEBUG) { console.log(`Starting to build Settings table...`); }
+                if (MP.DEBUG) console.log(`Starting to build Settings table...`);
                 // Create new table elements
                 const settingNav: Element = document.querySelector('#mainBody > table')!;
                 const settingTitle: HTMLHeadingElement = document.createElement('h1');
                 const settingTable: HTMLTableElement = document.createElement('table');
+                let pageScope:SettingGlobObject;
 
                 // Insert table elements after the Pref navbar
                 settingNav.insertAdjacentElement('afterend', settingTitle);
@@ -79,18 +127,27 @@ class Settings {
                     'class': 'coltable',
                     'cellspacing': '1',
                     'style': 'width:100%;min-width:100%;max-width:100%;',
+                });
+                settingTable.innerHTML = 'MAM+ Settings';
+                // Group settings by page
+                this._getScopes(settings)
+                // Generate table HTML from feature settings
+                .then(scopes => {
+                    pageScope = scopes;
+                    return this._buildTable(scopes)
                 })
                 // Insert content into the new table elements
-                .then( () => {
-                    settingTitle.innerHTML = 'MAM+ Settings';
-                    this._getScopes( settings )
-                    .then( scopes => this._buildTable( scopes, settings ) )
-                    // .then( (result) => settingTable.innerHTML = result);
-                } );
-            });
+                .then(result => {
+                    settingTable.innerHTML = result;
+                    if (MP.DEBUG) console.log(`Table built!`);
+                    return pageScope;
+                })
+                .then( scopes => { this._getSettings( scopes );} );
+            })
         }
     }
 
+    // FIXME: Move all settings into a Feature, then delete this
     public static obj: object = {
         /** TEMPLATE */
         // section: {

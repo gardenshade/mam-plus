@@ -19,14 +19,14 @@
 
 type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'settings';
 
-enum Scopes{
-    'global',
-    'browse',
-    'torrent',
-    'shoutbox',
-    'vault',
-    'user',
-    'other'
+enum SettingGroup {
+    'Global',
+    'Browse & Search',
+    'Torrent Page',
+    'Shoutbox',
+    'Mil. Vault',
+    'User Pages',
+    'Other'
 }
 
 interface ArrayObject {
@@ -42,10 +42,20 @@ interface SettingGlobObject {
 }
 
 interface FeatureSettings {
-    scope: Scopes;
+    scope: SettingGroup;
     title: string;
     type: 'checkbox'|'dropdown'|'textbox';
     desc: string;
+}
+
+interface AnyFeature extends FeatureSettings {
+    tag?:string;
+    options?:StringObject;
+    placeholder?:string;
+}
+
+interface AnyHTML extends HTMLElement{
+    value?:string;
 }
 
 interface Feature {
@@ -99,7 +109,7 @@ namespace MP {
     export let errorLog:string[] = [];
     export let pagePath:string = window.location.pathname;
     export let mpCss:Style = new Style();
-    export let settingsGlob:FeatureSettings[] = [];
+    export let settingsGlob:AnyFeature[] = [];
 
     export const run = () => {
         /************
@@ -129,6 +139,7 @@ namespace MP {
 
         // Initialize global functions
         const hideBrowse: HideBrowse = new HideBrowse();
+        const hideHome: HideHome = new HideHome();
 
         /************
          * SETTINGS
@@ -140,9 +151,14 @@ namespace MP {
         .then(result => {
             if (result === true) {
                 // Push all settings here
+                /** While all settings are grouped by their page (as defined by
+                 * `SettingGroup`), the order they are pushed will determine their
+                 * order relative to other settings in that group */
+                // TODO: Auto-push settings when each feature is constructed
                 settingsGlob.push(
+                    hideHome.settings,
+                    fake.settings, //FIXME: Delete this
                     alerts.settings,
-                    fake.settings,
                     hideBrowse.settings,
                 );
 

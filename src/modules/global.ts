@@ -4,7 +4,7 @@
 
 class HideHome implements Feature {
     private _settings:DropdownSetting = {
-        scope: Scopes.global,
+        scope: SettingGroup.Global,
         type: 'dropdown',
         title: 'hideHome',
         tag: 'Remove banner/home',
@@ -27,7 +27,7 @@ class HideHome implements Feature {
 
 class HideBrowse implements Feature {
     private _settings:CheckboxSetting = {
-        scope: Scopes.global,
+        scope: SettingGroup.Global,
         type: 'checkbox',
         title: 'hideBrowse',
         desc: 'Remove the Browse button, because Browse &amp; Search are practically the same'
