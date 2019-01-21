@@ -13,8 +13,6 @@
  * Fused hide banner/home settings. Now uses a dropdown. 'hideHome'
  * Browse/Search page is being updated and might have new DOM pointers/lazyload
  * default user gift now uses dropdown.
- * `MP.triggerNote` renamed `Util.notify`
- * `MP_CHECK.version` renamed `Check.updated`
  */
 
 type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'settings';
@@ -162,8 +160,9 @@ namespace MP {
         });
 
         /******************
-         * AFTER PAGE LOAD
-         * For things that explicitly require the DOM
+         * STYLES
+         *
+         * Injects CSS
          ******************/
 
         // CSS stuff

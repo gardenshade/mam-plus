@@ -8,6 +8,7 @@
 class Style {
     private _theme: string;
     private _prevTheme: string | undefined;
+    private _cssData:string|undefined;
 
     constructor() {
         // The light theme is the default theme, so use M+ Light values
@@ -22,6 +23,9 @@ class Style {
         } else {
             if (MP.DEBUG) console.warn('no previous theme');
         }
+
+        // Fetch the CSS data
+        this._cssData = GM_getResourceText('MP_CSS');
     }
 
     /** Allows the current theme to be returned */
@@ -52,7 +56,7 @@ class Style {
         if (!document.getElementById(id)) {
             const style: HTMLStyleElement = document.createElement('style');
             style.id = id;
-            style.innerText = GM_getResourceText('MP_CSS');
+            style.innerText = (this._cssData !== undefined) ? this._cssData : '';
             document.querySelector('head')!.appendChild(style);
         } else {
             if (MP.DEBUG) console.warn(`an element with the id "${id}" already exists`);
