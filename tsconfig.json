@@ -7,6 +7,7 @@
         "src"
     ],
     "compilerOptions": {
-        "target": "es6"
+        "target": "es6",
+        "lib": [ "dom", "es6", "es2016.array.include"]
     }
 }

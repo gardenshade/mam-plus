@@ -33,6 +33,7 @@ let tsSettings = {
     forceConsistentCasingInFileNames: true,
     noImplicitReturns: true,
     noUnusedLocals: true,
+    lib: [ 'dom', 'es6', 'es2016.array.include']
 }
 
 let env = 'dev';

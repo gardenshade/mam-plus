@@ -54,10 +54,6 @@ interface AnyFeature extends FeatureSettings {
     placeholder?:string;
 }
 
-interface AnyHTML extends HTMLElement{
-    value?:string;
-}
-
 interface Feature {
     settings: CheckboxSetting|DropdownSetting|TextboxSetting;
 }

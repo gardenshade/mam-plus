@@ -50,7 +50,7 @@ class Settings {
                             outp += `<span class='mp_setTag'>${item.tag}:</span> <input type='text' id='${item.title}' placeholder='${item.placeholder}' class='mp_textInput' size='25'>${item.desc}<br>`;
                         },
                         'dropdown': () => {
-                            outp += `<span class='mp_setTag'>${item.tag}:</span> <select id='${item.tag}' class='mp_dropInput'>`;
+                            outp += `<span class='mp_setTag'>${item.tag}:</span> <select id='${item.title}' class='mp_dropInput'>`;
                             if(item.options){
                                 Object.keys(item.options).forEach((key) => {
                                     outp += `<option value='${key}'>${item.options![key]}</option>`;
@@ -84,12 +84,10 @@ class Settings {
             Object.keys( page[Number(scope)] ).forEach( setting => {
                 let pref = page[Number(scope)][Number(setting)];
 
-                if (MP.DEBUG) {console.log('Pref:',pref,'\nSet:',GM_getValue(`${pref.title}`),'\nValue:', GM_getValue(`${pref.title}_val`));}
+                if (MP.DEBUG) {console.log('Pref:',pref.title,'| Set:',GM_getValue(`${pref.title}`),'| Value:', GM_getValue(`${pref.title}_val`));}
 
-                if(pref !== undefined && typeof pref === 'object'){
-                    console.log('Setting');
-
-                    let elem: AnyHTML = document.getElementById(pref.title)!;
+                if(pref !== null && typeof pref === 'object'){
+                    let elem: HTMLInputElement = <HTMLInputElement>document.getElementById(pref.title)!;
                     const cases = {
                         'checkbox': () => { elem.setAttribute('checked','checked') },
                         'textbox': () => {
@@ -105,6 +103,81 @@ class Settings {
         } );
     }
 
+    private static _setSettings( obj: SettingGlobObject ){
+        if (MP.DEBUG) console.log(`_setSettings(`,obj,')');
+        Object.keys(obj).forEach(scope => {
+            Object.keys(obj[Number(scope)]).forEach(setting => {
+                let pref = obj[Number(scope)][Number(setting)];
+
+                if( pref !== null && typeof pref === 'object' ){
+                    let elem: HTMLInputElement = <HTMLInputElement>document.getElementById(pref.title)!;
+
+                    const cases = {
+                        'checkbox': () => {
+                            if(elem.checked) GM_setValue( pref.title,true)
+                        },
+                        'textbox': () => {
+                            const inp:string = elem.value;
+                            if(inp !== ''){
+                                GM_setValue( pref.title,true );
+                                GM_setValue(`${pref.title}_val`,inp );
+                            }
+                        },
+                        'dropdown': () => {
+                            GM_setValue( pref.title,elem.value );
+                        },
+                    };
+                    if (cases[pref.type]) cases[pref.type]();
+                }
+            });
+        });
+        console.log('[M+] Saved!');
+    }
+
+    // Function that saves the values of the settings table
+    private static _saveSettings( timer:number, obj:SettingGlobObject ){
+        if (MP.DEBUG) console.group(`_saveSettings()`);
+
+        const savestate:HTMLSpanElement = <HTMLSpanElement>document.querySelector('span.mp_savestate')!;
+        const gmValues:string[] = GM_listValues();
+
+        // Reset timer & message
+        savestate.style.opacity = '0';
+        window.clearTimeout( timer );
+
+        console.log('[M+] Saving...');
+
+        // Loop over all values stored in GM and reset everything
+        for(let feature in gmValues){
+            if( typeof gmValues[feature] !== 'function' ){
+                // Only loop over values that are feature settings
+                if (!['mp_version', 'style_theme'].includes(gmValues[feature])) {
+                    GM_setValue( gmValues[feature],false );
+                }
+            }
+        }
+
+        // Save the settings to GM values
+        this._setSettings(obj);
+
+        // Display the confirmation message
+        savestate.style.opacity = '1';
+        try{
+            timer = window.setTimeout( () => {
+                savestate.style.opacity = '0';
+            },2345);
+        }catch(e){
+            if(MP.DEBUG) console.warn(e);
+        }
+
+        if (MP.DEBUG) console.groupEnd();
+    }
+
+    /**
+     * Inserts the settings page.
+     * @param result Value that must be passed down from `Check.page('settings')`
+     * @param settings The array of features to provide settings for
+     */
     public static init( result:boolean, settings:AnyFeature[] ){
         // This will only run if `Check.page('settings)` returns true & is passed here
         if(result === true){
@@ -113,7 +186,7 @@ class Settings {
             // Make sure the settings table has loaded
             Check.elemLoad('#mainBody > table')
             .then(() => {
-                if (MP.DEBUG) console.log(`Starting to build Settings table...`);
+                if (MP.DEBUG) console.log(`[M+] Starting to build Settings table...`);
                 // Create new table elements
                 const settingNav: Element = document.querySelector('#mainBody > table')!;
                 const settingTitle: HTMLHeadingElement = document.createElement('h1');
@@ -139,11 +212,28 @@ class Settings {
                 // Insert content into the new table elements
                 .then(result => {
                     settingTable.innerHTML = result;
-                    if (MP.DEBUG) console.log(`Table built!`);
+                    console.log('[M+] Added the MAM+ Settings table!');
                     return pageScope;
                 })
-                .then( scopes => { this._getSettings( scopes );} );
-            })
+                .then( scopes => {
+                    this._getSettings( scopes );
+                    return scopes;
+                } )
+                // Make sure the settings are done loading
+                .then( (scopes) => {
+                    const submitBtn: HTMLDivElement = <HTMLDivElement>document.querySelector('#mp_submit')!;
+                    let ssTimer: number;
+                    try {
+                        submitBtn.addEventListener('click', () => {
+                            this._saveSettings(ssTimer,scopes);
+                        }, false);
+                    }
+                    catch (err) {
+                        if (MP.DEBUG) console.warn(err);
+                    }
+                    if (MP.DEBUG) { console.groupEnd(); }
+                });
+            });
         }
     }
 
