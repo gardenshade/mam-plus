@@ -13,7 +13,7 @@
   */
 class Alerts implements Feature{
     private _settings:CheckboxSetting = {
-        scope: SettingGroup.Global,
+        scope: SettingGroup.Other,
         type: 'checkbox',
         title: 'alerts',
         desc: 'Enable the MAM+ Alert panel for update information, etc.',
@@ -99,5 +99,18 @@ class Alerts implements Feature{
                 }
             }
         });
+    }
+}
+
+class Debug implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Other,
+        type: 'checkbox',
+        title: 'debug',
+        desc: 'Error log (<em>Click this checkbox to enable verbose logging to the console</em>)',
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
     }
 }

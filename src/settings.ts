@@ -239,67 +239,6 @@ class Settings {
 
     // FIXME: Move all settings into a Feature, then delete this
     public static obj: object = {
-        /** TEMPLATE */
-        // section: {
-        //     pageTitle: "Section",
-        //     checkboxSetting: {
-        //         id: "checkboxSetting",
-        //         type: "checkbox",
-        //         desc: "HTML description",
-        //     },
-        //     dropdownSetting: {
-        //         id: "dropdownSetting",
-        //         type: "dropdown",
-        //         tag: "Simple description (ex. 'Year')",
-        //         options: {
-        //             opt1: "Option 1",
-        //             opt2: "Option 2",
-        //         },
-        //         desc: "HTML description",
-        //     },
-        //     textboxSetting: {
-        //         id: "textboxSetting",
-        //         type: "textbox",
-        //         tag: "Simple description (ex. 'Name')",
-        //         placeholder: "Placeholder",
-        //         desc: "HTML description",
-        //     },
-        // },
-        /** GLOBAL */
-        global: {
-            pageTitle: "Global",
-            alerts: {
-                id: "alerts",
-                type: "checkbox",
-                desc: "Enable the MAM+ Alert panel for update information, etc.",
-            },
-            hideHome: {
-                id: "hideHome",
-                type: "dropdown",
-                tag: "Remove banner/home",
-                options: {
-                    default: "Do not remove either",
-                    hideBanner: "Hide the banner",
-                    hideHome: "Hide the home button",
-                },
-                desc: "Remove the header image or Home button, because both link to the homepage",
-            },
-            hideBrowse: {
-                id: "hideBrowse",
-                type: "checkbox",
-                desc: "Remove the Browse button, because Browse &amp; Search are practically the same",
-            },
-            vaultLink: {
-                id: "vaultLink",
-                type: "checkbox",
-                desc: "Make the Vault link bypass the Vault Info page",
-            },
-            miniVaultInfo: {
-                id: "miniVaultInfo",
-                type: "checkbox",
-                desc: "Shorten the Vault link text",
-            },
-        },
         /** BROWSE / REQUESTS */
         browse: {
             pageTitle: "Browse &amp; Requests",

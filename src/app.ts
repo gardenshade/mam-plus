@@ -72,9 +72,6 @@ interface TextboxSetting extends FeatureSettings {
     placeholder: string;
 }
 
-// FIXME: this should be set in the settings
-GM_setValue('debug', true);
-
 /**
  * Userscript namespace
  * @constant CHANGELOG: Object containing a list of changes and known bugs
@@ -116,27 +113,26 @@ namespace MP {
 
         /**************
          * BEFORE PAGE LOAD
-         *
          * Nearly all features belong here, as they should have internal checks
          * for DOM elements as needed
          **************/
 
         // initialize core functions
         const alerts:Alerts = new Alerts();
+        const debug:Debug = new Debug();
 
         // Notify the user if the script was updated
         Check.updated()
-        .then( (result) => {
-            if(result){ alerts.notify(result, CHANGELOG); }
-        } )
+        .then( (result) => { if(result) alerts.notify(result, CHANGELOG); } );
 
         // Initialize global functions
-        const hideBrowse: HideBrowse = new HideBrowse();
         const hideHome: HideHome = new HideHome();
+        const hideBrowse: HideBrowse = new HideBrowse();
+        const vaultLink: VaultLink = new VaultLink();
+        const miniVaultInfo: MiniVaultInfo = new MiniVaultInfo();
 
         /************
          * SETTINGS
-         *
          * Any feature above should have its settings pushed here
          ************/
 
@@ -149,9 +145,13 @@ namespace MP {
                  * order relative to other settings in that group */
                 // TODO: Auto-push settings when each feature is constructed
                 settingsGlob.push(
-                    hideHome.settings,
                     alerts.settings,
+                    hideHome.settings,
                     hideBrowse.settings,
+                    vaultLink.settings,
+                    miniVaultInfo.settings,
+                    // This should be on the bottom
+                    debug.settings,
                 );
 
                 // Initialize the settings page
@@ -166,13 +166,12 @@ namespace MP {
          ******************/
 
         // CSS stuff
-        // TODO: Consider running this pre-DOM with internal element checks
-        window.addEventListener('load', () => {
+        Check.elemLoad('head link[href*="ICGstation"]')
+        .then(() => {
             // Add custom CSS sheet
             mpCss.injectLink();
-            // When the page loads, get the current site theme
-            Check.elemLoad('head link[href*="ICGstation"]')
-            .then( () => { mpCss.alignToSiteTheme(); } );
+            // Get the current site theme
+            mpCss.alignToSiteTheme();
         });
 
         console.groupEnd();

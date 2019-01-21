@@ -10,8 +10,8 @@ class Check {
     /**
      * Checks to see if an element exists, then resolves a promise when it exists
      */
-    public static elemLoad( selector:string ):Promise<Element|void> {
-        const elem:Element|null = document.querySelector(selector);
+    public static elemLoad( selector:string ):Promise<HTMLElement|void> {
+        let elem:HTMLElement|null = document.querySelector(selector);
         if( elem === null ) {
             return Util.afTimer().then( () => {
                 this.elemLoad( selector );

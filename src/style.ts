@@ -40,14 +40,20 @@ class Style {
 
     /** Sets the M+ theme based on the site theme */
     public async alignToSiteTheme(): Promise<void> {
+
         const theme: string = await this._getSiteCSS();
         this._theme = (theme.indexOf('dark') > 0) ? 'dark' : 'light';
         if (this._prevTheme !== this._theme) {
             this._setPrevTheme();
         }
+
         // Inject the CSS class used by M+ for theming
-        const body: HTMLBodyElement | null = document.querySelector('body');
-        if (body) { body.classList.add(`mp_${this._theme}`); }
+        Check.elemLoad('body')
+        .then( () => {
+            const body: HTMLBodyElement|null = document.querySelector('body');
+            if (body) { body.classList.add(`mp_${this._theme}`); }
+            else if(MP.DEBUG){ console.warn(`Body is ${body}`); }
+        } );
     }
 
     /** Injects the stylesheet link into the header */
