@@ -101,17 +101,3 @@ class Alerts implements Feature{
         });
     }
 }
-
-// FIXME: Delete this
-class Fake implements Feature {
-    private _settings: CheckboxSetting = {
-        scope: SettingGroup.Shoutbox,
-        type: 'checkbox',
-        title: 'fake',
-        desc: 'This is a fake feature for Scope testing only',
-    }
-
-    get settings(): CheckboxSetting {
-        return this._settings;
-    }
-}

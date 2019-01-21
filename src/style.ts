@@ -20,7 +20,7 @@ class Style {
         if (this._prevTheme !== undefined) {
             this._theme = this._prevTheme;
         } else {
-            if (MP.DEBUG) { console.warn('no previous theme'); }
+            if (MP.DEBUG) console.warn('no previous theme');
         }
     }
 
@@ -55,7 +55,7 @@ class Style {
             style.innerText = GM_getResourceText('MP_CSS');
             document.querySelector('head')!.appendChild(style);
         } else {
-            if (MP.DEBUG) { console.warn(`an element with the id "${id}" already exists`); }
+            if (MP.DEBUG) console.warn(`an element with the id "${id}" already exists`);
         }
     }
 
@@ -76,7 +76,7 @@ class Style {
             if (typeof themeURL === 'string') {
                 resolve(themeURL);
             } else {
-                if (MP.DEBUG) { console.warn(`themeUrl is not a string: ${themeURL}`); }
+                if (MP.DEBUG) console.warn(`themeUrl is not a string: ${themeURL}`);
             }
         });
     }

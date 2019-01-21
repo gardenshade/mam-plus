@@ -125,7 +125,6 @@ namespace MP {
 
         // initialize core functions
         const alerts:Alerts = new Alerts();
-        const fake:Fake = new Fake();
 
         // Notify the user if the script was updated
         Check.updated()
@@ -153,7 +152,6 @@ namespace MP {
                 // TODO: Auto-push settings when each feature is constructed
                 settingsGlob.push(
                     hideHome.settings,
-                    fake.settings, //FIXME: Delete this
                     alerts.settings,
                     hideBrowse.settings,
                 );
