@@ -266,13 +266,7 @@ class Settings {
                 type: "checkbox",
                 desc: "Retrieve Goodreads rating info if possible",
             },
-            torGiftDefault: {
-                id: "torGiftDefault",
-                type: "textbox",
-                tag: "Default Gift",
-                placeholder: "ex. 5000, max",
-                desc: "Autofills the Gift box with a specified number of points.<br>(<em>Or the max allowable value, whichever is lower</em>)",
-            },
+
         },
         /** SHOUTBOX */
         shoutbox: {
@@ -317,15 +311,6 @@ class Settings {
                 tag: "Default Gift",
                 placeholder: "ex. 1000, max",
                 desc: "Autofills the Gift box with a specified number of points.<br>(<em>Or the max allowable value, whichever is lower</em>)",
-            },
-        },
-        /** OTHER */
-        other: {
-            pageTitle: "Other",
-            debug: {
-                id: "debug",
-                type: "checkbox",
-                desc: "Error log (<em>Click this checkbox to enable verbose logging to the console</em>)",
             },
         },
     };

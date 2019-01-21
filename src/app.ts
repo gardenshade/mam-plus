@@ -1,6 +1,7 @@
 /// <reference path="style.ts" />
 /// <reference path="./modules/core.ts" />
 /// <reference path="./modules/global.ts" />
+/// <reference path="./modules/tor.ts" />
 /// <reference path="settings.ts" />
 
 /**
@@ -131,6 +132,9 @@ namespace MP {
         const vaultLink: VaultLink = new VaultLink();
         const miniVaultInfo: MiniVaultInfo = new MiniVaultInfo();
 
+        // Initialize Torrent Page settings
+        const torGiftDefault: TorGiftDefault = new TorGiftDefault();
+
         /************
          * SETTINGS
          * Any feature above should have its settings pushed here
@@ -150,6 +154,7 @@ namespace MP {
                     hideBrowse.settings,
                     vaultLink.settings,
                     miniVaultInfo.settings,
+                    torGiftDefault.settings,
                     // This should be on the bottom
                     debug.settings,
                 );
