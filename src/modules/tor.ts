@@ -1,3 +1,5 @@
+/// <reference path="shared.ts" />
+
 /**
  * TORRENT PAGE FEATURES
  */
@@ -19,18 +21,10 @@ class TorGiftDefault implements Feature{
     constructor(){
         if(GM_getValue(this._settings.title)){
             Check.page('torrent')
-            .then( () => Check.elemLoad('#thanksArea') )
-            .then( () => {
-                const torPointBox: HTMLInputElement = <HTMLInputElement> document.querySelector('#thanksArea input[name=points]');
-
-                if(torPointBox){
-                    const userSetPoints:number = parseInt(GM_getValue(`${this._settings.title}_val`));
-                    let maxPoints:number = parseInt( torPointBox.getAttribute('max')! );
-                    /* FIXME: */console.log('>>>>>>',userSetPoints);
-                    if( userSetPoints !== NaN && userSetPoints <= maxPoints ){
-                        maxPoints = userSetPoints;
-                    }
-                    torPointBox.value = maxPoints.toFixed(0);
+            .then( (result) => {
+                if(result === true){
+                    Shared.fillGiftBox('#thanksArea input[name=points]', this._settings.title)
+                        .then((points) => console.log(`[M+] Set the default gift amount to ${points}`) );
                 }
             } );
         }

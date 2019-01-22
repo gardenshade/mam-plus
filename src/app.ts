@@ -1,7 +1,9 @@
+/// <reference path="types.ts" />
 /// <reference path="style.ts" />
 /// <reference path="./modules/core.ts" />
 /// <reference path="./modules/global.ts" />
 /// <reference path="./modules/tor.ts" />
+/// <reference path="./modules/user.ts" />
 /// <reference path="settings.ts" />
 
 /**
@@ -16,62 +18,7 @@
  * default user gift now uses dropdown.
  */
 
-type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'settings';
 
-enum SettingGroup {
-    'Global',
-    'Browse & Search',
-    'Torrent Page',
-    'Shoutbox',
-    'Mil. Vault',
-    'User Pages',
-    'Other'
-}
-
-interface ArrayObject {
-    [key:string]: string[];
-}
-
-interface StringObject {
-    [key:string]: string;
-}
-
-interface SettingGlobObject {
-    [key:number]: FeatureSettings[]
-}
-
-interface FeatureSettings {
-    scope: SettingGroup;
-    title: string;
-    type: 'checkbox'|'dropdown'|'textbox';
-    desc: string;
-}
-
-interface AnyFeature extends FeatureSettings {
-    tag?:string;
-    options?:StringObject;
-    placeholder?:string;
-}
-
-interface Feature {
-    settings: CheckboxSetting|DropdownSetting|TextboxSetting;
-}
-
-interface CheckboxSetting extends FeatureSettings{
-    type: 'checkbox';
-}
-
-interface DropdownSetting extends FeatureSettings {
-    type: 'dropdown';
-    tag: string;
-    options: StringObject;
-}
-
-interface TextboxSetting extends FeatureSettings {
-    type: 'textbox';
-    tag: string;
-    placeholder: string;
-}
 
 /**
  * Userscript namespace
@@ -135,6 +82,9 @@ namespace MP {
         // Initialize Torrent Page settings
         const torGiftDefault: TorGiftDefault = new TorGiftDefault();
 
+        // Initialize User Page settings
+        const userGiftDefault:UserGiftDefault = new UserGiftDefault();
+
         /************
          * SETTINGS
          * Any feature above should have its settings pushed here
@@ -155,6 +105,7 @@ namespace MP {
                     vaultLink.settings,
                     miniVaultInfo.settings,
                     torGiftDefault.settings,
+                    userGiftDefault.settings,
                     // This should be on the bottom
                     debug.settings,
                 );
