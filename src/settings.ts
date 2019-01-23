@@ -67,8 +67,6 @@ class Settings {
             // Add the save button & last part of the table
             outp += '<tr><td class="row1" colspan="2"><div id="mp_submit">Save M+ Settings</div><span class="mp_savestate" style="opacity:0">Saved!</span></td></tr></tbody>'
 
-            if (MP.DEBUG) console.log('RESULT:',outp);
-
             resolve(outp);
         } );
     }
@@ -291,26 +289,6 @@ class Settings {
                 tag: "Block Users",
                 placeholder: "ex. 1234, 108303, 10000",
                 desc: "Obscures messages from the listed users in the shoutbox",
-            },
-        },
-        /** VAULT */
-        vault: {
-            pageTitle: "Vault",
-            simpleVault: {
-                id: "simpleVault",
-                type: "checkbox",
-                desc: "Simplify the Vault pages. (<em>This removes everything except the donate button &amp; list of recent donations</em>)",
-            },
-        },
-        /** USER PAGES */
-        user: {
-            pageTitle: "User Pages",
-            userGiftDefault: {
-                id: "userGiftDefault",
-                type: "textbox",
-                tag: "Default Gift",
-                placeholder: "ex. 1000, max",
-                desc: "Autofills the Gift box with a specified number of points.<br>(<em>Or the max allowable value, whichever is lower</em>)",
             },
         },
     };

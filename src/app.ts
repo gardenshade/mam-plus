@@ -3,6 +3,7 @@
 /// <reference path="./modules/core.ts" />
 /// <reference path="./modules/global.ts" />
 /// <reference path="./modules/tor.ts" />
+/// <reference path="./modules/vault.ts" />
 /// <reference path="./modules/user.ts" />
 /// <reference path="settings.ts" />
 
@@ -11,11 +12,8 @@
  * FIXME: Search result ID changed on site, but not reflected in old build code.
  * FIXME: Stylesheet hardcoded to v4 branch; change to main when needed
  * FIXME: Goodreads links must be derefered
+ * TODO: Browse/Search page is being updated and might have new DOM pointers/lazyload
  * All styling is done via stylesheet. Use `.mp_dark` & `.mp_light` as needed.
- * Settings are now named `simplyLikeThis`; they now reside in classes
- * Fused hide banner/home settings. Now uses a dropdown. 'hideHome'
- * Browse/Search page is being updated and might have new DOM pointers/lazyload
- * default user gift now uses dropdown.
  */
 
 
@@ -37,9 +35,10 @@ namespace MP {
             'CODE: Script starts before the page loads and uses a CSS sheet to hopefully prevent flashing content. This likely introduced bugs. ',
             'CODE: Made features modular. This hopefully speeds up development',
             'FIX: Home page features were not running if navigated to via the Home button',
+            'FIX: Default User Gift is now a textbox just like the Default Torrent Gift'
         ] as string[],
         BUG_LIST: [
-            //
+            `???: Something is logging to the console, but I don't know what or where, so codes's probably running when it shouldn't`
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';
@@ -59,65 +58,47 @@ namespace MP {
         // Add a simple cookie to announce the script is being used
         document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/';
 
+        // initialize core functions
+        const alerts: Alerts = new Alerts();
+        new Debug();
+
+        // Notify the user if the script was updated
+        Check.updated()
+        .then((result) => { if (result) alerts.notify(result, CHANGELOG); });
+
         /**************
          * BEFORE PAGE LOAD
          * Nearly all features belong here, as they should have internal checks
          * for DOM elements as needed
          **************/
 
-        // initialize core functions
-        const alerts:Alerts = new Alerts();
-        const debug:Debug = new Debug();
+        // Initialize Global functions
+        new HideHome();
+        new HideBrowse();
+        new VaultLink();
+        new MiniVaultInfo();
 
-        // Notify the user if the script was updated
-        Check.updated()
-        .then( (result) => { if(result) alerts.notify(result, CHANGELOG); } );
+        // Initialize Torrent Page functions
+        new TorGiftDefault();
 
-        // Initialize global functions
-        const hideHome: HideHome = new HideHome();
-        const hideBrowse: HideBrowse = new HideBrowse();
-        const vaultLink: VaultLink = new VaultLink();
-        const miniVaultInfo: MiniVaultInfo = new MiniVaultInfo();
+        // Initialize Vault functions
+        new SimpleVault();
 
-        // Initialize Torrent Page settings
-        const torGiftDefault: TorGiftDefault = new TorGiftDefault();
-
-        // Initialize User Page settings
-        const userGiftDefault:UserGiftDefault = new UserGiftDefault();
+        // Initialize User Page functions
+        new UserGiftDefault();
 
         /************
          * SETTINGS
-         * Any feature above should have its settings pushed here
          ************/
 
         Check.page('settings')
-        .then(result => {
-            if (result === true) {
-                // Push all settings here
-                /** While all settings are grouped by their page (as defined by
-                 * `SettingGroup`), the order they are pushed will determine their
-                 * order relative to other settings in that group */
-                // TODO: Auto-push settings when each feature is constructed
-                settingsGlob.push(
-                    alerts.settings,
-                    hideHome.settings,
-                    hideBrowse.settings,
-                    vaultLink.settings,
-                    miniVaultInfo.settings,
-                    torGiftDefault.settings,
-                    userGiftDefault.settings,
-                    // This should be on the bottom
-                    debug.settings,
-                );
-
-                // Initialize the settings page
-                Settings.init(result, settingsGlob);
-            }
-        });
+        .then(result => { if (result === true) {
+            // Initialize the settings page
+            Settings.init(result, settingsGlob);
+        } });
 
         /******************
          * STYLES
-         *
          * Injects CSS
          ******************/
 

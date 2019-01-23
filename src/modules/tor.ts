@@ -1,4 +1,5 @@
 /// <reference path="shared.ts" />
+/// <reference path="../util.ts" />
 
 /**
  * TORRENT PAGE FEATURES
@@ -13,20 +14,19 @@ class TorGiftDefault implements Feature{
         placeholder: "ex. 5000, max",
         desc: 'Autofills the Gift box with a specified number of points. (<em>Or the max allowable value, whichever is lower</em>)',
     }
+    private _tar: string = '#thanksArea input[name=points]';
+
+    constructor(){
+        Util.startFeature(this._settings, this._tar, 'torrent')
+        .then(t => { if (t) { this._init() } });
+    }
+
+    private _init() {
+        new Shared().fillGiftBox(this._tar, this._settings.title)
+        .then((points) => console.log(`[M+] Set the default gift amount to ${points}`));
+    }
 
     get settings(): TextboxSetting {
         return this._settings;
-    }
-
-    constructor(){
-        if(GM_getValue(this._settings.title)){
-            Check.page('torrent')
-            .then( (result) => {
-                if(result === true){
-                    Shared.fillGiftBox('#thanksArea input[name=points]', this._settings.title)
-                        .then((points) => console.log(`[M+] Set the default gift amount to ${points}`) );
-                }
-            } );
-        }
     }
 }

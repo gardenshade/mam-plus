@@ -1,5 +1,5 @@
 /**
- * Types, Interfaces, etc
+ * Types, Interfaces, etc.
  */
 
 type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'settings';
@@ -9,7 +9,7 @@ enum SettingGroup {
     'Browse & Search',
     'Torrent Page',
     'Shoutbox',
-    'Mil. Vault',
+    'Vault',
     'User Pages',
     'Other'
 }

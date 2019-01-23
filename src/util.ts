@@ -40,4 +40,39 @@ class Util {
             GM_deleteValue(value);
         }
     }
+
+    /**
+     * Initializes a feature
+     */
+    public static async startFeature(
+        settings:FeatureSettings,
+        elem:string,
+        page?:ValidPage
+    ): Promise<boolean>{
+        // Queue the settings in case they're needed
+        MP.settingsGlob.push(settings);
+
+        // Function to return true when the element is loaded
+        async function run () {
+            await Check.elemLoad(elem);
+            return true;
+        }
+
+        // Is the setting enabled?
+        if (GM_getValue(settings.title)) {
+            // A specific page is needed
+            if (page) {
+                // Are we on the right page?
+                const result = await Check.page(page)
+                if (result === true) return run(); // Yes
+                else return false; // No
+            // Skip to element checking
+            } else {
+                return run();
+            }
+        // Setting is not enabled
+        }else{
+            return false;
+        }
+    }
 }

@@ -13,7 +13,8 @@ class Shared {
      * Receive a target and `this._settings.title`
      * @param tar CSS selector for a text input box
      */
-    public static fillGiftBox = ( tar:string, settingTitle:string ):Promise<number|undefined> => {
+    // TODO: with all Checking being done in `Util.startFeature()` it's no longer necessary to Check in this function
+    public fillGiftBox = ( tar:string, settingTitle:string ):Promise<number|undefined> => {
         if (MP.DEBUG) console.log( `Shared.fillGiftBox( ${tar}, ${settingTitle} )` );
 
         return new Promise( (resolve) => {

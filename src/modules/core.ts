@@ -19,8 +19,8 @@ class Alerts implements Feature{
         desc: 'Enable the MAM+ Alert panel for update information, etc.',
     }
 
-    get settings(): CheckboxSetting {
-        return this._settings;
+    constructor() {
+        MP.settingsGlob.push(this._settings);
     }
 
     public notify(kind: string | boolean, log: ArrayObject): Promise<any> {
@@ -100,6 +100,10 @@ class Alerts implements Feature{
             }
         });
     }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
 }
 
 class Debug implements Feature {
@@ -108,6 +112,10 @@ class Debug implements Feature {
         type: 'checkbox',
         title: 'debug',
         desc: 'Error log (<em>Click this checkbox to enable verbose logging to the console</em>)',
+    }
+
+    constructor() {
+        MP.settingsGlob.push(this._settings);
     }
 
     get settings(): CheckboxSetting {

@@ -81,7 +81,7 @@ class Check {
                 'preferences': 'settings',
                 'u'          : 'user',
                 'tor'        : subPage,
-                'millionaires': subPage,
+                'millionaires': 'vault', /* TODO: changed from subPage */
             };
         /* I can't figure out how to provide typing for an object-literal with
          * functions inside it, so we use IFs on the subPage after the fact */
