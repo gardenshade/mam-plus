@@ -116,7 +116,7 @@ class Check {
 
                     // Save the current page to be accessed later
                     GM_setValue('mp_currentPage',currentPage);
-                    GM_setValue('mp_currentSubPage',subPage);
+                    GM_setValue('mp_currentSubPage', subPage.split('.')[0]);
 
                     // If we're just checking what page we're on, return the page
                     if (!pageQuery) {
