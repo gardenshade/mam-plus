@@ -1,6 +1,6 @@
 # MAM+
 
-The MAM+ userscript, now using Typescript and Gulp 4. Built on [userscript-typescript-template](https://github.com/gardenshade/userscript-typescript-template).
+The MAM+ userscript, now using Typescript and Gulp 4.
 
 ## Installation
 

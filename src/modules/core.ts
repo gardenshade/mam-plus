@@ -1,3 +1,4 @@
+/// <reference path="../check.ts" />
 /**
  * CORE FEATURES
  *

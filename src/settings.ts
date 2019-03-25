@@ -183,7 +183,7 @@ class Settings {
 
             // Make sure the settings table has loaded
             Check.elemLoad('#mainBody > table')
-            .then(() => {
+            .then((result) => {
                 if (MP.DEBUG) console.log(`[M+] Starting to build Settings table...`);
                 // Create new table elements
                 const settingNav: Element = document.querySelector('#mainBody > table')!;

@@ -38,7 +38,7 @@ namespace MP {
             'FIX: Default User Gift is now a textbox just like the Default Torrent Gift'
         ] as string[],
         BUG_LIST: [
-            `???: Something is logging to the console, but I don't know what or where, so codes's probably running when it shouldn't`
+            `S: Currently, each function runs its own query to see what page is active; this value should be stored and reused for efficiency`
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';
@@ -54,6 +54,10 @@ namespace MP {
          * PRE SCRIPT
          ************/
         console.group(`Welcome to MAM+ v${VERSION}!!!`);
+
+        // The current page is not yet known
+        GM_deleteValue('mp_currentPage');
+        GM_deleteValue('mp_currentSubPage');
 
         // Add a simple cookie to announce the script is being used
         document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/';
