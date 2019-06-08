@@ -32,15 +32,16 @@ namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
         UPDATE_LIST: [
-            'CODE: Moved from Coffeescript to Typescript to allow for better practices and easier contribution. This likely introduced bugs.',
-            'CODE: Script starts before the page loads and uses a CSS sheet to hopefully prevent flashing content. This likely introduced bugs. ',
-            'CODE: Made features modular. This hopefully speeds up development',
-            'FIX: Home page features were not running if navigated to via the Home button',
-            'FIX: Default User Gift is now a textbox just like the Default Torrent Gift',
-            'ENHANCE: Toggle Snatched state can now be remembered'
+            `CODE: Moved from Coffeescript to Typescript to allow for better practices and easier contribution. This likely introduced bugs.`,
+            `CODE: Script starts before the page loads and uses a CSS sheet to hopefully prevent flashing content. This likely introduced bugs. `,
+            `CODE: Made features modular. This hopefully speeds up development`,
+            `FIX: Home page features were not running if navigated to via the Home button`,
+            `FIX: Default User Gift is now a textbox just like the Default Torrent Gift`,
+            `ENHANCE: Toggle Snatched state can now be remembered`,
         ] as string[],
         BUG_LIST: [
-            `S: Currently, each function runs its own query to see what page is active; this value should be stored and reused for efficiency`
+            `S: Currently, each function runs its own query to see what page is active; this value should be stored and reused for efficiency`,
+            `S: Plaintext Results textbox causes slight horizontal scrollbar when open`
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';

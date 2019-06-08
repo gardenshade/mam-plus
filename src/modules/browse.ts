@@ -152,7 +152,7 @@ class PlaintextSearch implements Feature {
         desc: `Insert plaintext search results at top of page`,
     }
     private _tar: string = '#ssr h1';
-    private _isOpen: string | undefined = GM_getValue(`${this._settings.title}State`);
+    private _isOpen:"true"| "false" | undefined = GM_getValue(`${this._settings.title}State`);
 
     constructor() {
         Util.startFeature(this._settings, this._tar, 'browse')
@@ -164,45 +164,119 @@ class PlaintextSearch implements Feature {
         let copyBtn: Promise<HTMLElement>;
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
         let share = new Shared();
+        let plainText:string = '';
 
-        // Queue building the button and getting the results
+        // Queue building the toggle button and getting the results
         await Promise.all([
             toggleBtn = share.createButton('plainToggle', 'Show Plaintext', 'div', '#ssr > h1', 'afterend', 'mp_toggle mp_plainBtn' ),
             resultList = share.getSearchList()
         ]);
 
+        // Process the results into plaintext
+        resultList.then( res => {
+            res.forEach( node => {
+                // Break out the important data from each node
+                let rawTitle:HTMLAnchorElement|null = node.querySelector('.title');
+                let title:string = '';
+                let seriesTitle:string = '';
+                let authTitle:string = '';
+                let narrTitle:string = '';
+                let seriesList:NodeListOf<HTMLAnchorElement>|null = node.querySelectorAll('.series');
+                let authList:NodeListOf<HTMLAnchorElement>|null = node.querySelectorAll('.author');
+                let narrList:NodeListOf<HTMLAnchorElement>|null = node.querySelectorAll('.narrator');
+
+                if(rawTitle === null){
+                    throw new Error(`Result title should not be null @ ${res}`);
+                }else{
+                    title = rawTitle.textContent!;
+                }
+
+                // Process series
+                if(seriesList !== null && seriesList.length > 0){
+                    seriesList.forEach( series => {
+                        seriesTitle += `${series.textContent} / `;
+                    } );
+                    // Remove trailing slash from last series, then style
+                    seriesTitle = seriesTitle.substring(0, seriesTitle.length - 3);
+                    seriesTitle = `(${seriesTitle})`;
+                }
+                // Process authors
+                if (authList !== null && authList.length > 0){
+                    authTitle = 'BY ';
+                    authList.forEach( auth => {
+                        authTitle += `${auth.textContent} AND `;
+                    } );
+                    // Remove trailing AND
+                    authTitle = authTitle.substring(0,authTitle.length-5);
+                }
+                // Process narrators
+                if (narrList !== null && narrList.length > 0){
+                    narrTitle = 'FT ';
+                    narrList.forEach( narr => {
+                        narrTitle += `${narr.textContent} AND `
+                    } );
+                    // Remove trailing AND
+                    narrTitle = narrTitle.substring(0,narrTitle.length-5);
+                }
+
+                plainText += `${title} ${seriesTitle} ${authTitle} ${narrTitle}\n`;
+            } )
+        } );
+
+        // Build the copy button
         copyBtn = share.createButton('plainCopy', 'Copy Plaintext', 'div', '#mp_plainToggle', 'afterend', 'mp_copy mp_plainBtn');
 
-        /* FIXME: */
-        toggleBtn;
-        copyBtn;
-        resultList;
+        // Build textbox and add button functionality
+        copyBtn.then(async btn => {
+            btn.insertAdjacentHTML('afterend', `<br><textarea class='mp_plaintextSearch' style='display: none'>${plainText}</textarea>`);
 
+            btn.addEventListener('click', e => {
+                // Have to override the Navigator type to prevent TS errors
+                let nav:NavigatorExtended|undefined = <NavigatorExtended>navigator;
+                if(nav === undefined){
+                    throw new Error("browser doesn't support 'navigator'?")
+                }else{
+                    // Copy results to clipboard
+                    nav.clipboard!.writeText(plainText);
+                    console.log('[M+] Copied plaintext results to your clipboard!');
+                }
+            });
+        });
+
+        // Init open state
         this._setOpenState(this._isOpen);
 
-        /* toggleBtn.then(btn => {
-            // Update based on vis state
+        // Set up toggle button functionality
+        toggleBtn.then(btn => {
             btn.addEventListener('click', () => {
-                // TODO: This is where you are
-                if (this._visible === "true") {
-                    this._setVisState("false");
-                } else {
-                    this._setVisState("true");
+                // Textbox should exist, but just in case...
+                const textbox: HTMLTextAreaElement | null = document.querySelector('.mp_plaintextSearch');
+                if (textbox === null) { throw new Error(`textbox doesn't exist!`); }
+                else{
+                    // Toggle
+                    if (this._isOpen === "false") {
+                        this._setOpenState("true");
+                        textbox.style.display = 'block';
+                        btn.innerText = 'Hide Plaintext';
+                    } else {
+                        this._setOpenState("false");
+                        textbox.style.display = 'none';
+                        btn.innerText = 'Show Plaintext';
+                    }
                 }
-                this._filterResults(results, snatchedHook);
             }, false);
         }).catch(err => {
             throw new Error(err);
         });
 
-        copyBtn.then( btn => {
-            btn.insertAdjacentElement('afterend','');
-        } ); */
-
         console.log('[M+] Inserted plaintext search results!');
     }
 
-    private _setOpenState(val: string | undefined): void {
+    /**
+     * Sets Open State to true/false internally and in script storage
+     * @param val stringified boolean
+     */
+    private _setOpenState(val:"true"|"false"|undefined): void {
         if (MP.DEBUG) { console.log('PT open state:', this._isOpen, '\nPT val:', val); }
         if (val === undefined) { val = "false"; } // Default value
         GM_setValue('toggleSnatchedState', val);
@@ -213,11 +287,11 @@ class PlaintextSearch implements Feature {
         return this._settings;
     }
 
-    get isOpen(): string | undefined {
+    get isOpen(): "true"|"false" | undefined {
         return this._isOpen;
     }
 
-    set isOpen(val: string | undefined) {
+    set isOpen(val: "true"|"false" | undefined) {
         this._setOpenState(val);
     }
 }

@@ -30,3 +30,26 @@ class TorGiftDefault implements Feature{
         return this._settings;
     }
 }
+
+class GoodreadsButton implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'checkbox',
+        title: 'goodreadsButton',
+        desc: 'Enable the MAM-to-Goodreads buttons',
+    }
+    private _tar: string = '#torDetMainCon';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, 'torrent')
+            .then(t => { if (t) { this._init() } });
+    }
+
+    private _init() {
+        console.log(`[M+] Added the MAM-to-Goodreads button!`);
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}

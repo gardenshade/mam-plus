@@ -240,11 +240,6 @@ class Settings {
         /** TORRENT */
         torrent: {
             pageTitle: "Torrent",
-            goodreadsBtn: {
-                id: "goodreadsBtn",
-                type: "checkbox",
-                desc: "Enable the MAM-to-Goodreads buttons",
-            },
             fetchRating: {
                 id: "fetchRating",
                 type: "checkbox",
