@@ -2,6 +2,9 @@
  * BROWSE/REQUESTS FEATURES
  */
 
+ /**
+  * Allows Snatched torrents to be hidden/shown
+  */
 class ToggleSnatched implements Feature {
     private _settings: CheckboxSetting = {
         scope: SettingGroup['Browse & Search'],
@@ -141,6 +144,9 @@ class ToggleSnatched implements Feature {
     }
 }
 
+/**
+ * Remembers the state of ToggleSnatched between page loads
+ */
 class StickySnatchedToggle implements Feature{
     private _settings: CheckboxSetting = {
         scope: SettingGroup['Browse & Search'],
