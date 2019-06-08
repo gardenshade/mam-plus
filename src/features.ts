@@ -15,6 +15,7 @@ class InitFeatures{
         // Initialize Browse/Request Page functions
         new ToggleSnatched();
         new StickySnatchedToggle();
+        new PlaintextSearch();
 
         // Initialize Torrent Page functions
         new TorGiftDefault();

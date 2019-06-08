@@ -1,3 +1,4 @@
+/// <reference path="shared.ts" />
 /**
  * BROWSE/REQUESTS FEATURES
  */
@@ -13,7 +14,7 @@ class ToggleSnatched implements Feature {
         desc: `Add a button to hide/show results that you've snatched`,
     }
     private _tar: string = '#ssr';
-    private _visible: string | undefined = GM_getValue('toggleSnatchedState');
+    private _visible: string | undefined = GM_getValue(`${this._settings.title}State`);
     private _searchList: NodeListOf<HTMLTableRowElement>|undefined;
 
     constructor() {
@@ -22,31 +23,31 @@ class ToggleSnatched implements Feature {
     }
 
     private async _init():Promise<void> {
-        let toggle: Promise<HTMLHeadingElement>;
+        let toggle: Promise<HTMLElement>;
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
         let results: NodeListOf<HTMLTableRowElement>;
         let snatchedHook: string = 'td div[class^="browse"]';
+        let share:Shared = new Shared();
 
         if (!GM_getValue('stickySnatchedToggle')){
-            this.setVisState(undefined);
+            this._setVisState(undefined);
         }
 
         // Queue building the button and getting the results
         await Promise.all([
-            toggle = this._buildBtn(),
-            resultList = this._getSearchList()
+            toggle = share.createButton('snatchedToggle', 'Hide Snatched', 'h1', '#resetNewIcon', 'beforebegin', 'torFormButton' ),
+            resultList = share.getSearchList()
         ]);
 
-        this.setVisState(this._visible);
+        this._setVisState(this._visible);
 
         toggle.then(btn => {
             // Update based on vis state
             btn.addEventListener( 'click', () => {
-                // TODO: This is where you are
                 if(this._visible === "true"){
-                    this.setVisState("false");
+                    this._setVisState("false");
                 }else{
-                    this.setVisState("true");
+                    this._setVisState("true");
                 }
                 this._filterResults(results,snatchedHook);
             },false );
@@ -55,42 +56,13 @@ class ToggleSnatched implements Feature {
         });
 
         resultList.then(
-            res => {
+            async res => {
                 results = res;
-                this._filterResults(results, snatchedHook);
+                this._searchList = res;
+                await this._filterResults(results, snatchedHook);
+                console.log('[M+] Added the Toggle Snatched button!');
             }
         );
-    }
-
-    private _buildBtn(): Promise<HTMLHeadingElement> {
-        return new Promise( resolve => {
-            // Choose the new button insert location and insert elements
-            const clearNewBtn: HTMLElement = <HTMLElement>document.querySelector('#resetNewIcon');
-            const toggleBtn: HTMLHeadingElement = document.createElement('h1');
-
-            clearNewBtn.insertAdjacentElement("beforebegin", toggleBtn);
-            Util.setAttr(toggleBtn, {
-                "id": "mp_snatchedToggle",
-                "class": "torFormButton",
-                "role": "button"
-            });
-            // Set initial button text
-            toggleBtn.innerHTML = 'Hide Snatched';
-            resolve( toggleBtn );
-        } );
-    }
-
-    /**
-     * Returns list of all snatches from Browse page
-     */
-    private _getSearchList(): Promise<NodeListOf<HTMLTableRowElement>> {
-        return new Promise( async (resolve) => {
-            // Wait for the search results to exist
-            await Check.elemLoad('#ssr tr[id ^= "tdr"] td');
-            const snatchList: NodeListOf<HTMLTableRowElement> = <NodeListOf<HTMLTableRowElement>>document.querySelectorAll('#ssr tr[id ^= "tdr"]')!;
-            this._searchList = snatchList;
-            resolve(snatchList);
-        } );
     }
 
     /**
@@ -103,7 +75,6 @@ class ToggleSnatched implements Feature {
             const btn:HTMLHeadingElement = <HTMLHeadingElement>document.querySelector('#mp_snatchedToggle')!;
             // Select only the items that match our sub element
             let result = key.querySelector(subTar);
-            console.log('🔥',result);
             if(result !== null){
                 // Hide/show as required
                 if(this._visible === 'false'){
@@ -117,7 +88,7 @@ class ToggleSnatched implements Feature {
         });
     }
 
-    private setVisState(val:string|undefined):void {
+    private _setVisState(val:string|undefined):void {
         if(MP.DEBUG){console.log('vis state:',this._visible,'\nval:',val);}
         if (val === undefined) { val = "true"; }
         GM_setValue('toggleSnatchedState', val);
@@ -140,7 +111,7 @@ class ToggleSnatched implements Feature {
     }
 
     set visible( val:string|undefined ){
-        this.setVisState(val);
+        this._setVisState(val);
     }
 }
 
@@ -167,5 +138,86 @@ class StickySnatchedToggle implements Feature{
 
     get settings(): CheckboxSetting {
         return this._settings;
+    }
+}
+
+/**
+ * Generate a plaintext list of search results
+ */
+class PlaintextSearch implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup['Browse & Search'],
+        type: 'checkbox',
+        title: 'plaintextSearch',
+        desc: `Insert plaintext search results at top of page`,
+    }
+    private _tar: string = '#ssr h1';
+    private _isOpen: string | undefined = GM_getValue(`${this._settings.title}State`);
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, 'browse')
+            .then(t => { if (t) { this._init() } });
+    }
+
+    private async _init() {
+        let toggleBtn: Promise<HTMLElement>;
+        let copyBtn: Promise<HTMLElement>;
+        let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
+        let share = new Shared();
+
+        // Queue building the button and getting the results
+        await Promise.all([
+            toggleBtn = share.createButton('plainToggle', 'Show Plaintext', 'div', '#ssr > h1', 'afterend', 'mp_toggle mp_plainBtn' ),
+            resultList = share.getSearchList()
+        ]);
+
+        copyBtn = share.createButton('plainCopy', 'Copy Plaintext', 'div', '#mp_plainToggle', 'afterend', 'mp_copy mp_plainBtn');
+
+        /* FIXME: */
+        toggleBtn;
+        copyBtn;
+        resultList;
+
+        this._setOpenState(this._isOpen);
+
+        /* toggleBtn.then(btn => {
+            // Update based on vis state
+            btn.addEventListener('click', () => {
+                // TODO: This is where you are
+                if (this._visible === "true") {
+                    this._setVisState("false");
+                } else {
+                    this._setVisState("true");
+                }
+                this._filterResults(results, snatchedHook);
+            }, false);
+        }).catch(err => {
+            throw new Error(err);
+        });
+
+        copyBtn.then( btn => {
+            btn.insertAdjacentElement('afterend','');
+        } ); */
+
+        console.log('[M+] Inserted plaintext search results!');
+    }
+
+    private _setOpenState(val: string | undefined): void {
+        if (MP.DEBUG) { console.log('PT open state:', this._isOpen, '\nPT val:', val); }
+        if (val === undefined) { val = "false"; } // Default value
+        GM_setValue('toggleSnatchedState', val);
+        this._isOpen = val;
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+
+    get isOpen(): string | undefined {
+        return this._isOpen;
+    }
+
+    set isOpen(val: string | undefined) {
+        this._setOpenState(val);
     }
 }

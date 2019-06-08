@@ -35,4 +35,46 @@ class Shared {
                 });
         } );
     }
+
+    /**
+     * Returns list of all snatches from Browse page
+     */
+    public getSearchList = (): Promise<NodeListOf<HTMLTableRowElement>> => {
+        if (MP.DEBUG) console.log(`Shared.getSearchList( )`);
+        return new Promise( async (resolve,reject) => {
+            // Wait for the search results to exist
+            await Check.elemLoad('#ssr tr[id ^= "tdr"] td');
+            // Select all search results
+            const snatchList: NodeListOf<HTMLTableRowElement> = <NodeListOf<HTMLTableRowElement>>document.querySelectorAll('#ssr tr[id ^= "tdr"]');
+            if(snatchList === null || snatchList == undefined){
+                reject(`snatchList is ${snatchList}`);
+            }
+            else{ resolve(snatchList); }
+        } );
+    }
+
+    /**
+     * Create a button
+     */
+    public createButton( id:string, text:string, type:string = 'h1', tar:string, relative:"beforebegin"|"afterend" = "afterend", btnClass:string = "mp_btn" ): Promise<HTMLElement> {
+        return new Promise( (resolve,reject) => {
+            // Choose the new button insert location and insert elements
+            const target: HTMLElement|null = <HTMLElement>document.querySelector(tar);
+            const btn: HTMLElement = document.createElement( type );
+
+            if(target === null){
+                reject(`${tar} is null!`);
+            }
+
+            target.insertAdjacentElement(relative, btn);
+            Util.setAttr(btn, {
+                "id": `mp_${id}`,
+                "class": btnClass,
+                "role": "button"
+            });
+            // Set initial button text
+            btn.innerHTML = text;
+            resolve(btn);
+        } );
+    }
 }

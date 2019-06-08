@@ -237,14 +237,6 @@ class Settings {
 
     // FIXME: Move all settings into a Feature, then delete this
     public static obj: object = {
-        /** BROWSE / REQUESTS */
-        browse: {
-            plaintextSearch: {
-                id: "plaintextSearch",
-                type: "checkbox",
-                desc: "Insert plaintext search results at top of page",
-            },
-        },
         /** TORRENT */
         torrent: {
             pageTitle: "Torrent",
