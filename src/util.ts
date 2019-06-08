@@ -42,6 +42,14 @@ class Util {
     }
 
     /**
+     * Log a message about a counted result
+     */
+    public static reportCount(did:string,num:number,thing:string):void{
+        if(num !== 1){ thing += 's' }
+        if(MP.DEBUG) { console.log(`> ${did} ${num} ${thing}`);}
+    }
+
+    /**
      * Initializes a feature
      */
     public static async startFeature(

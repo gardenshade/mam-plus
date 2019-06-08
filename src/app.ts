@@ -3,13 +3,14 @@
 /// <reference path="./modules/core.ts" />
 /// <reference path="./modules/global.ts" />
 /// <reference path="./modules/tor.ts" />
+/// <reference path="./modules/browse.ts" />
 /// <reference path="./modules/vault.ts" />
 /// <reference path="./modules/user.ts" />
+/// <reference path="features.ts" />
 /// <reference path="settings.ts" />
 
 /**
  * BREAKING CHANGES INTRODUCED WHILE CODING
- * FIXME: Search result ID changed on site, but not reflected in old build code.
  * FIXME: Stylesheet hardcoded to v4 branch; change to main when needed
  * FIXME: Goodreads links must be derefered
  * TODO: Browse/Search page is being updated and might have new DOM pointers/lazyload
@@ -35,7 +36,8 @@ namespace MP {
             'CODE: Script starts before the page loads and uses a CSS sheet to hopefully prevent flashing content. This likely introduced bugs. ',
             'CODE: Made features modular. This hopefully speeds up development',
             'FIX: Home page features were not running if navigated to via the Home button',
-            'FIX: Default User Gift is now a textbox just like the Default Torrent Gift'
+            'FIX: Default User Gift is now a textbox just like the Default Torrent Gift',
+            'ENHANCE: Toggle Snatched state can now be remembered'
         ] as string[],
         BUG_LIST: [
             `S: Currently, each function runs its own query to see what page is active; this value should be stored and reused for efficiency`
@@ -49,7 +51,7 @@ namespace MP {
     export let mpCss:Style = new Style();
     export let settingsGlob:AnyFeature[] = [];
 
-    export const run = () => {
+    export const run = async () => {
         /************
          * PRE SCRIPT
          ************/
@@ -57,7 +59,7 @@ namespace MP {
 
         // The current page is not yet known
         GM_deleteValue('mp_currentPage');
-        GM_deleteValue('mp_currentSubPage');
+        Check.page();
 
         // Add a simple cookie to announce the script is being used
         document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/';
@@ -70,26 +72,7 @@ namespace MP {
         Check.updated()
         .then((result) => { if (result) alerts.notify(result, CHANGELOG); });
 
-        /**************
-         * BEFORE PAGE LOAD
-         * Nearly all features belong here, as they should have internal checks
-         * for DOM elements as needed
-         **************/
-
-        // Initialize Global functions
-        new HideHome();
-        new HideBrowse();
-        new VaultLink();
-        new MiniVaultInfo();
-
-        // Initialize Torrent Page functions
-        new TorGiftDefault();
-
-        // Initialize Vault functions
-        new SimpleVault();
-
-        // Initialize User Page functions
-        new UserGiftDefault();
+        new InitFeatures();
 
         /************
          * SETTINGS
@@ -97,6 +80,7 @@ namespace MP {
 
         Check.page('settings')
         .then(result => { if (result === true) {
+
             // Initialize the settings page
             Settings.init(result, settingsGlob);
         } });

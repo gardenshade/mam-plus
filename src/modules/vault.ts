@@ -1,5 +1,5 @@
 /**
- * VAULTFEATURES
+ * VAULT FEATURES
  */
 
 class SimpleVault implements Feature {
@@ -17,7 +17,7 @@ class SimpleVault implements Feature {
     }
 
     private async _init(){
-        const subPage:string = GM_getValue('mp_currentSubPage');
+        const subPage:string = GM_getValue('mp_currentPage');
         const page:HTMLElement = <HTMLElement>document.querySelector(this._tar);
         console.group(`Applying Vault (${subPage}) settings...`);
 
@@ -43,7 +43,7 @@ class SimpleVault implements Feature {
         }else{
             page.style.paddingBottom = '25px';
         }
-
+        console.log('[M+] Simplified the vault page!');
     }
 
     get settings(): CheckboxSetting {

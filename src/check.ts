@@ -8,20 +8,22 @@ class Check {
     public static prevVer: string | undefined = GM_getValue('mp_version');
 
     /**
-     * Checks to see if an element exists, then resolves a promise when it exists
+     * Waits for an element to exist, then returns it
+     * @param selector css selector string
      */
-    public static elemLoad( selector:string ):Promise<Node|null|void> {
-        let elem:HTMLElement|null = document.querySelector(selector);
+    public static async elemLoad( selector:string ):Promise<HTMLElement>{
+        // Select the actual element
+        const elem: HTMLElement | null = document.querySelector(selector);
+        if (MP.DEBUG) { console.log(`%c Looking for ${selector}: ${elem}`, 'background: #222; color: #555'); }
 
-        if( elem === null) {
-            return Util.afTimer().then( () => {
-                this.elemLoad( selector );
-            } );
-        }else if( elem === undefined ){
-            throw new Error(`Elem "${elem}" is undefined`);
-
-        } else {
-            return Promise.resolve( elem.parentNode );
+        if (elem === undefined) {
+            throw `${selector} is undefined!`;
+        }
+        if(elem === null){
+            await Util.afTimer();
+            return await this.elemLoad(selector);
+        }else{
+            return elem;
         }
     }
 
@@ -71,6 +73,8 @@ class Check {
     public static page(pageQuery?:ValidPage):Promise<string|boolean>{
         if (MP.DEBUG) { console.group(`Check.page()`); }
         let storedPage = GM_getValue('mp_currentPage');
+        if (MP.DEBUG) {console.log(`Stored Page: ${storedPage}`);}
+
 
         return new Promise( (resolve) => {
 
@@ -108,7 +112,7 @@ class Check {
                 if (MP.DEBUG) { console.log(`Page @ ${pageStr}\nSubpage @ ${subPage}`); }
                 if (cases[pageStr]) {
                     if (cases[pageStr] === subPage) {
-                        currentPage = subPage.split('.')[0];
+                        currentPage = subPage.split('.')[0].replace(/[0-9]/g,'');
                     } else {
                         currentPage = cases[pageStr];
                     }
@@ -116,7 +120,6 @@ class Check {
 
                     // Save the current page to be accessed later
                     GM_setValue('mp_currentPage',currentPage);
-                    GM_setValue('mp_currentSubPage', subPage.split('.')[0]);
 
                     // If we're just checking what page we're on, return the page
                     if (!pageQuery) {

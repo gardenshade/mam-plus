@@ -31,7 +31,7 @@ class Settings {
     private static _buildTable( page:SettingGlobObject ):Promise<string>{
         if (MP.DEBUG) console.log('_buildTable(',page,')');
         return new Promise( resolve => {
-            let outp = '<tbody><tr><td class="row1" colspan="2">Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.</td></tr>';
+            let outp = '<tbody><tr><td class="row1" colspan="2"><br>Here you can enable &amp; disable any feature from the <a href="/forums.php?action=viewtopic&topicid=41863&page=p376355#376355">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.<br><br></td></tr>';
 
             Object.keys(page).forEach( scope => {
                 let scopeNum:number = Number(scope);
@@ -176,14 +176,14 @@ class Settings {
      * @param result Value that must be passed down from `Check.page('settings')`
      * @param settings The array of features to provide settings for
      */
-    public static init( result:boolean, settings:AnyFeature[] ){
+    public static async init( result:boolean, settings:AnyFeature[] ){
         // This will only run if `Check.page('settings)` returns true & is passed here
         if(result === true){
             if (MP.DEBUG) { console.group(`new Settings()`); }
 
             // Make sure the settings table has loaded
-            Check.elemLoad('#mainBody > table')
-            .then((result) => {
+            await Check.elemLoad('#mainBody > table')
+            .then((r) => {
                 if (MP.DEBUG) console.log(`[M+] Starting to build Settings table...`);
                 // Create new table elements
                 const settingNav: Element = document.querySelector('#mainBody > table')!;
@@ -199,7 +199,7 @@ class Settings {
                     'cellspacing': '1',
                     'style': 'width:100%;min-width:100%;max-width:100%;',
                 });
-                settingTable.innerHTML = 'MAM+ Settings';
+                settingTitle.innerHTML = 'MAM+ Settings';
                 // Group settings by page
                 this._getScopes(settings)
                 // Generate table HTML from feature settings
@@ -239,12 +239,6 @@ class Settings {
     public static obj: object = {
         /** BROWSE / REQUESTS */
         browse: {
-            pageTitle: "Browse &amp; Requests",
-            hideSnatched: {
-                id: "hideSnatched",
-                type: "checkbox",
-                desc: "Enable the Hide Snatched button",
-            },
             plaintextSearch: {
                 id: "plaintextSearch",
                 type: "checkbox",

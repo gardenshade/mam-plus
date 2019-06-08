@@ -2,7 +2,13 @@
  * Types, Interfaces, etc.
  */
 
-type ValidPage = 'browse' | 'torrent' | 'shoutbox' | 'vault' | 'user' | 'settings';
+type ValidPage = 'browse'|
+                'requests'|
+                'torrent' |
+                'shoutbox' |
+                'vault' |
+                'user' |
+                'settings';
 
 enum SettingGroup {
     'Global',
