@@ -220,7 +220,7 @@ class GoodreadsButton implements Feature {
             },
         }
         if (cases[type]) { cases[type](); }
-        return `https://www.goodreads.com/search?q=${encodeURIComponent(inp).replace('\'', '&apos;')}&search_type=books&search%5Bfield%5D=${grType}`;
+        return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(inp).replace('\'', '&apos;')}&search_type=books&search%5Bfield%5D=${grType}`;
 
         // Return a value eventually
     }
