@@ -2,9 +2,8 @@
 /// <reference path="../util.ts" />
 
 /**
- * TORRENT PAGE FEATURES
+ * Autofills the Gift box with a specified number of points.
  */
-
 class TorGiftDefault implements Feature{
     private _settings: TextboxSetting = {
         scope: SettingGroup['Torrent Page'],

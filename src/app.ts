@@ -40,6 +40,7 @@ namespace MP {
             `ENHANCE: Toggle Snatched state can now be remembered`,
         ] as string[],
         BUG_LIST: [
+            `M: Browse page features only work on first page`,
             `S: Currently, each function runs its own query to see what page is active; this value should be stored and reused for efficiency`,
             `S: Plaintext Results textbox causes slight horizontal scrollbar when open`
         ] as string[],
