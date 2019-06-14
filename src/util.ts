@@ -83,4 +83,45 @@ class Util {
             return false;
         }
     }
+
+    /**
+     * Trims a string longer than a specified char limit, to a full word
+     */
+    public static trimString( inp:string,max:number ):string{
+        if(inp.length > max){
+            inp = inp.substring( 0,max+1 );
+            inp = inp.substring( 0, (Math.min( inp.length,inp.lastIndexOf(' ') )) )
+        }
+        return inp;
+    }
+
+    /**
+     * Removes brackets & all contained words from a string
+     */
+    public static bracketRemover( inp:string ):string{
+        return inp
+            .replace(/{+.*?}+/g, '')
+            .replace(/\[\[|\]\]/g, '')
+            .replace(/<.*?>/g, '')
+            .replace(/\(.*?\)/g, '')
+            .trim();
+    }
+
+    /**
+     * Converts a string to an array
+     */
+    public static stringToArray( inp:string, splitPoint?:"ws" ):string[]{
+        return ((splitPoint != null) && (splitPoint !== 'ws') ? inp.split(splitPoint) : inp.match(/\S+/g) || []);
+    }
+
+    public static arrayToString( inp:string[], end?:number ):string {
+        let outp:string = '';
+        inp.forEach( (key, val) => {
+            outp += key;
+            if(end && (val+1 !== inp.length)){
+                outp += ' ';
+            }
+        } );
+        return outp;
+    }
 }

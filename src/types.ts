@@ -10,6 +10,8 @@ type ValidPage = 'browse'|
                 'user' |
                 'settings';
 
+type BookData = 'book'|'author'|'series';
+
 enum SettingGroup {
     'Global',
     'Browse & Search',
@@ -26,6 +28,11 @@ interface ArrayObject {
 
 interface StringObject {
     [key: string]: string;
+}
+
+interface BookDataObject extends StringObject {
+    ['extracted']: string;
+    ['desc']: string;
 }
 
 interface SettingGlobObject {
