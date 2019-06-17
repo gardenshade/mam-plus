@@ -182,3 +182,14 @@ a[id^="torDeBookmark"]{
     width: 100%;
     height: 175px;
 }
+
+.mp_muted{
+    transition: all 0.3s;
+    filter: blur(3px);
+    opacity: 0.3;
+
+    &:hover{
+        filter: blur(0);
+        opacity: 0.5;
+    }
+}

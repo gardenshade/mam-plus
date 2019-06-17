@@ -22,6 +22,8 @@ enum SettingGroup {
     'Other'
 }
 
+type ShoutboxUserType = 'priority' | 'mute';
+
 interface ArrayObject {
     [key: string]: string[];
 }

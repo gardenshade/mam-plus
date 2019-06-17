@@ -114,6 +114,24 @@ class Util {
         return ((splitPoint != null) && (splitPoint !== 'ws') ? inp.split(splitPoint) : inp.match(/\S+/g) || []);
     }
 
+    /**
+     * Converts a comma (or other) separated value into an array
+     * @param inp String to be divided
+     * @param divider The divider (default: ',')
+     */
+    public static csvToArray( inp:string, divider:string = ',' ):string[]{
+        let arr: string[] = [];
+        inp.split(divider).forEach(item => {
+            arr.push(item.trim());
+        })
+        return arr;
+    }
+
+    /**
+     * Convert an array to a string
+     * @param inp string
+     * @param end cut-off point
+     */
     public static arrayToString( inp:string[], end?:number ):string {
         let outp:string = '';
         inp.forEach( (key, val) => {
@@ -123,5 +141,27 @@ class Util {
             }
         } );
         return outp;
+    }
+
+    /**
+     * Converts a DOM node reference into an HTML Element reference
+     * @param node The node to convert
+     */
+    public static nodeToElem( node:Node ):HTMLElement{
+        if(node.firstChild !== null){
+            return <HTMLElement>node.firstChild!.parentElement!;
+        }else{
+            console.warn('🔥 Node-to-elem without childnode is untested');
+            let tempNode:Node = node;
+            node.appendChild(tempNode);
+            let selected:HTMLElement = <HTMLElement>node.firstChild!.parentElement!;
+            node.removeChild(tempNode);
+            return selected;
+        }
+    }
+
+    public static caselessStringMatch( a:string, b:string ):boolean{
+        let compare: number = a.localeCompare(b, 'en', { sensitivity: 'base' });
+        return (compare === 0) ? true : false;
     }
 }

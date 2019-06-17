@@ -29,6 +29,11 @@ class InitFeatures{
         new GoodreadsButton();
         new TorGiftDefault();
 
+        // Initialize Shoutbox functions
+        new PriorityUsers();
+        new PriorityStyle();
+        new MutedUsers();
+
         // Initialize Vault functions
         new SimpleVault();
 

@@ -3,6 +3,7 @@
 /// <reference path="./modules/core.ts" />
 /// <reference path="./modules/global.ts" />
 /// <reference path="./modules/tor.ts" />
+/// <reference path="./modules/shout.ts" />
 /// <reference path="./modules/browse.ts" />
 /// <reference path="./modules/vault.ts" />
 /// <reference path="./modules/user.ts" />
@@ -38,6 +39,8 @@ namespace MP {
             `FIX: Home page features were not running if navigated to via the Home button`,
             `FIX: Default User Gift is now a textbox just like the Default Torrent Gift`,
             `ENHANCE: Toggle Snatched state can now be remembered`,
+            `ENHANCE: Priority Users can now be matched via username <em>and</em> ID`,
+            `CHANGE: Priority User Styling setting uses HSL instead of RGB`,
         ] as string[],
         BUG_LIST: [
             `M: Browse page features only work on first page`,

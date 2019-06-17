@@ -234,43 +234,4 @@ class Settings {
             });
         }
     }
-
-    // FIXME: Move all settings into a Feature, then delete this
-    public static obj: object = {
-        /** TORRENT */
-        torrent: {
-            pageTitle: "Torrent",
-            fetchRating: {
-                id: "fetchRating",
-                type: "checkbox",
-                desc: "Retrieve Goodreads rating info if possible",
-            },
-
-        },
-        /** SHOUTBOX */
-        shoutbox: {
-            pageTitle: "Shoutbox",
-            priorityUsers: {
-                id: "priorityUsers",
-                type: "textbox",
-                tag: "Emphasize Users",
-                placeholder: "ex. 6, 25420, 77618",
-                desc: "Emphasizes messages from the listed users in the shoutbox",
-            },
-            priorityStyle: {
-                id: "priorityStyle",
-                type: "textbox",
-                tag: "Emphasis Style",
-                placeholder: "default: 125, 125, 125, 0.3",
-                desc: "Change the color/opacity of the highlighting rule for emphasized users\' posts.<br>(<em>This is formatted as R,G,B,Opacity. RGB are 0-255 and Opacity is 0-1</em>)",
-            },
-            blockUsers: {
-                id: "blockUsers",
-                type: "textbox",
-                tag: "Block Users",
-                placeholder: "ex. 1234, 108303, 10000",
-                desc: "Obscures messages from the listed users in the shoutbox",
-            },
-        },
-    };
 }

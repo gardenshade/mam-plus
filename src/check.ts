@@ -28,6 +28,26 @@ class Check {
     }
 
     /**
+     * Runs a function whenever an element changes
+     * @param selector The element to be observed. Can be a string.
+     * @param callback The function to run when the observer triggers
+     */
+    public static async elemObserver(selector: string | HTMLElement | null, callback:MutationCallback, config: MutationObserverInit = {
+        childList: true,
+        attributes: true
+    } ) {
+        let selected:HTMLElement|null = null;
+        if(typeof selector === 'string'){
+            selected = <HTMLElement|null>document.querySelector(selector);
+            if(selected === null){ throw new Error(`Couldn't find '${selector}'`); }
+        }
+        let observer:MutationObserver = new MutationObserver( callback );
+
+        observer.observe(selected!, config);
+
+    }
+
+    /**
      * Checks to see if the script has been updated from an older version
      */
     public static updated():Promise<string|boolean> {
