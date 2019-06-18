@@ -7,7 +7,6 @@
 // @run-at       document-start
 // @include      https://myanonamouse.net/*
 // @include      https://www.myanonamouse.net/*
-// @connect      https://www.dropbox.com/*
 // @icon         https://i.imgur.com/dX44pSv.png
 // @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css
 // @grant        GM_setValue
