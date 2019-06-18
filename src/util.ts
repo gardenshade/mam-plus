@@ -55,7 +55,7 @@ class Util {
     public static async startFeature(
         settings:FeatureSettings,
         elem:string,
-        page?:ValidPage
+        page?:ValidPage[]
     ): Promise<boolean>{
         // Queue the settings in case they're needed
         MP.settingsGlob.push(settings);
@@ -69,11 +69,17 @@ class Util {
         // Is the setting enabled?
         if (GM_getValue(settings.title)) {
             // A specific page is needed
-            if (page) {
-                // Are we on the right page?
-                const result = await Check.page(page)
-                if (result === true) return run(); // Yes
-                else return false; // No
+            if( page && page.length > 0 ){
+                // Loop over all required pages
+                let results:boolean[] = [];
+                await page.forEach( p => {
+                    Check.page(p)
+                    .then( r => { results.push( <boolean>r ); });
+                } );
+                // If any requested page matches the current page, run the feature
+                if (results.includes(true) === true) return run();
+                else return false;
+
             // Skip to element checking
             } else {
                 return run();

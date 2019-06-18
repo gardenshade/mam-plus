@@ -17,7 +17,7 @@ class UserGiftDefault implements Feature {
     private _tar: string = '#bonusgift';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'user')
+        Util.startFeature(this._settings, this._tar, ['user'])
         .then(t => { if (t) { this._init()} });
     }
 

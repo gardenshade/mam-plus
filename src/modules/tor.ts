@@ -16,7 +16,7 @@ class TorGiftDefault implements Feature{
     private _tar: string = '#thanksArea input[name=points]';
 
     constructor(){
-        Util.startFeature(this._settings, this._tar, 'torrent')
+        Util.startFeature(this._settings, this._tar, ['torrent'])
         .then(t => { if (t) { this._init() } });
     }
 
@@ -43,7 +43,7 @@ class GoodreadsButton implements Feature {
     private _tar: string = '#submitInfo';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'torrent')
+        Util.startFeature(this._settings, this._tar, ['torrent'])
             .then(t => { if (t) { this._init() } });
     }
 

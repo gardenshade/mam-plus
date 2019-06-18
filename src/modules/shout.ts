@@ -15,7 +15,7 @@ class PriorityUsers implements Feature {
     private _userType:ShoutboxUserType = 'priority';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'shoutbox')
+        Util.startFeature(this._settings, this._tar, ['shoutbox','home'])
             .then(t => { if (t) { this._init() } });
     }
 
@@ -50,7 +50,7 @@ class PriorityStyle implements Feature {
     private _tar: string = '#sbf';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'shoutbox')
+        Util.startFeature(this._settings, this._tar, ['shoutbox','home'])
             .then(t => { if (t) { this._init() } });
     }
 
@@ -80,7 +80,7 @@ class MutedUsers implements Feature {
     private _userType: ShoutboxUserType = 'mute';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'shoutbox')
+        Util.startFeature(this._settings, this._tar, ['shoutbox','home'])
             .then(t => { if (t) { this._init() } });
     }
 

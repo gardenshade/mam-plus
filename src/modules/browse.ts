@@ -18,7 +18,7 @@ class ToggleSnatched implements Feature {
     private _searchList: NodeListOf<HTMLTableRowElement>|undefined;
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'browse')
+        Util.startFeature(this._settings, this._tar, ['browse'])
             .then(t => { if (t) { this._init() } });
     }
 
@@ -128,7 +128,7 @@ class StickySnatchedToggle implements Feature{
     private _tar: string = '#ssr';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'browse')
+        Util.startFeature(this._settings, this._tar, ['browse'])
             .then(t => { if (t) { this._init() } });
     }
 
@@ -155,7 +155,7 @@ class PlaintextSearch implements Feature {
     private _isOpen:"true"| "false" | undefined = GM_getValue(`${this._settings.title}State`);
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'browse')
+        Util.startFeature(this._settings, this._tar, ['browse'])
             .then(t => { if (t) { this._init() } });
     }
 

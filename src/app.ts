@@ -13,12 +13,7 @@
 /**
  * BREAKING CHANGES INTRODUCED WHILE CODING
  * FIXME: Stylesheet hardcoded to v4 branch; change to main when needed
- * FIXME: Goodreads links must be derefered
- * TODO: Browse/Search page is being updated and might have new DOM pointers/lazyload
- * All styling is done via stylesheet. Use `.mp_dark` & `.mp_light` as needed.
  */
-
-
 
 /**
  * Userscript namespace
@@ -45,7 +40,8 @@ namespace MP {
         BUG_LIST: [
             `M: Browse page features only work on first page`,
             `S: Currently, each function runs its own query to see what page is active; this value should be stored and reused for efficiency`,
-            `S: Plaintext Results textbox causes slight horizontal scrollbar when open`
+            `S: Plaintext Results textbox causes slight horizontal scrollbar when open`,
+            `S: Check.elemLoad() needs a kill condition if an element doesn't always exist on the page (ex. Thanks points field). Currently it keeps checking`
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';

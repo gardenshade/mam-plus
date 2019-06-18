@@ -125,10 +125,9 @@ class Check {
                     'preferences': 'settings',
                     'u': 'user',
                     'tor': subPage,
-                    'millionaires': 'vault', /* TODO: changed from subPage */
+                    'millionaires': 'vault',
                 };
-                /* I can't figure out how to provide typing for an object-literal with
-                 * functions inside it, so we use IFs on the subPage after the fact */
+                /* TODO: set `cases` to any to allow proper Object switch */
                 if (MP.DEBUG) { console.log(`Page @ ${pageStr}\nSubpage @ ${subPage}`); }
                 if (cases[pageStr]) {
                     if (cases[pageStr] === subPage) {

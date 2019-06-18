@@ -12,7 +12,7 @@ class SimpleVault implements Feature {
     private _tar: string = '#mainBody';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, 'vault')
+        Util.startFeature(this._settings, this._tar, ['vault'])
         .then(t => { if (t) { this._init() } });
     }
 

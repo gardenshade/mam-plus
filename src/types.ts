@@ -2,7 +2,8 @@
  * Types, Interfaces, etc.
  */
 
-type ValidPage = 'browse'|
+type ValidPage = 'home' |
+                'browse'|
                 'requests'|
                 'torrent' |
                 'shoutbox' |
