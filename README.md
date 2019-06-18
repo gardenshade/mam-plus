@@ -4,7 +4,7 @@ The MAM+ userscript, now using Typescript and Gulp 4.
 
 ## Installation
 
-As long as you have a userscript browser extension installed, you can simply __[CLICK HERE](https://github.com/gardenshade/mam-plus/raw/master/release/MAM_Plus.user.js)__ to install the script. Popular browser extensions include:
+As long as you have a userscript browser extension installed, you can simply __[CLICK HERE](https://github.com/gardenshade/mam-plus/raw/master/release/mam-plus.user.js)__ to install the script. Popular browser extensions include:
 - [Tampermonkey](https://tampermonkey.net/): Recommended for Firefox v57+
 - [Violentmonkey](https://violentmonkey.github.io/get-it/): Recommended for Chrome
 
