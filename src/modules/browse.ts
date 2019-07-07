@@ -153,6 +153,8 @@ class PlaintextSearch implements Feature {
     }
     private _tar: string = '#ssr h1';
     private _isOpen:"true"| "false" | undefined = GM_getValue(`${this._settings.title}State`);
+    private _share:Shared = new Shared();
+    private _plainText:string = '';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['browse'])
@@ -161,87 +163,51 @@ class PlaintextSearch implements Feature {
 
     private async _init() {
         let toggleBtn: Promise<HTMLElement>;
-        let copyBtn: Promise<HTMLElement>;
+        let copyBtn: HTMLElement;
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
-        let share = new Shared();
-        let plainText:string = '';
 
         // Queue building the toggle button and getting the results
         await Promise.all([
-            toggleBtn = share.createButton('plainToggle', 'Show Plaintext', 'div', '#ssr > h1', 'afterend', 'mp_toggle mp_plainBtn' ),
-            resultList = share.getSearchList()
+            toggleBtn = this._share.createButton('plainToggle', 'Show Plaintext', 'div', '#ssr', 'beforebegin', 'mp_toggle mp_plainBtn' ),
+            resultList = this._share.getSearchList()
         ]);
 
         // Process the results into plaintext
-        resultList.then( res => {
-            res.forEach( node => {
-                // Break out the important data from each node
-                let rawTitle:HTMLAnchorElement|null = node.querySelector('.title');
-                let title:string = '';
-                let seriesTitle:string = '';
-                let authTitle:string = '';
-                let narrTitle:string = '';
-                let seriesList:NodeListOf<HTMLAnchorElement>|null = node.querySelectorAll('.series');
-                let authList:NodeListOf<HTMLAnchorElement>|null = node.querySelectorAll('.author');
-                let narrList:NodeListOf<HTMLAnchorElement>|null = node.querySelectorAll('.narrator');
-
-                if(rawTitle === null){
-                    throw new Error(`Result title should not be null @ ${res}`);
-                }else{
-                    title = rawTitle.textContent!;
-                }
-
-                // Process series
-                if(seriesList !== null && seriesList.length > 0){
-                    seriesList.forEach( series => {
-                        seriesTitle += `${series.textContent} / `;
-                    } );
-                    // Remove trailing slash from last series, then style
-                    seriesTitle = seriesTitle.substring(0, seriesTitle.length - 3);
-                    seriesTitle = `(${seriesTitle})`;
-                }
-                // Process authors
-                if (authList !== null && authList.length > 0){
-                    authTitle = 'BY ';
-                    authList.forEach( auth => {
-                        authTitle += `${auth.textContent} AND `;
-                    } );
-                    // Remove trailing AND
-                    authTitle = authTitle.substring(0,authTitle.length-5);
-                }
-                // Process narrators
-                if (narrList !== null && narrList.length > 0){
-                    narrTitle = 'FT ';
-                    narrList.forEach( narr => {
-                        narrTitle += `${narr.textContent} AND `
-                    } );
-                    // Remove trailing AND
-                    narrTitle = narrTitle.substring(0,narrTitle.length-5);
-                }
-
-                plainText += `${title} ${seriesTitle} ${authTitle} ${narrTitle}\n`;
-            } )
-        } );
-
-        // Build the copy button
-        copyBtn = share.createButton('plainCopy', 'Copy Plaintext', 'div', '#mp_plainToggle', 'afterend', 'mp_copy mp_plainBtn');
-
-        // Build textbox and add button functionality
-        copyBtn.then(async btn => {
-            btn.insertAdjacentHTML('afterend', `<br><textarea class='mp_plaintextSearch' style='display: none'>${plainText}</textarea>`);
-
-            btn.addEventListener('click', e => {
+        resultList.then( async res => {
+            // Build the copy button
+            copyBtn = await this._share.createButton('plainCopy', 'Copy Plaintext', 'div', '#mp_plainToggle', 'afterend', 'mp_copy mp_plainBtn');
+            // Set up a click listener
+            copyBtn.addEventListener('click', () => {
                 // Have to override the Navigator type to prevent TS errors
-                let nav:NavigatorExtended|undefined = <NavigatorExtended>navigator;
-                if(nav === undefined){
+                let nav: NavigatorExtended | undefined = <NavigatorExtended>navigator;
+                if (nav === undefined) {
+                    alert('Failed to copy text, likely due to missing browser support.');
                     throw new Error("browser doesn't support 'navigator'?")
-                }else{
+                } else {
                     // Copy results to clipboard
-                    nav.clipboard!.writeText(plainText);
+                    nav.clipboard!.writeText(this._plainText);
                     console.log('[M+] Copied plaintext results to your clipboard!');
                 }
             });
-        });
+            // Build the plaintext box
+            copyBtn.insertAdjacentHTML('afterend', `<br><textarea class='mp_plaintextSearch' style='display: none'></textarea>`);
+
+            // Insert plaintext results
+            this._plainText = await this._processResults(res);
+            document.querySelector('.mp_plaintextSearch')!.innerHTML = this._plainText;
+        } )
+        .then( () => {
+            // Observe the Search results
+            Check.elemObserver('#ssr', () => {
+                document.querySelector('.mp_plaintextSearch')!.innerHTML = '';
+                resultList = this._share.getSearchList();
+                resultList.then( async res => {
+                    // Insert plaintext results
+                    this._plainText = await this._processResults(res);
+                    document.querySelector('.mp_plaintextSearch')!.innerHTML = this._plainText;
+                } );
+            });
+        } );
 
         // Init open state
         this._setOpenState(this._isOpen);
@@ -277,10 +243,62 @@ class PlaintextSearch implements Feature {
      * @param val stringified boolean
      */
     private _setOpenState(val:"true"|"false"|undefined): void {
-        if (MP.DEBUG) { console.log('PT open state:', this._isOpen, '\nPT val:', val); }
         if (val === undefined) { val = "false"; } // Default value
         GM_setValue('toggleSnatchedState', val);
         this._isOpen = val;
+    }
+
+    private  async _processResults( results:NodeListOf<HTMLTableRowElement> ):Promise<string>{
+        let outp: string = '';
+        results.forEach(node => {
+            // Reset each text field
+            let title: string = '';
+            let seriesTitle: string = '';
+            let authTitle: string = '';
+            let narrTitle: string = '';
+            // Break out the important data from each node
+            let rawTitle: HTMLAnchorElement | null = node.querySelector('.torTitle');
+            let seriesList: NodeListOf<HTMLAnchorElement> | null = node.querySelectorAll('.series');
+            let authList: NodeListOf<HTMLAnchorElement> | null = node.querySelectorAll('.author');
+            let narrList: NodeListOf<HTMLAnchorElement> | null = node.querySelectorAll('.narrator');
+
+            if (rawTitle === null) {
+                console.warn('Error Node:', node);
+                throw new Error(`Result title should not be null`);
+            } else {
+                title = rawTitle.textContent!.trim();
+            }
+
+            // Process series
+            if (seriesList !== null && seriesList.length > 0) {
+                seriesList.forEach(series => {
+                    seriesTitle += `${series.textContent} / `;
+                });
+                // Remove trailing slash from last series, then style
+                seriesTitle = seriesTitle.substring(0, seriesTitle.length - 3);
+                seriesTitle = ` (${seriesTitle})`;
+            }
+            // Process authors
+            if (authList !== null && authList.length > 0) {
+                authTitle = 'BY ';
+                authList.forEach(auth => {
+                    authTitle += `${auth.textContent} AND `;
+                });
+                // Remove trailing AND
+                authTitle = authTitle.substring(0, authTitle.length - 5);
+            }
+            // Process narrators
+            if (narrList !== null && narrList.length > 0) {
+                narrTitle = 'FT ';
+                narrList.forEach(narr => {
+                    narrTitle += `${narr.textContent} AND `
+                });
+                // Remove trailing AND
+                narrTitle = narrTitle.substring(0, narrTitle.length - 5);
+            }
+            outp += (`${title}${seriesTitle} ${authTitle} ${narrTitle}\n`);
+        });
+        return outp;
     }
 
     get settings(): CheckboxSetting {

@@ -33,6 +33,7 @@ namespace MP {
             `CODE: Made features modular. This hopefully speeds up development`,
             `FIX: Home page features were not running if navigated to via the Home button`,
             `FIX: Default User Gift is now a textbox just like the Default Torrent Gift`,
+            `FIX: Site code changed, so Plaintext Search was returning nothing`,
             `ENHANCE: Toggle Snatched state can now be remembered`,
             `ENHANCE: Priority Users can now be matched via username <em>and</em> ID`,
             `CHANGE: Priority User Styling setting uses HSL instead of RGB`,

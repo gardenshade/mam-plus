@@ -35,16 +35,17 @@ class Check {
     public static async elemObserver(selector: string | HTMLElement | null, callback:MutationCallback, config: MutationObserverInit = {
         childList: true,
         attributes: true
-    } ) {
+    } ): Promise<MutationObserver> {
         let selected:HTMLElement|null = null;
         if(typeof selector === 'string'){
             selected = <HTMLElement|null>document.querySelector(selector);
             if(selected === null){ throw new Error(`Couldn't find '${selector}'`); }
         }
+        if (MP.DEBUG) { console.log(`%c Setting observer on ${selector}: ${selected}`, 'background: #222; color: #5d8aa8'); }
         let observer:MutationObserver = new MutationObserver( callback );
 
         observer.observe(selected!, config);
-
+        return observer;
     }
 
     /**

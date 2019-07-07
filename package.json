@@ -15,7 +15,9 @@
     "build": "npx gulp build",
     "release": "npx gulp release",
     "clean": "npx gulp clean",
-    "test": "npx jest"
+    "test": "npx jest",
+    "version": "npm run release && git add .",
+    "postversion": "git push && git push --tags && npm run clean"
   },
   "devDependencies": {
     "@types/greasemonkey": "0.0.28",
