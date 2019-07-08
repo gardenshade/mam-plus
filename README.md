@@ -33,8 +33,8 @@ This is a Typescript project, but vanilla JavaScript is valid Typescript, so don
 
 To start developing, simply run `npm run build`. Assuming everything works, this will transpile the Typescript files into a single JavaScript file (in the `build/` dir) with a userscript header and inline sourcemaps. Additionally, the userscript will have `_dev` appended to its name, to differentiate between the developmental version and the release version.
 
-For continuous development, run `npm run watch`. This task may halt when Typescript encounters an error, but will otherwise retranspile the script every time you save.
+For continuous development, run `npm run watch`. This task will otherwise retranspile the script every time you save.
 
-Drag the `_dev.user.js` file into Chrome and install with Violentmonkey. When you are using the Watch task, as long as you keep the userscript installation tab open any changes you save will be automatically loaded in your browser when you reload.
+Drag the `_dev.user.js` file into Chrome and install with Violentmonkey. When you are using the Watch task, as long as you keep the userscript installation tab open any changes you save will be automatically loaded in your browser when you reload. Occasionally, Violentmonkey will throw an error when the script is being generated via `watch`; if this happens, close the script installation page and reinstall the script as previously described.
 
-When you are ready to release your script, use [`npm version <newversion>`](https://docs.npmjs.com/cli/version) to increment your script, then `npm run release`. This will output a minified JavaScript file without the `_dev` suffix.
+When you are ready to release your script, use [`npm version <patch|minor|major>`](https://docs.npmjs.com/cli/version) to increment your script. This will output a minified JavaScript file without the `_dev` suffix and will automatically generate a commit & push to the Github repo.
