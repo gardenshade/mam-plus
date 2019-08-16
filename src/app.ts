@@ -12,7 +12,7 @@
 
 /**
  * BREAKING CHANGES INTRODUCED WHILE CODING
- * FIXME: Stylesheet hardcoded to v4 branch; change to main when needed
+ * None yet...
  */
 
 /**
@@ -28,21 +28,10 @@ namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
         UPDATE_LIST: [
-            `CODE: Moved from Coffeescript to Typescript to allow for better practices and easier contribution. This likely introduced bugs.`,
-            `CODE: Script starts before the page loads and uses a CSS sheet to hopefully prevent flashing content. This likely introduced bugs. `,
-            `CODE: Made features modular. This hopefully speeds up development`,
-            `FIX: Home page features were not running if navigated to via the Home button`,
-            `FIX: Default User Gift is now a textbox just like the Default Torrent Gift`,
-            `FIX: Site code changed, so Plaintext Search was returning nothing`,
-            `ENHANCE: Toggle Snatched state can now be remembered`,
-            `ENHANCE: Priority Users can now be matched via username <em>and</em> ID`,
-            `CHANGE: Priority User Styling setting uses HSL instead of RGB`,
+
         ] as string[],
         BUG_LIST: [
-            `M: Browse page features only work on first page`,
-            `S: Currently, each function runs its own query to see what page is active; this value should be stored and reused for efficiency`,
-            `S: Plaintext Results textbox causes slight horizontal scrollbar when open`,
-            `S: Check.elemLoad() needs a kill condition if an element doesn't always exist on the page (ex. Thanks points field). Currently it keeps checking`
+
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';
