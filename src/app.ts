@@ -28,7 +28,8 @@ namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
         UPDATE_LIST: [
-            `🐞: Fixed 'Hide Snatched' not persisting across search pages`,
+            `🐞: 'Hide Snatched' was not persisting across search pages`,
+            `🐞: M+ settings were appearing on all Pref. pages`,
         ] as string[],
         BUG_LIST: [
 
@@ -70,11 +71,13 @@ namespace MP {
          ************/
 
         Check.page('settings')
-        .then(result => { if (result === true) {
-
-            // Initialize the settings page
-            Settings.init(result, settingsGlob);
-        } });
+        .then(result => {
+            let subPg:string = window.location.search;
+            if (result === true && (subPg === '' || subPg === '?view=general') ) {
+                // Initialize the settings page
+                Settings.init(result, settingsGlob);
+            }
+        });
 
         /******************
          * STYLES
