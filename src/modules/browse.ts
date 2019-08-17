@@ -14,8 +14,9 @@ class ToggleSnatched implements Feature {
         desc: `Add a button to hide/show results that you've snatched`,
     }
     private _tar: string = '#ssr';
-    private _visible: string | undefined = GM_getValue(`${this._settings.title}State`);
+    private _isVisible: "true"|"false" | undefined = GM_getValue(`${this._settings.title}State`);
     private _searchList: NodeListOf<HTMLTableRowElement>|undefined;
+    private _share: Shared = new Shared();
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['browse'])
@@ -27,30 +28,31 @@ class ToggleSnatched implements Feature {
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
         let results: NodeListOf<HTMLTableRowElement>;
         let snatchedHook: string = 'td div[class^="browse"]';
-        let share:Shared = new Shared();
 
-        if (!GM_getValue('stickySnatchedToggle')){
-            this._setVisState(undefined);
+        GM_deleteValue('stickySnatchedToggle');
+
+        if (this._isVisible === undefined) {
+            this._setVisState("true");
         }
 
         // Queue building the button and getting the results
         await Promise.all([
-            toggle = share.createButton('snatchedToggle', 'Hide Snatched', 'h1', '#resetNewIcon', 'beforebegin', 'torFormButton' ),
-            resultList = share.getSearchList()
+            toggle = this._share.createButton('snatchedToggle', 'Hide Snatched', 'h1', '#resetNewIcon', 'beforebegin', 'torFormButton'),
+            resultList = this._share.getSearchList()
         ]);
 
-        this._setVisState(this._visible);
+        this._setVisState(this._isVisible);
 
         toggle.then(btn => {
             // Update based on vis state
-            btn.addEventListener( 'click', () => {
-                if(this._visible === "true"){
+            btn.addEventListener('click', () => {
+                if (this._isVisible === "true") {
                     this._setVisState("false");
-                }else{
+                } else {
                     this._setVisState("true");
                 }
-                this._filterResults(results,snatchedHook);
-            },false );
+                this._filterResults(results, snatchedHook);
+            }, false);
         }).catch(err => {
             throw new Error(err);
         });
@@ -62,7 +64,19 @@ class ToggleSnatched implements Feature {
                 await this._filterResults(results, snatchedHook);
                 console.log('[M+] Added the Toggle Snatched button!');
             }
-        );
+        )
+        .then(() => {
+            // Observe the Search results
+            Check.elemObserver('#ssr', () => {
+                resultList = this._share.getSearchList();
+
+                resultList.then(async res => {
+                    results = res;
+                    this._searchList = res;
+                    await this._filterResults(results, snatchedHook);
+                });
+            });
+        });
     }
 
     /**
@@ -73,11 +87,13 @@ class ToggleSnatched implements Feature {
     private _filterResults(list: NodeListOf<HTMLTableRowElement>, subTar:string): void  {
         list.forEach((key) => {
             const btn:HTMLHeadingElement = <HTMLHeadingElement>document.querySelector('#mp_snatchedToggle')!;
+
             // Select only the items that match our sub element
             let result = key.querySelector(subTar);
+
             if(result !== null){
                 // Hide/show as required
-                if(this._visible === 'false'){
+                if(this._isVisible === 'false'){
                     btn.innerHTML = 'Show Snatched';
                     key.style.display = 'none';
                 }else{
@@ -88,11 +104,11 @@ class ToggleSnatched implements Feature {
         });
     }
 
-    private _setVisState(val:string|undefined):void {
-        if(MP.DEBUG){console.log('vis state:',this._visible,'\nval:',val);}
+    private _setVisState(val:"true"|"false"|undefined):void {
+        if(MP.DEBUG){console.log('vis state:',this._isVisible,'\nval:',val);}
         if (val === undefined) { val = "true"; }
-        GM_setValue('toggleSnatchedState', val);
-        this._visible = val;
+        GM_setValue(`${this._settings.title}State`, val);
+        this._isVisible = val;
     }
 
     get settings(): CheckboxSetting {
@@ -106,11 +122,11 @@ class ToggleSnatched implements Feature {
         return this._searchList;
     }
 
-    get visible():string|undefined{
-        return this._visible;
+    get visible(): "true" | "false"|undefined{
+        return this._isVisible;
     }
 
-    set visible( val:string|undefined ){
+    set visible( val:"true"|"false"|undefined ){
         this._setVisState(val);
     }
 }
