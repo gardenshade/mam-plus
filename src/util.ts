@@ -170,4 +170,13 @@ class Util {
         let compare: number = a.localeCompare(b, 'en', { sensitivity: 'base' });
         return (compare === 0) ? true : false;
     }
+
+    public static async addTorDetailsRow( tar:HTMLDivElement|null, label:string, rowClass:string ):Promise<HTMLDivElement>{
+        if (tar === null || tar.parentElement === null) {
+            throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`)
+        } else {
+            tar.parentElement.insertAdjacentHTML('afterend', `<div class="torDetRow"><div class="torDetLeft">${label}</div><div class="torDetRight ${rowClass}"><span class="flex"></span></div></div>`);
+        }
+        return <HTMLDivElement>document.querySelector(`.${label}`);
+    }
 }

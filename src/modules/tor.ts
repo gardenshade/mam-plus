@@ -56,11 +56,7 @@ class GoodreadsButton implements Feature {
         let target:HTMLDivElement|null = document.querySelector(this._tar);
         let series: Promise<BookDataObject>, author: Promise<BookDataObject>;
 
-        if(target === null || target.parentElement === null){
-            throw new Error(`Goodreads Btn: empty node or parent node @ ${this._tar}`)
-        }else{
-            target.parentElement.insertAdjacentHTML('afterend','<div class="torDetRow"><div class="torDetLeft">Search Goodreads</div><div class="torDetRight mp_grRow"><span class="flex"></span></div></div>');
-        }
+        Util.addTorDetailsRow( target,'Search Goodreads','mp_grRow' );
 
         // Extract the Series and Author
         await Promise.all([
