@@ -256,7 +256,7 @@ class CurrentlyReading implements Feature {
         title: "currentlyReading",
         desc: `Add a button to generate a "Currently Reading" forum snippet`
     }
-    private _tar: string = '#torDetMainCon';
+    private _tar: string = '#torDetMainCon .TorrentTitle';
     constructor() {
         Util.startFeature(this._settings, this._tar, ['torrent'])
         .then(t => { if (t) { this._init() } });
@@ -271,7 +271,8 @@ class CurrentlyReading implements Feature {
         if(title === null){throw new Error(`Title field was null`);}
 
         const blurb:string = await this._generateSnippet(torID,title,authors);
-        blurb;/* TODO: FINISH */
+        const btn:HTMLDivElement = await this._buildButton();
+        btn;blurb;/* FIXME: */
 
     }
 
@@ -283,6 +284,14 @@ class CurrentlyReading implements Feature {
         } );
         // Return the string, but remove unneeded punctuation
         return `[url=/t/${id}]${title}[/url] by ${authorText.slice(0, -2)}`;
+    }
+
+    // Build a button on the tor details page
+    private _buildButton(): HTMLDivElement{
+        document.querySelector(this._tar)!.insertAdjacentHTML(
+            'afterend', '<div class="mp_reading" style="color:red;cursor:pointer;margin-left:20px">Currently Reading?</div>'
+        )
+        return <HTMLDivElement>document.querySelector('.mp_reading');
     }
 
     get settings(): CheckboxSetting {
