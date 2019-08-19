@@ -248,3 +248,44 @@ class GoodreadsButton implements Feature {
         return this._settings;
     }
 }
+
+class CurrentlyReading implements Feature {
+    private _settings: CheckboxSetting = {
+        type: "checkbox",
+        scope: SettingGroup['Torrent Page'],
+        title: "currentlyReading",
+        desc: `Add a button to generate a "Currently Reading" forum snippet`
+    }
+    private _tar: string = '#torDetMainCon';
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['torrent'])
+        .then(t => { if (t) { this._init() } });
+    }
+
+    private async _init() {
+        // Get the required information
+        const title: string = document!.querySelector('#torDetMainCon .TorrentTitle')!.textContent!;
+        const authors:NodeListOf<HTMLAnchorElement> = document.querySelectorAll('#torDetMainCon .torAuthors a');
+        const torID: string = window.location.pathname.split('/')[2];
+
+        if(title === null){throw new Error(`Title field was null`);}
+
+        const blurb:string = await this._generateSnippet(torID,title,authors);
+        blurb;/* TODO: FINISH */
+
+    }
+
+    // Build a BB Code text snippet using the book info, then return it
+    private _generateSnippet( id:string, title:string, authors:NodeListOf<HTMLAnchorElement> ):string {
+        let authorText = '';
+        authors.forEach( authorElem => {
+            authorText += `[i]${authorElem.textContent}[/i], `;
+        } );
+        // Return the string, but remove unneeded punctuation
+        return `[url=/t/${id}]${title}[/url] by ${authorText.slice(0, -2)}`;
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}

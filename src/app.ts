@@ -28,8 +28,7 @@ namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
         UPDATE_LIST: [
-            `🐞: 'Hide Snatched' was not persisting across search pages`,
-            `🐞: M+ settings were appearing on all Pref. pages`,
+
         ] as string[],
         BUG_LIST: [
 
