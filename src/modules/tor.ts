@@ -74,7 +74,7 @@ class GoodreadsButton implements Feature {
         series.then( ser => {
             if(ser.extracted !== ''){
                 let url: string = this._buildGrSearchURL('series', ser.extracted);
-                this._injectButton(buttonTar, url, ser.desc, 4);
+                Util.injectTorButton(buttonTar, url, ser.desc, 4);
             }
         });
 
@@ -82,7 +82,7 @@ class GoodreadsButton implements Feature {
         await author.then( auth => {
             if(auth.extracted !== ''){
                 let url: string = this._buildGrSearchURL('author', auth.extracted);
-                this._injectButton(buttonTar, url, auth.desc, 3);
+                Util.injectTorButton(buttonTar, url, auth.desc, 3);
             }else{
                 if(MP.DEBUG){ console.warn('No author data detected!'); }
             }
@@ -96,11 +96,11 @@ class GoodreadsButton implements Feature {
             let auth:BookDataObject = result.auth;
             let book:BookDataObject = await result.book;
             let url:string = this._buildGrSearchURL('book', book.extracted);
-            await this._injectButton(buttonTar, url, book.desc,2);
+            Util.injectTorButton(buttonTar, url, book.desc, 2);
             // If a title and author both exist, make an extra button
             if (auth.extracted !== '' && book.extracted !== '') {
                 let bothURL: string = this._buildGrSearchURL('on', `${book.extracted} ${auth.extracted}`);
-                this._injectButton(buttonTar, bothURL, 'Title + Author',1);
+                Util.injectTorButton(buttonTar, bothURL, 'Title + Author', 1);
             }else{
                 if(MP.DEBUG){console.log(`Book+Author failed.\nBook: ${book.extracted}\nAuthor: ${auth.extracted}`);}
             }
@@ -219,26 +219,6 @@ class GoodreadsButton implements Feature {
 
         // Return a value eventually
     }
-
-    /**
-     * Injects a URL button into an element
-     * @param tar The element the button should be added to
-     * @param url The URL the button will send you to
-     * @param text The text on the button
-     */
-    private _injectButton( tar:HTMLElement, url:string, text:string, order:number):void {
-        // Create the button
-        let button: HTMLAnchorElement = document.createElement('a');
-        // Set up the button
-        button.classList.add('mp_button_clone');
-        button.setAttribute('href', url);
-        button.setAttribute('target', '_blank');
-        button.innerText = text;
-        button.style.order = `${order}`;
-        // Inject the button
-        tar.insertBefore(button,tar.firstChild);
-    }
-
 
     get settings(): CheckboxSetting {
         return this._settings;

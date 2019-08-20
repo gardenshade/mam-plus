@@ -166,11 +166,22 @@ class Util {
         }
     }
 
+    /**
+     * Match strings while ignoring case sensitivity
+     * @param a First string
+     * @param b Second string
+     */
     public static caselessStringMatch( a:string, b:string ):boolean{
         let compare: number = a.localeCompare(b, 'en', { sensitivity: 'base' });
         return (compare === 0) ? true : false;
     }
 
+    /**
+     * Add a new TorDetRow and return the inner div
+     * @param tar The row to be targetted
+     * @param label The name to be displayed for the new row
+     * @param rowClass The row's classname (should start with mp_)
+     */
     public static async addTorDetailsRow( tar:HTMLDivElement|null, label:string, rowClass:string ):Promise<HTMLDivElement>{
         if (tar === null || tar.parentElement === null) {
             throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`)
@@ -179,5 +190,25 @@ class Util {
 
             return <HTMLDivElement>document.querySelector(`.${rowClass} .flex`);
         }
+    }
+
+    /**
+     * Inserts a button that is styled like a site button (ex. in tor details)
+     * @param tar The element the button should be added to
+     * @param url The URL the button will send you to
+     * @param text The text on the button
+     * @param order Optional: flex flow ordering
+     */
+    public static injectTorButton(tar: HTMLElement, url: string, text: string, order: number = 0 ):void {
+        // Create the button
+        let button: HTMLAnchorElement = document.createElement('a');
+        // Set up the button
+        button.classList.add('mp_button_clone');
+        button.setAttribute('href', url);
+        button.setAttribute('target', '_blank');
+        button.innerText = text;
+        button.style.order = `${order}`;
+        // Inject the button
+        tar.insertBefore(button, tar.firstChild);
     }
 }
