@@ -176,7 +176,8 @@ class Util {
             throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`)
         } else {
             tar.parentElement.insertAdjacentHTML('afterend', `<div class="torDetRow"><div class="torDetLeft">${label}</div><div class="torDetRight ${rowClass}"><span class="flex"></span></div></div>`);
+
+            return <HTMLDivElement>document.querySelector(`.${rowClass} .flex`);
         }
-        return <HTMLDivElement>document.querySelector(`.${label}`);
     }
 }

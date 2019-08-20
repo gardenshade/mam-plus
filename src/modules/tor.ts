@@ -263,12 +263,21 @@ class CurrentlyReading implements Feature {
         const title: string = document!.querySelector('#torDetMainCon .TorrentTitle')!.textContent!;
         const authors:NodeListOf<HTMLAnchorElement> = document.querySelectorAll('#torDetMainCon .torAuthors a');
         const torID: string = window.location.pathname.split('/')[2];
+        const rowTar: HTMLDivElement|null = document.querySelector('#fInfo');
 
+        // Title can't be null
         if(title === null){throw new Error(`Title field was null`);}
 
+        // Build a new table row
+        const crRow:HTMLDivElement = await Util.addTorDetailsRow(rowTar, 'Currently Reading', 'mp_crRow');
+        // Process data into string
         const blurb:string = await this._generateSnippet(torID,title,authors);
-        const btn:HTMLDivElement = await this._buildButton();
-        btn;blurb;/* FIXME: */
+        // Build button
+        const btn:HTMLDivElement = await this._buildButton( crRow, blurb );
+
+        btn.addEventListener( 'click', () => {
+            //
+        } );
 
     }
 
@@ -283,10 +292,11 @@ class CurrentlyReading implements Feature {
     }
 
     // Build a button on the tor details page
-    private _buildButton(): HTMLDivElement{
-        document.querySelector(this._tar)!.insertAdjacentHTML(
-            'afterend', '<div class="mp_reading" style="color:red;cursor:pointer;margin-left:20px">Currently Reading?</div>'
-        )
+    private _buildButton( tar:HTMLDivElement, content:string ): HTMLDivElement{
+
+        // Build text display & button
+        tar.innerHTML = `<textarea rows="1" cols="80">${content}</textarea>`;
+        // Return button
         return <HTMLDivElement>document.querySelector('.mp_reading');
     }
 
