@@ -74,7 +74,7 @@ class GoodreadsButton implements Feature {
         series.then( ser => {
             if(ser.extracted !== ''){
                 let url: string = this._buildGrSearchURL('series', ser.extracted);
-                Util.injectTorButton(buttonTar, url, ser.desc, 4);
+                Util.createLinkButton(buttonTar, url, ser.desc, 4);
             }
         });
 
@@ -82,7 +82,7 @@ class GoodreadsButton implements Feature {
         await author.then( auth => {
             if(auth.extracted !== ''){
                 let url: string = this._buildGrSearchURL('author', auth.extracted);
-                Util.injectTorButton(buttonTar, url, auth.desc, 3);
+                Util.createLinkButton(buttonTar, url, auth.desc, 3);
             }else{
                 if(MP.DEBUG){ console.warn('No author data detected!'); }
             }
@@ -96,11 +96,11 @@ class GoodreadsButton implements Feature {
             let auth:BookDataObject = result.auth;
             let book:BookDataObject = await result.book;
             let url:string = this._buildGrSearchURL('book', book.extracted);
-            Util.injectTorButton(buttonTar, url, book.desc, 2);
+            Util.createLinkButton(buttonTar, url, book.desc, 2);
             // If a title and author both exist, make an extra button
             if (auth.extracted !== '' && book.extracted !== '') {
                 let bothURL: string = this._buildGrSearchURL('on', `${book.extracted} ${auth.extracted}`);
-                Util.injectTorButton(buttonTar, bothURL, 'Title + Author', 1);
+                Util.createLinkButton(buttonTar, bothURL, 'Title + Author', 1);
             }else{
                 if(MP.DEBUG){console.log(`Book+Author failed.\nBook: ${book.extracted}\nAuthor: ${auth.extracted}`);}
             }
@@ -254,10 +254,8 @@ class CurrentlyReading implements Feature {
         const blurb:string = await this._generateSnippet(torID,title,authors);
         // Build button
         const btn:HTMLDivElement = await this._buildButton( crRow, blurb );
-
-        btn.addEventListener( 'click', () => {
-            //
-        } );
+        // Init button
+        Util.clipboardifyBtn(btn,blurb);
 
     }
 
@@ -274,8 +272,11 @@ class CurrentlyReading implements Feature {
     // Build a button on the tor details page
     private _buildButton( tar:HTMLDivElement, content:string ): HTMLDivElement{
 
-        // Build text display & button
-        tar.innerHTML = `<textarea rows="1" cols="80">${content}</textarea>`;
+        // Build text display
+        tar.innerHTML = `<textarea rows="1" cols="80" style='margin-right:5px'>${content}</textarea>`;
+        // Build button
+        Util.createLinkButton(tar,'none','Copy',2);
+        document.querySelector('.mp_crRow .mp_button_clone')!.classList.add('mp_reading');
         // Return button
         return <HTMLDivElement>document.querySelector('.mp_reading');
     }

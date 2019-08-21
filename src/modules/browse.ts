@@ -37,7 +37,7 @@ class ToggleSnatched implements Feature {
 
         // Queue building the button and getting the results
         await Promise.all([
-            toggle = this._share.createButton('snatchedToggle', 'Hide Snatched', 'h1', '#resetNewIcon', 'beforebegin', 'torFormButton'),
+            toggle = Util.createButton('snatchedToggle', 'Hide Snatched', 'h1', '#resetNewIcon', 'beforebegin', 'torFormButton'),
             resultList = this._share.getSearchList()
         ]);
 
@@ -184,33 +184,21 @@ class PlaintextSearch implements Feature {
 
         // Queue building the toggle button and getting the results
         await Promise.all([
-            toggleBtn = this._share.createButton('plainToggle', 'Show Plaintext', 'div', '#ssr', 'beforebegin', 'mp_toggle mp_plainBtn' ),
+            toggleBtn = Util.createButton('plainToggle', 'Show Plaintext', 'div', '#ssr', 'beforebegin', 'mp_toggle mp_plainBtn' ),
             resultList = this._share.getSearchList()
         ]);
 
         // Process the results into plaintext
         resultList.then( async res => {
             // Build the copy button
-            copyBtn = await this._share.createButton('plainCopy', 'Copy Plaintext', 'div', '#mp_plainToggle', 'afterend', 'mp_copy mp_plainBtn');
-            // Set up a click listener
-            copyBtn.addEventListener('click', () => {
-                // Have to override the Navigator type to prevent TS errors
-                let nav: NavigatorExtended | undefined = <NavigatorExtended>navigator;
-                if (nav === undefined) {
-                    alert('Failed to copy text, likely due to missing browser support.');
-                    throw new Error("browser doesn't support 'navigator'?")
-                } else {
-                    // Copy results to clipboard
-                    nav.clipboard!.writeText(this._plainText);
-                    console.log('[M+] Copied plaintext results to your clipboard!');
-                }
-            });
+            copyBtn = await Util.createButton('plainCopy', 'Copy Plaintext', 'div', '#mp_plainToggle', 'afterend', 'mp_copy mp_plainBtn');
             // Build the plaintext box
             copyBtn.insertAdjacentHTML('afterend', `<br><textarea class='mp_plaintextSearch' style='display: none'></textarea>`);
-
             // Insert plaintext results
             this._plainText = await this._processResults(res);
             document.querySelector('.mp_plaintextSearch')!.innerHTML = this._plainText;
+            // Set up a click listener
+            Util.clipboardifyBtn(copyBtn, this._plainText);
         } )
         .then( () => {
             // Observe the Search results

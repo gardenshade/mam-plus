@@ -192,23 +192,79 @@ class Util {
         }
     }
 
+    // TODO: Merge with `Util.createButton`
     /**
-     * Inserts a button that is styled like a site button (ex. in tor details)
+     * Inserts a link button that is styled like a site button (ex. in tor details)
      * @param tar The element the button should be added to
      * @param url The URL the button will send you to
      * @param text The text on the button
      * @param order Optional: flex flow ordering
      */
-    public static injectTorButton(tar: HTMLElement, url: string, text: string, order: number = 0 ):void {
+    public static createLinkButton(tar: HTMLElement, url: string = 'none', text: string, order: number = 0 ):void {
         // Create the button
         let button: HTMLAnchorElement = document.createElement('a');
         // Set up the button
         button.classList.add('mp_button_clone');
-        button.setAttribute('href', url);
-        button.setAttribute('target', '_blank');
+        if(url !== 'none'){
+            button.setAttribute('href', url);
+            button.setAttribute('target', '_blank');
+        }
         button.innerText = text;
         button.style.order = `${order}`;
         // Inject the button
         tar.insertBefore(button, tar.firstChild);
+    }
+
+    /**
+     * Inserts a non-linked button
+     * @param id The ID of the button
+     * @param text The text displayed in the button
+     * @param type The HTML element to create. Default: `h1`
+     * @param tar The HTML element the button will be `relative` to
+     * @param relative The position of the button relative to the `tar`. Default: `afterend`
+     * @param btnClass The classname of the element. Default: `mp_btn`
+     */
+    public static createButton(id: string, text: string, type: string = 'h1', tar: string, relative: "beforebegin" | "afterend" = "afterend", btnClass: string = "mp_btn"): Promise<HTMLElement> {
+        return new Promise((resolve, reject) => {
+            // Choose the new button insert location and insert elements
+            const target: HTMLElement | null = <HTMLElement>document.querySelector(tar);
+            const btn: HTMLElement = document.createElement(type);
+
+            if (target === null) {
+                reject(`${tar} is null!`);
+            }
+
+            target.insertAdjacentElement(relative, btn);
+            Util.setAttr(btn, {
+                "id": `mp_${id}`,
+                "class": btnClass,
+                "role": "button"
+            });
+            // Set initial button text
+            btn.innerHTML = text;
+            resolve(btn);
+        });
+    }
+
+    /**
+     * Converts an element into a button that, when clicked, copies text to clipboard
+     * @param btn An HTML Element being used as a button
+     * @param text The text that will be copied to clipboard on button click
+     */
+    public static clipboardifyBtn(btn:HTMLElement,text:string):void{
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', () => {
+            // Have to override the Navigator type to prevent TS errors
+            let nav: NavigatorExtended | undefined = <NavigatorExtended>navigator;
+            if (nav === undefined) {
+                alert('Failed to copy text, likely due to missing browser support.');
+                throw new Error("browser doesn't support 'navigator'?")
+            } else {
+                // Copy results to clipboard
+                nav.clipboard!.writeText(text);
+                btn.style.color = 'green';
+                console.log('[M+] Copied to your clipboard!');
+            }
+        } );
     }
 }
