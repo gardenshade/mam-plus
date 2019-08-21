@@ -7,7 +7,7 @@
  * for DOM elements as needed. Only core features should be placed in `app.ts`
  *
  * This determines the order in which settings will be generated on the Settings page.
- * Settings will be grouped by type, but Features of one type that are called before
+ * Settings will be grouped by type and Features of one type that are called before
  * other Features of the same type will appear first.
  *
  * The order of the feature groups is not determined here.
@@ -27,6 +27,7 @@ class InitFeatures{
 
         // Initialize Torrent Page functions
         new GoodreadsButton();
+        new CurrentlyReading();
         new TorGiftDefault();
 
         // Initialize Shoutbox functions

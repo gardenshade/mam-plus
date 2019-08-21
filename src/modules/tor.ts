@@ -56,11 +56,7 @@ class GoodreadsButton implements Feature {
         let target:HTMLDivElement|null = document.querySelector(this._tar);
         let series: Promise<BookDataObject>, author: Promise<BookDataObject>;
 
-        if(target === null || target.parentElement === null){
-            throw new Error(`Goodreads Btn: empty node or parent node @ ${this._tar}`)
-        }else{
-            target.parentElement.insertAdjacentHTML('afterend','<div class="torDetRow"><div class="torDetLeft">Search Goodreads</div><div class="torDetRight mp_grRow"><span class="flex"></span></div></div>');
-        }
+        Util.addTorDetailsRow( target,'Search Goodreads','mp_grRow' );
 
         // Extract the Series and Author
         await Promise.all([
@@ -78,7 +74,7 @@ class GoodreadsButton implements Feature {
         series.then( ser => {
             if(ser.extracted !== ''){
                 let url: string = this._buildGrSearchURL('series', ser.extracted);
-                this._injectButton(buttonTar, url, ser.desc, 4);
+                Util.createLinkButton(buttonTar, url, ser.desc, 4);
             }
         });
 
@@ -86,7 +82,7 @@ class GoodreadsButton implements Feature {
         await author.then( auth => {
             if(auth.extracted !== ''){
                 let url: string = this._buildGrSearchURL('author', auth.extracted);
-                this._injectButton(buttonTar, url, auth.desc, 3);
+                Util.createLinkButton(buttonTar, url, auth.desc, 3);
             }else{
                 if(MP.DEBUG){ console.warn('No author data detected!'); }
             }
@@ -100,11 +96,11 @@ class GoodreadsButton implements Feature {
             let auth:BookDataObject = result.auth;
             let book:BookDataObject = await result.book;
             let url:string = this._buildGrSearchURL('book', book.extracted);
-            await this._injectButton(buttonTar, url, book.desc,2);
+            Util.createLinkButton(buttonTar, url, book.desc, 2);
             // If a title and author both exist, make an extra button
             if (auth.extracted !== '' && book.extracted !== '') {
                 let bothURL: string = this._buildGrSearchURL('on', `${book.extracted} ${auth.extracted}`);
-                this._injectButton(buttonTar, bothURL, 'Title + Author',1);
+                Util.createLinkButton(buttonTar, bothURL, 'Title + Author', 1);
             }else{
                 if(MP.DEBUG){console.log(`Book+Author failed.\nBook: ${book.extracted}\nAuthor: ${auth.extracted}`);}
             }
@@ -224,25 +220,66 @@ class GoodreadsButton implements Feature {
         // Return a value eventually
     }
 
-    /**
-     * Injects a URL button into an element
-     * @param tar The element the button should be added to
-     * @param url The URL the button will send you to
-     * @param text The text on the button
-     */
-    private _injectButton( tar:HTMLElement, url:string, text:string, order:number):void {
-        // Create the button
-        let button: HTMLAnchorElement = document.createElement('a');
-        // Set up the button
-        button.classList.add('mp_button_clone');
-        button.setAttribute('href', url);
-        button.setAttribute('target', '_blank');
-        button.innerText = text;
-        button.style.order = `${order}`;
-        // Inject the button
-        tar.insertBefore(button,tar.firstChild);
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+class CurrentlyReading implements Feature {
+    private _settings: CheckboxSetting = {
+        type: "checkbox",
+        scope: SettingGroup['Torrent Page'],
+        title: "currentlyReading",
+        desc: `Add a button to generate a "Currently Reading" forum snippet`
+    }
+    private _tar: string = '#torDetMainCon .TorrentTitle';
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['torrent'])
+        .then(t => { if (t) { this._init() } });
     }
 
+    private async _init() {
+        // Get the required information
+        const title: string = document!.querySelector('#torDetMainCon .TorrentTitle')!.textContent!;
+        const authors:NodeListOf<HTMLAnchorElement> = document.querySelectorAll('#torDetMainCon .torAuthors a');
+        const torID: string = window.location.pathname.split('/')[2];
+        const rowTar: HTMLDivElement|null = document.querySelector('#fInfo');
+
+        // Title can't be null
+        if(title === null){throw new Error(`Title field was null`);}
+
+        // Build a new table row
+        const crRow:HTMLDivElement = await Util.addTorDetailsRow(rowTar, 'Currently Reading', 'mp_crRow');
+        // Process data into string
+        const blurb:string = await this._generateSnippet(torID,title,authors);
+        // Build button
+        const btn:HTMLDivElement = await this._buildButton( crRow, blurb );
+        // Init button
+        Util.clipboardifyBtn(btn,blurb);
+
+    }
+
+    // Build a BB Code text snippet using the book info, then return it
+    private _generateSnippet( id:string, title:string, authors:NodeListOf<HTMLAnchorElement> ):string {
+        let authorText = '';
+        authors.forEach( authorElem => {
+            authorText += `[i]${authorElem.textContent}[/i], `;
+        } );
+        // Return the string, but remove unneeded punctuation
+        return `[url=/t/${id}]${title}[/url] by ${authorText.slice(0, -2)}`;
+    }
+
+    // Build a button on the tor details page
+    private _buildButton( tar:HTMLDivElement, content:string ): HTMLDivElement{
+
+        // Build text display
+        tar.innerHTML = `<textarea rows="1" cols="80" style='margin-right:5px'>${content}</textarea>`;
+        // Build button
+        Util.createLinkButton(tar,'none','Copy',2);
+        document.querySelector('.mp_crRow .mp_button_clone')!.classList.add('mp_reading');
+        // Return button
+        return <HTMLDivElement>document.querySelector('.mp_reading');
+    }
 
     get settings(): CheckboxSetting {
         return this._settings;

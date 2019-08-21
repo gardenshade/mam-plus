@@ -28,8 +28,8 @@ namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
         UPDATE_LIST: [
-            `🐞: 'Hide Snatched' was not persisting across search pages`,
-            `🐞: M+ settings were appearing on all Pref. pages`,
+            `🆕: Currently Reading - Generates an easily copy/paste-able text snippet to show what book you're currently reading`,
+            `♻️: Moved some code around in the name of efficiency`
         ] as string[],
         BUG_LIST: [
 

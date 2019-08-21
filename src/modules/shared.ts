@@ -52,29 +52,4 @@ class Shared {
             else{ resolve(snatchList); }
         } );
     }
-
-    /**
-     * Create a button
-     */
-    public createButton( id:string, text:string, type:string = 'h1', tar:string, relative:"beforebegin"|"afterend" = "afterend", btnClass:string = "mp_btn" ): Promise<HTMLElement> {
-        return new Promise( (resolve,reject) => {
-            // Choose the new button insert location and insert elements
-            const target: HTMLElement|null = <HTMLElement>document.querySelector(tar);
-            const btn: HTMLElement = document.createElement( type );
-
-            if(target === null){
-                reject(`${tar} is null!`);
-            }
-
-            target.insertAdjacentElement(relative, btn);
-            Util.setAttr(btn, {
-                "id": `mp_${id}`,
-                "class": btnClass,
-                "role": "button"
-            });
-            // Set initial button text
-            btn.innerHTML = text;
-            resolve(btn);
-        } );
-    }
 }
