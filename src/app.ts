@@ -27,9 +27,9 @@
 namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
+        /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            `🆕: Currently Reading - Generates an easily copy/paste-able text snippet to show what book you're currently reading`,
-            `♻️: Moved some code around in the name of efficiency`
+            `🐞: URLs with apostrophes weren't correctly created in the Goodreads Buttons`
         ] as string[],
         BUG_LIST: [
 

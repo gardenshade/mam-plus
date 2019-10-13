@@ -64,7 +64,6 @@ class GoodreadsButton implements Feature {
             author = this._extractData( 'author', authorData )
         ]);
 
-        if(MP.DEBUG){ console.log('Checking for Goodreads Row, this should only take a sec...') }
         await Check.elemLoad('.mp_grRow .flex');
 
         let buttonTar:HTMLSpanElement = <HTMLSpanElement>document.querySelector('.mp_grRow .flex');
@@ -215,7 +214,7 @@ class GoodreadsButton implements Feature {
             },
         }
         if (cases[type]) { cases[type](); }
-        return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(inp).replace('\'', '&apos;')}&search_type=books&search%5Bfield%5D=${grType}`;
+        return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(inp).replace('\'', '%27')}&search_type=books&search%5Bfield%5D=${grType}`;
 
         // Return a value eventually
     }
