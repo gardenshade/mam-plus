@@ -29,10 +29,10 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            `🐞: URLs with apostrophes weren't correctly created in the Goodreads Buttons`
+            `🐞: URLs with apostrophes weren't correctly created in the Goodreads Buttons`,
+            `🐞: Toggle Snatched wasn't behaving as intended`,
         ] as string[],
         BUG_LIST: [
-
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';
