@@ -128,3 +128,71 @@ class MiniVaultInfo implements Feature {
         return this._settings;
     }
 }
+
+class BonusPointDelta implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Global,
+        type: 'checkbox',
+        title: 'bonusPointDelta',
+        desc: `Display how many bonus points you've gained since last pageload`,
+    }
+    private _tar: string = '#tmBP';
+    private _prevBP:number = 0;
+    private _currentBP:number = 0;
+    private _delta:number = 0;
+
+    constructor() {
+        Util.startFeature( this._settings, this._tar )
+            .then( t => { if ( t ) { this._init() } } );
+    }
+
+    _init(){
+        const currentBPEl:HTMLAnchorElement|null = document.querySelector(this._tar);
+
+        // Get old BP value
+        this._prevBP = this._getBP();
+
+        if(currentBPEl !== null){
+            // Extract only the number from the BP element
+            const current:RegExpMatchArray = currentBPEl.textContent!
+                .match( /\d+/g ) as RegExpMatchArray;
+
+            // Set new BP value
+            this._currentBP = parseInt(current[0]);
+            this._setBP(this._currentBP);
+
+            // Calculate delta
+            this._delta = this._currentBP - this._prevBP;
+
+            // Show the text if not 0
+            if ( this._delta !== 0 ) { this._displayBP( this._delta ); }
+        }
+    }
+
+    private _displayBP = (bp:number):void => {
+        const bonusBox:HTMLAnchorElement|null = document.querySelector(this._tar);
+        let deltaBox:string = '';
+
+        deltaBox = bp > 0 ? `+${bp}` : `${bp}`;
+
+        if(bonusBox !== null){
+            bonusBox.innerHTML += `<span class='mp_bpDelta'> (${deltaBox})</span>`;
+        }
+    }
+
+    private _setBP = (bp:number):void => {
+        GM_setValue(`${this._settings.title}Val`, `${bp}`);
+    }
+    private _getBP = ():number => {
+        const stored: string | undefined = GM_getValue(`${this._settings.title}Val`);
+        if(stored === undefined){
+            return 0;
+        }else{
+            return parseInt(stored);
+        }
+    };
+
+    get settings (): CheckboxSetting {
+        return this._settings;
+    }
+}

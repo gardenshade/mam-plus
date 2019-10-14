@@ -19,6 +19,7 @@ class InitFeatures{
         new HideBrowse();
         new VaultLink();
         new MiniVaultInfo();
+        new BonusPointDelta();
 
         // Initialize Browse/Request Page functions
         new ToggleSnatched();

@@ -31,6 +31,7 @@ namespace MP {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
             `🆕: Hide Hidden Requesters - self explanatory`,
+            `🆕: Display bonus points difference since last pageload`,
             `🐞: URLs with apostrophes weren't correctly created in the Goodreads Buttons`,
             `🐞: Toggle Snatched wasn't behaving as intended`,
         ] as string[],
