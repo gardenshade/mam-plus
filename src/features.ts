@@ -24,6 +24,7 @@ class InitFeatures{
         new ToggleSnatched();
         new StickySnatchedToggle();
         new PlaintextSearch();
+        new ToggleHiddenRequesters();
 
         // Initialize Torrent Page functions
         new GoodreadsButton();

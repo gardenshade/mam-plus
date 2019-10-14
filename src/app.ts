@@ -5,6 +5,7 @@
 /// <reference path="./modules/tor.ts" />
 /// <reference path="./modules/shout.ts" />
 /// <reference path="./modules/browse.ts" />
+/// <reference path="./modules/request.ts" />
 /// <reference path="./modules/vault.ts" />
 /// <reference path="./modules/user.ts" />
 /// <reference path="features.ts" />
@@ -29,6 +30,7 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
+            `🆕: Hide Hidden Requesters - self explanatory`,
             `🐞: URLs with apostrophes weren't correctly created in the Goodreads Buttons`,
             `🐞: Toggle Snatched wasn't behaving as intended`,
         ] as string[],
