@@ -28,11 +28,9 @@ namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
         UPDATE_LIST: [
-            `🆕: Currently Reading - Generates an easily copy/paste-able text snippet to show what book you're currently reading`,
-            `♻️: Moved some code around in the name of efficiency`
+            `🐞: Toggle Snatched wasn't behaving as intended`,
         ] as string[],
         BUG_LIST: [
-
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';
