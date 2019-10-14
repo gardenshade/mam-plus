@@ -5,6 +5,7 @@
 /// <reference path="./modules/tor.ts" />
 /// <reference path="./modules/shout.ts" />
 /// <reference path="./modules/browse.ts" />
+/// <reference path="./modules/request.ts" />
 /// <reference path="./modules/vault.ts" />
 /// <reference path="./modules/user.ts" />
 /// <reference path="features.ts" />
@@ -27,12 +28,14 @@
 namespace MP {
     export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
     export const CHANGELOG:ArrayObject = {
+        /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            `🆕: Currently Reading - Generates an easily copy/paste-able text snippet to show what book you're currently reading`,
-            `♻️: Moved some code around in the name of efficiency`
+            `🆕: Hide Hidden Requesters - self explanatory`,
+            `🆕: Display bonus points difference since last pageload`,
+            `🐞: URLs with apostrophes weren't correctly created in the Goodreads Buttons`,
+            `🐞: Toggle Snatched wasn't behaving as intended`,
         ] as string[],
         BUG_LIST: [
-
         ] as string[],
     };
     export const TIMESTAMP:string = '##meta_timestamp##';

@@ -19,11 +19,13 @@ class InitFeatures{
         new HideBrowse();
         new VaultLink();
         new MiniVaultInfo();
+        new BonusPointDelta();
 
         // Initialize Browse/Request Page functions
         new ToggleSnatched();
         new StickySnatchedToggle();
         new PlaintextSearch();
+        new ToggleHiddenRequesters();
 
         // Initialize Torrent Page functions
         new GoodreadsButton();

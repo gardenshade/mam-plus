@@ -14,8 +14,9 @@ class ToggleSnatched implements Feature {
         desc: `Add a button to hide/show results that you've snatched`,
     }
     private _tar: string = '#ssr';
-    private _isVisible: "true"|"false" | undefined = GM_getValue(`${this._settings.title}State`);
+    private _isVisible: boolean = true;
     private _searchList: NodeListOf<HTMLTableRowElement>|undefined;
+    private _snatchedHook: string = 'td div[class^="browse"]';
     private _share: Shared = new Shared();
 
     constructor() {
@@ -27,31 +28,36 @@ class ToggleSnatched implements Feature {
         let toggle: Promise<HTMLElement>;
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
         let results: NodeListOf<HTMLTableRowElement>;
-        let snatchedHook: string = 'td div[class^="browse"]';
+        const storedState:string|undefined = GM_getValue( `${this._settings.title}State` );
 
-        GM_deleteValue('stickySnatchedToggle');
-
-        if (this._isVisible === undefined) {
-            this._setVisState("true");
+        if(
+            storedState === 'false' &&
+            GM_getValue( 'stickySnatchedToggle' ) === true
+        ){
+            this._setVisState(false);
+        }else{
+            this._setVisState(true);
         }
+
+        const toggleText:string = this._isVisible ? 'Hide Snatched' : 'Show Snatched';
 
         // Queue building the button and getting the results
         await Promise.all([
-            toggle = Util.createButton('snatchedToggle', 'Hide Snatched', 'h1', '#resetNewIcon', 'beforebegin', 'torFormButton'),
+            toggle = Util.createButton('snatchedToggle', toggleText, 'h1', '#resetNewIcon', 'beforebegin', 'torFormButton'),
             resultList = this._share.getSearchList()
         ]);
-
-        this._setVisState(this._isVisible);
 
         toggle.then(btn => {
             // Update based on vis state
             btn.addEventListener('click', () => {
-                if (this._isVisible === "true") {
-                    this._setVisState("false");
+                if (this._isVisible === true) {
+                    btn.innerHTML = 'Show Snatched';
+                    this._setVisState(false);
                 } else {
-                    this._setVisState("true");
+                    btn.innerHTML = 'Hide Snatched';
+                    this._setVisState(true);
                 }
-                this._filterResults(results, snatchedHook);
+                this._filterResults(results, this._snatchedHook);
             }, false);
         }).catch(err => {
             throw new Error(err);
@@ -61,7 +67,7 @@ class ToggleSnatched implements Feature {
             async res => {
                 results = res;
                 this._searchList = res;
-                await this._filterResults(results, snatchedHook);
+                this._filterResults(results, this._snatchedHook);
                 console.log('[M+] Added the Toggle Snatched button!');
             }
         )
@@ -73,7 +79,7 @@ class ToggleSnatched implements Feature {
                 resultList.then(async res => {
                     results = res;
                     this._searchList = res;
-                    await this._filterResults(results, snatchedHook);
+                    await this._filterResults(results, this._snatchedHook);
                 });
             });
         });
@@ -85,29 +91,28 @@ class ToggleSnatched implements Feature {
      * @param subTar the elements that must be contained in our filtered results
      */
     private _filterResults(list: NodeListOf<HTMLTableRowElement>, subTar:string): void  {
-        list.forEach((key) => {
+        list.forEach((snatch) => {
             const btn:HTMLHeadingElement = <HTMLHeadingElement>document.querySelector('#mp_snatchedToggle')!;
 
             // Select only the items that match our sub element
-            let result = key.querySelector(subTar);
+            let result = snatch.querySelector(subTar);
 
             if(result !== null){
                 // Hide/show as required
-                if(this._isVisible === 'false'){
+                if(this._isVisible === false){
                     btn.innerHTML = 'Show Snatched';
-                    key.style.display = 'none';
+                    snatch.style.display = 'none';
                 }else{
                     btn.innerHTML = 'Hide Snatched';
-                    key.style.display = 'table-row';
+                    snatch.style.display = 'table-row';
                 }
             }
         });
     }
 
-    private _setVisState(val:"true"|"false"|undefined):void {
-        if(MP.DEBUG){console.log('vis state:',this._isVisible,'\nval:',val);}
-        if (val === undefined) { val = "true"; }
-        GM_setValue(`${this._settings.title}State`, val);
+    private _setVisState(val:boolean):void {
+        if(MP.DEBUG){console.log('Snatch vis state:',this._isVisible,'\nval:',val);}
+        GM_setValue(`${this._settings.title}State`, `${val}`);
         this._isVisible = val;
     }
 
@@ -122,11 +127,11 @@ class ToggleSnatched implements Feature {
         return this._searchList;
     }
 
-    get visible(): "true" | "false"|undefined{
+    get visible(): boolean{
         return this._isVisible;
     }
 
-    set visible( val:"true"|"false"|undefined ){
+    set visible( val:boolean ){
         this._setVisState(val);
     }
 }

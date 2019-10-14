@@ -16,6 +16,7 @@ type BookData = 'book'|'author'|'series';
 enum SettingGroup {
     'Global',
     'Browse & Search',
+    'Requests',
     'Torrent Page',
     'Shoutbox',
     'Vault',

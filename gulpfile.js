@@ -182,3 +182,5 @@ exports.release = series(
     ),
     insertHead,
 );
+
+exports.clean = clean;
