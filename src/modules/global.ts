@@ -165,7 +165,7 @@ class BonusPointDelta implements Feature {
             this._delta = this._currentBP - this._prevBP;
 
             // Show the text if not 0
-            if ( this._delta !== 0 ) { this._displayBP( this._delta ); }
+            if ( this._delta !== 0 && !isNaN(this._delta) ) { this._displayBP( this._delta ); }
         }
     }
 
