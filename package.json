@@ -28,7 +28,11 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^5.0.1",
     "gulp-uglify-es": "^1.0.4",
-    "typescript": "^3.6.3"
+    "typescript": "^3.7.5"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+      "node": "^11.13.0",
+      "npm": "^6.9.0"
+  }
 }
