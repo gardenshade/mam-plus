@@ -6,3 +6,4 @@ build
 *.sublime*
 *.code-*
 .vscode
+notes.md

@@ -2,6 +2,7 @@
 
 // Notification box
 .mp_notification{
+    box-sizing: border-box;
     position: fixed;
     padding: 20px 40px;
     width: 100%;
@@ -63,6 +64,16 @@
     }
 }
 #mp_submit{
+    margin-right: 1rem;
+
+    & ~ .mp_savestate{
+        font-weight: bold;
+        color: green;
+        padding: 0 20px;
+        cursor: default;
+    }
+}
+.mp_settingBtn{
     box-sizing: border-box;
     padding: 0 8px;
     display: inline-block;
@@ -80,13 +91,6 @@
         border: $light-btnBorder;
         color: $light-btnColor;
         background-image: $light-btnBack;
-    }
-
-    & ~ .mp_savestate{
-        font-weight: bold;
-        color: green;
-        padding: 0 20px;
-        cursor: default;
     }
 }
 a.mp_button_clone,

@@ -30,10 +30,8 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            `🆕: Hide Hidden Requesters - self explanatory`,
-            `🆕: Display bonus points difference since last pageload`,
-            `🐞: URLs with apostrophes weren't correctly created in the Goodreads Buttons`,
-            `🐞: Toggle Snatched wasn't behaving as intended`,
+            `🆕: You may now Import/Export your MAM+ Settings! Useful when switching browsers.`,
+            `🐞: Displayed point change would sometimes return "NaN"`,
         ] as string[],
         BUG_LIST: [
         ] as string[],

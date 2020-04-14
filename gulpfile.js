@@ -29,11 +29,11 @@ const path = {
 
 const tsSettings = {
     strict: true,
-    target: "es6",
+    target: "es2015",
     rootDir: "src",
     forceConsistentCasingInFileNames: true,
-    noImplicitReturns: true,
-    noUnusedLocals: true,
+    noImplicitReturns: false,
+    noUnusedLocals: false,
     lib: [ 'dom', 'es6', 'es2016.array.include']
 }
 

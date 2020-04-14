@@ -1,6 +1,6 @@
 {
   "name": "mam-plus",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Tweaks and features for MAM",
   "author": "GardenShade",
   "repository": {
@@ -19,16 +19,20 @@
     "postversion": "git push && git push --tags && npm run clean"
   },
   "devDependencies": {
-    "@types/greasemonkey": "^3.0.0",
+    "@types/greasemonkey": "3.0.0",
     "del": "^5.1.0",
     "gulp": "^4.0.2",
     "gulp-header": "^2.0.9",
     "gulp-inject-string": "^1.1.2",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
-    "gulp-typescript": "^5.0.1",
-    "gulp-uglify-es": "^1.0.4",
-    "typescript": "^3.6.3"
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-uglify-es": "^2.0.0",
+    "typescript": "^3.7.5"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+    "node": "^11.13.0",
+    "npm": "^6.9.0"
+  }
 }

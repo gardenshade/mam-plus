@@ -249,9 +249,9 @@ class Util {
     /**
      * Converts an element into a button that, when clicked, copies text to clipboard
      * @param btn An HTML Element being used as a button
-     * @param text The text that will be copied to clipboard on button click
+     * @param payload The text that will be copied to clipboard on button click, or a callback function that will use the clipboard's current text
      */
-    public static clipboardifyBtn(btn:HTMLElement,text:string):void{
+    public static clipboardifyBtn(btn:HTMLElement,payload:any, copy:boolean = true):void{
         btn.style.cursor = 'pointer';
         btn.addEventListener('click', () => {
             // Have to override the Navigator type to prevent TS errors
@@ -260,10 +260,21 @@ class Util {
                 alert('Failed to copy text, likely due to missing browser support.');
                 throw new Error("browser doesn't support 'navigator'?")
             } else {
-                // Copy results to clipboard
-                nav.clipboard!.writeText(text);
+                /* Navigator Exists */
+
+                if(copy && typeof payload === 'string'){
+                    // Copy results to clipboard
+                    nav.clipboard!.writeText( payload );
+                    console.log( '[M+] Copied to your clipboard!' );
+                }else{
+                    // Run payload function with clipboard text
+                    nav.clipboard!.readText()
+                    .then(text => {
+                        payload(text);
+                    })
+                    console.log( '[M+] Copied from your clipboard!' );
+                }
                 btn.style.color = 'green';
-                console.log('[M+] Copied to your clipboard!');
             }
         } );
     }
