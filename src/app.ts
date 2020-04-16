@@ -30,8 +30,6 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            `🆕: You may now Import/Export your MAM+ Settings! Useful when switching browsers.`,
-            `🐞: Displayed point change would sometimes return "NaN"`,
         ] as string[],
         BUG_LIST: [
         ] as string[],
