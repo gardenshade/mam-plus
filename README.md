@@ -12,7 +12,7 @@ MAM+ only officially supports the most recent versions of Chrome & Firefox, but 
 
 ## Modification & Contribution
 
-In case you want to modify the script and/or contribute to it, follow the below instructions. These instructions are for Chrome using Violentmonkey, as it's the easiest way to test scripts.
+In case you want to modify the script and/or contribute to it, follow the below instructions. These instructions are for Chrome using Violentmonkey, as it's the easiest way to test scripts. Additionally, there's some [documentation](https://github.com/gardenshade/mam-plus/wiki) in the Wiki to help you get started with adding new features, so be sure to check that out.
 
 ### Prerequisites
 
@@ -38,3 +38,5 @@ For continuous development, run `npm run watch`. This task will otherwise retran
 Drag the `_dev.user.js` file into Chrome and install with Violentmonkey. When you are using the Watch task, as long as you keep the userscript installation tab open any changes you save will be automatically loaded in your browser when you reload. Occasionally, Violentmonkey will throw an error when the script is being generated via `watch`; if this happens, close the script installation page and reinstall the script as previously described.
 
 When you are ready to release your script, use [`npm version <patch|minor|major>`](https://docs.npmjs.com/cli/version) to increment your script. This will output a minified JavaScript file without the `_dev` suffix and will automatically generate a commit & push to the Github repo.
+
+This project uses `git flow` so pull requests should not be on the `master` branch if possible.
