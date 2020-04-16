@@ -30,6 +30,7 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
+            '🐞: The MAM+ stylesheet should now re-download every time the script is updated in case the CSS was changed.'
         ] as string[],
         BUG_LIST: [
         ] as string[],
