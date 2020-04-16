@@ -30,7 +30,8 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🐞: The MAM+ stylesheet should now re-download every time the script is updated in case the CSS was changed.'
+            '🐞: The MAM+ stylesheet should now re-download every time the script is updated in case the CSS was changed.',
+            '♻️: Removed the "Hide Browse" feature as it has been implemented by MAM.',
         ] as string[],
         BUG_LIST: [
         ] as string[],
