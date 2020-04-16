@@ -8,7 +8,7 @@
 // @include      https://myanonamouse.net/*
 // @include      https://www.myanonamouse.net/*
 // @icon         https://i.imgur.com/dX44pSv.png
-// @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css
+// @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=<%= pkg.version %>
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues

@@ -16,15 +16,17 @@ class InitFeatures{
     constructor(){
         // Initialize Global functions
         new HideHome();
-        new HideBrowse();
         new VaultLink();
         new MiniVaultInfo();
         new BonusPointDelta();
 
-        // Initialize Browse/Request Page functions
+        // Initialize Browse/Search Page functions
         new ToggleSnatched();
         new StickySnatchedToggle();
         new PlaintextSearch();
+        new ToggleSearchbox();
+
+        // Initialize Request Page functions
         new ToggleHiddenRequesters();
 
         // Initialize Torrent Page functions

@@ -30,8 +30,9 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            `🆕: You may now Import/Export your MAM+ Settings! Useful when switching browsers.`,
-            `🐞: Displayed point change would sometimes return "NaN"`,
+            '🆕: Added ability to hide the Search box by default and made it toggleable.',
+            '🐞: The MAM+ stylesheet should now re-download every time the script is updated in case the CSS was changed.',
+            '♻️: Removed the "Hide Browse" feature as it has been implemented by MAM.',
         ] as string[],
         BUG_LIST: [
         ] as string[],

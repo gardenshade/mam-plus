@@ -38,30 +38,6 @@ class HideHome implements Feature {
     }
 }
 
-class HideBrowse implements Feature {
-    private _settings:CheckboxSetting = {
-        scope: SettingGroup.Global,
-        type: 'checkbox',
-        title: 'hideBrowse',
-        desc: 'Remove the Browse button, because Browse &amp; Search are practically the same'
-    }
-    private _tar: string = '#mainmenu';
-
-    constructor() {
-        Util.startFeature(this._settings, this._tar)
-        .then(t => { if (t) { this._init() } });
-    }
-
-    private _init(){
-        document.body.classList.add('mp_hide_browse');
-        console.log('[M+] Hid the browse button!');
-    }
-
-    get settings(): CheckboxSetting {
-        return this._settings;
-    }
-}
-
 class VaultLink implements Feature {
     private _settings: CheckboxSetting = {
         scope: SettingGroup.Global,
