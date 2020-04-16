@@ -20,10 +20,13 @@ class InitFeatures{
         new MiniVaultInfo();
         new BonusPointDelta();
 
-        // Initialize Browse/Request Page functions
+        // Initialize Browse/Search Page functions
         new ToggleSnatched();
         new StickySnatchedToggle();
         new PlaintextSearch();
+        new ToggleSearchbox();
+
+        // Initialize Request Page functions
         new ToggleHiddenRequesters();
 
         // Initialize Torrent Page functions

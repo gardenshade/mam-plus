@@ -322,3 +322,68 @@ class PlaintextSearch implements Feature {
         this._setOpenState(val);
     }
 }
+
+/**
+ * Allows the search features to be hidden/shown
+ */
+class ToggleSearchbox implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup[ 'Browse & Search' ],
+        type: 'checkbox',
+        title: 'toggleSearchbox',
+        desc: `Collapse the Search box and make it toggleable`,
+    }
+    private _tar: string = '#torSearchControl';
+    private _height:string = '26px';
+    private _isOpen: "true" | "false"  = "false";
+
+    constructor() {
+        Util.startFeature( this._settings, this._tar, [ 'browse' ] )
+            .then( t => { if ( t ) { this._init() } } );
+    }
+
+    private async _init (): Promise<void> {
+        const searchbox:HTMLDivElement|null = document.querySelector(this._tar);
+        if(searchbox){
+            // Adjust the title to make it clear it is a toggle button
+            const title:HTMLDivElement|null = searchbox.querySelector( '.blockHeadCon h4' );
+            if(title) {
+                // Adjust text & style
+                title.innerHTML = 'Toggle Search';
+                title.style.cursor = 'pointer';
+                // Set up click listener
+                title.addEventListener( "click", () => {
+                    this._toggle( searchbox! );
+                } )
+            }else{
+                console.error( 'Could not set up toggle! Target does not exist' );
+            };
+            // Collapse the searchbox
+            Util.setAttr( searchbox, { 'style': `height:${this._height};overflow:hidden;` } );
+            // Hide extra text
+            const notification:HTMLHeadingElement|null = document.querySelector('#mainBody > h3');
+            const guideLink:HTMLAnchorElement|null = document.querySelector('#mainBody > h3 ~ a');
+            if(notification) notification.style.display = 'none';
+            if(guideLink) guideLink.style.display = 'none';
+
+            console.log( '[M+] Collapsed the Search box!' );
+        }else{
+            console.error('Could not collapse Search box! Target does not exist');
+        }
+    }
+
+    private async _toggle(elem:HTMLDivElement):Promise<void>{
+        if(this._isOpen === "false"){
+            elem.style.height = "unset";
+            this._isOpen = "true";
+        }else{
+            elem.style.height = this._height;
+            this._isOpen = "false";
+        }
+        if(MP.DEBUG) console.log('Toggled Search box!');
+    }
+
+    get settings (): CheckboxSetting {
+        return this._settings;
+    }
+}
