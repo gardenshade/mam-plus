@@ -30,9 +30,7 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🆕: Added ability to hide the Search box by default and made it toggleable.',
-            '🐞: The MAM+ stylesheet should now re-download every time the script is updated in case the CSS was changed.',
-            '♻️: Removed the "Hide Browse" feature as it has been implemented by MAM.',
+            '🆕: Added the ability to make book tags clickable on the Search page',
         ] as string[],
         BUG_LIST: [
         ] as string[],

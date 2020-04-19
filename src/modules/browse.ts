@@ -79,7 +79,7 @@ class ToggleSnatched implements Feature {
                 resultList.then(async res => {
                     results = res;
                     this._searchList = res;
-                    await this._filterResults(results, this._snatchedHook);
+                    this._filterResults(results, this._snatchedHook);
                 });
             });
         });
@@ -381,6 +381,86 @@ class ToggleSearchbox implements Feature {
             this._isOpen = "false";
         }
         if(MP.DEBUG) console.log('Toggled Search box!');
+    }
+
+    get settings (): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * Generates linked tags from the site's plaintext tag field
+ */
+class BuildTags implements Feature{
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup[ 'Browse & Search' ],
+        type: 'checkbox',
+        title: 'buildTags',
+        desc: `Generate clickable Tags automatically`,
+    }
+    private _tar: string = '#ssr';
+    private _share:Shared = new Shared();
+
+    constructor() {
+        Util.startFeature( this._settings, this._tar, [ 'browse' ] )
+            .then( t => { if ( t ) { this._init() } } );
+    }
+
+    private async _init () {
+        let resultsList = this._share.getSearchList();
+
+        // Build the tags
+        resultsList.then( results => {
+            results.forEach( r => this._processTagString(r) );
+            console.log( '[M+] Built tag links!' );
+        })
+        .then( () => {
+            // Observe the Search results
+            Check.elemObserver( '#ssr', () => {
+                resultsList = this._share.getSearchList();
+                resultsList.then( results => {
+                    // Build the tags again
+                    results.forEach( r => this._processTagString( r ) );
+                    console.log( '[M+] Built tag links!' );
+                } );
+            } );
+        } );
+    }
+
+    /**
+     * Code to run for every search result
+     */
+    private _processTagString = (res:HTMLTableRowElement) => {
+        let tagline = <HTMLSpanElement>res.querySelector('.torRowDesc');
+
+        if(MP.DEBUG) console.group(tagline);
+
+        // Assume brackets contain tags
+        let tagString = tagline.innerHTML.replace( /(?:\[|\]|\(|\)|$)/gi, ',')
+        // Split tags at ',' and ';' and '>' and '|'
+        let tags = tagString.split( /\s*(?:;|,|>|\||$)\s*/ );
+        // Remove empty or long tags
+        tags = tags.filter( tag => tag.length <= 30 && tag.length > 0 );
+
+        // Inject the tags
+        this._injectLinks(tags,tagline);
+
+        if(MP.DEBUG){ console.log( tags ); console.groupEnd();}
+    }
+
+    private _injectLinks = (tags:string[],tar:HTMLSpanElement) => {
+        if(tags.length > 0){
+            // Insert the new tag row
+            let tagRow = document.createElement( 'span' );
+            tagRow.classList.add( 'mp_tags' );
+            tar.insertAdjacentElement( 'beforebegin', tagRow );
+            tar.style.display = 'none';
+            tagRow.insertAdjacentElement( 'afterend', document.createElement( 'br' ) )
+            // Add the tags to the tag row
+            tags.forEach(tag => {
+                tagRow.innerHTML += `<a class='mp_tag' href='/tor/browse.php?tor%5Btext%5D=%22${encodeURIComponent(tag)}%22&tor%5BsrchIn%5D%5Btags%5D=true'>${tag}</a>`;
+            });
+        }
     }
 
     get settings (): CheckboxSetting {
