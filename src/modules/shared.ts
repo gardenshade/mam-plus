@@ -37,7 +37,7 @@ class Shared {
     }
 
     /**
-     * Returns list of all snatches from Browse page
+     * Returns list of all results from Browse page
      */
     public getSearchList = (): Promise<NodeListOf<HTMLTableRowElement>> => {
         if (MP.DEBUG) console.log(`Shared.getSearchList( )`);

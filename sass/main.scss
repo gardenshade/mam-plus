@@ -201,3 +201,16 @@ a[id^="torDeBookmark"]{
 .mp_bpDelta{
     opacity: 0.7;
 }
+
+.mp_tag{
+    border-radius: 3px;
+    margin: 0 2px;
+    padding: 0 5px;
+
+    .mp_dark &{
+        background: #033649;
+    }
+    .mp_light & {
+        background: #cac4a8;
+    }
+}
