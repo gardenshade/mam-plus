@@ -25,6 +25,7 @@ class InitFeatures{
         new StickySnatchedToggle();
         new PlaintextSearch();
         new ToggleSearchbox();
+        new BuildTags();
 
         // Initialize Request Page functions
         new ToggleHiddenRequesters();
