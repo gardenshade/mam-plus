@@ -232,11 +232,11 @@ class ProcessShouts {
 						let replyButton: HTMLElement = document.createElement('span');
 						if(buttons === 1){
 							//create button with onclick action of setting sb text field to username with potential color block with a colon and space to reply, focus cursor in text box
-							replyButton.innerHTML = '<button onclick="getElementById(&apos;shbox_text&apos;).value = &apos;[i]'+ colorBlock[0] +'&apos;+' + userName + ' + &apos;'+colorBlock[1]+'+&apos;[/i]:  &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10554;</button>';
+							replyButton.innerHTML = '<button onclick="getElementById(&apos;shbox_text&apos;).value = &apos;[i]'+ colorBlock[0] + userName +colorBlock[1]+'[/i]:  &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10554;</button>';
 						}
 						else if (buttons === 2){
 							//create button with onclick action of getting that line's text, stripping down to 75 char with no word break, then insert into SB text field, focus cursor in text box
-							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(":"); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot; '+ colorBlock[0] +'&apos;+' + userName + ' + &apos;'+colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
+							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(&quot;:&quot;)); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot; '+ colorBlock[0] + userName + colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
 						}
 						//give span an ID for potential use later
 						replyButton.setAttribute("id","replyButton");
