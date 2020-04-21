@@ -209,10 +209,9 @@ class ProcessShouts {
             mutList.forEach( mutRec => {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
-                    // If Reply, 1... if Reply with Quote, 2 - Both can be true
-                    //if(buttons[0] === 1){
-						//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
+                    	//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
 						let colorBlock: Array<string> = ["",""];
+						//idColor created as empty string placeholder
 						let idColor: string = "";
 						//extract the shoutbox text node containing UserID color Data
 						let shoutHrefElem:HTMLElement|null = Util.nodeToElem(node).querySelector('a[href^="\/u\/"]');
@@ -230,17 +229,19 @@ class ProcessShouts {
 						let userName: string = this.extractFromShout(node, 'a > span', 'text');
 						//create a span element to be body of button added to page - button uses relative node context at click time to do calculations
 						let replyButton: HTMLElement = document.createElement('span');
+						//if this is a ReplySimple request, then create Reply Simple button
 						if(buttons === 1){
 							//create button with onclick action of setting sb text field to username with potential color block with a colon and space to reply, focus cursor in text box
 							replyButton.innerHTML = '<button onclick="getElementById(&apos;shbox_text&apos;).value = &apos;[i]'+ colorBlock[0] + userName +colorBlock[1]+'[/i]:  &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10554;</button>';
 						}
+						//if this is a replyQuote request, then create reply quote button
 						else if (buttons === 2){
 							//create button with onclick action of getting that line's text, stripping down to 75 char with no word break, then insert into SB text field, focus cursor in text box
 							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(&quot;:&quot;)); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot;'+ colorBlock[0] + userName + colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
 						}
 						//give span an ID for potential use later
 						replyButton.setAttribute("id","replyButton");
-						//insert button prior to username or another button 
+						//insert button prior to username or another button
 						node.insertBefore(replyButton,node.childNodes[2]);
 									
                 } );
