@@ -221,7 +221,7 @@ class ProcessShouts {
 							idColor = Util.nodeToElem(shoutHrefElem.childNodes[0]).attributes[0].value;
 						}
 						//if the color extracted from href element has more than 2 attributes, then that means it is an admin/mod with background color. skip them
-						if(idColor.split(";").length <= 2 && idColor != ""){
+						if(idColor.split(";").length <= 2 && idColor != "" && idColor.indexOf("#") > 0){
 						//overwrite empty string with bbcode color block
 						colorBlock[0] = "[" + idColor.replace(":","=").replace(";","") + "]";
 						colorBlock[1] = "[/color]";
@@ -236,7 +236,7 @@ class ProcessShouts {
 						}
 						else if (buttons === 2){
 							//create button with onclick action of getting that line's text, stripping down to 75 char with no word break, then insert into SB text field, focus cursor in text box
-							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(&quot;:&quot;)); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot; '+ colorBlock[0] + userName + colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
+							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(&quot;:&quot;)); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot;'+ colorBlock[0] + userName + colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
 						}
 						//give span an ID for potential use later
 						replyButton.setAttribute("id","replyButton");
