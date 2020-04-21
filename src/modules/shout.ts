@@ -104,11 +104,11 @@ class MutedUsers implements Feature {
  * Allows Reply button to be added to Shout
  */
 class ReplySimple implements Feature {
-    private _settings: TextboxSetting = {
+    private _settings: CheckboxSetting = {
         scope: SettingGroup.Shoutbox,
         type: 'checkbox',
         title: 'replySimple',
-        tag: "Reply",
+        //tag: "Reply",
         desc: `Places a Reply button in Shoutbox: &#10554;`,
     }
     private _tar: string = '#sbf';
@@ -124,7 +124,7 @@ class ReplySimple implements Feature {
         console.log(`[M+] Adding Reply Button...`)
     }
 
-    get settings(): TextboxSetting {
+    get settings(): CheckboxSetting {
         return this._settings;
     }
 }
@@ -133,11 +133,11 @@ class ReplySimple implements Feature {
  * Allows Reply With Quote button to be added to Shout
  */
 class ReplyQuote implements Feature {
-    private _settings: TextboxSetting = {
+    private _settings: CheckboxSetting = {
         scope: SettingGroup.Shoutbox,
         type: 'checkbox',
         title: 'replyQuote',
-        tag: "Reply With Quote",
+        //tag: "Reply With Quote",
         desc: `Places a Reply with Quote button in Shoutbox: &#10557;`,
     }
     private _tar: string = '#sbf';
@@ -153,7 +153,7 @@ class ReplyQuote implements Feature {
         console.log(`[M+] Adding Reply with Quote Button...`)
     }
 
-    get settings(): TextboxSetting {
+    get settings(): CheckboxSetting {
         return this._settings;
     }
 }
@@ -202,7 +202,7 @@ class ProcessShouts {
      * @param buttons Number to represent checkbox selections 1 = Reply, 2 = Reply With Quote
      * @param charLimit Number of characters to include in quote, , charLimit?:number - Currently unused
      */
-    public static watchShoutboxReply( tar:string, buttons?:number[] ):void{
+    public static watchShoutboxReply( tar:string, buttons?:number ):void{
         // Observe the shoutbox
         Check.elemObserver( tar, mutList => {
             // When the shoutbox updates, process the information
@@ -212,13 +212,16 @@ class ProcessShouts {
                     // If Reply, 1... if Reply with Quote, 2 - Both can be true
                     //if(buttons[0] === 1){
 						//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
-						let colorBlock: string[] = [""][""];
+						let colorBlock: Array<string> = ["",""];
+						let idColor: string = "";
 						//extract the shoutbox text node containing UserID color Data
 						let shoutHrefElem:HTMLElement|null = Util.nodeToElem(node).querySelector('a[href^="\/u\/"]');
                         //use queried element to pull out the attribute value of color (had issue with getting attribute by name, room for improvement here)
-						let idColor: string = shoutHrefElemElem.childNodes[0].attributes[0].value;
+						if(shoutHrefElem != null ){
+							idColor = Util.nodeToElem(shoutHrefElem.childNodes[0]).attributes[0].value;
+						}
 						//if the color extracted from href element has more than 2 attributes, then that means it is an admin/mod with background color. skip them
-						if(idColor.split(";").length <= 2){
+						if(idColor.split(";").length <= 2 && idColor != ""){
 						//overwrite empty string with bbcode color block
 						colorBlock[0] = "[" + idColor.replace(":","=").replace(";","") + "]";
 						colorBlock[1] = "[/color]";
@@ -227,13 +230,13 @@ class ProcessShouts {
 						let userName: string = this.extractFromShout(node, 'a > span', 'text');
 						//create a span element to be body of button added to page - button uses relative node context at click time to do calculations
 						let replyButton: HTMLElement = document.createElement('span');
-						if(buttons[0] === 1){
+						if(buttons === 1){
 							//create button with onclick action of setting sb text field to username with potential color block with a colon and space to reply, focus cursor in text box
-							replyButton.innerHTML = '<button onclick="getElementById(&apos;shbox_text&apos;).value = &apos;[i]'+ colorBlock[0] +'&apos;+' userName' + &apos;'+colorBlock[1]+'+&apos;[/i]:  &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10554;</button>';
+							replyButton.innerHTML = '<button onclick="getElementById(&apos;shbox_text&apos;).value = &apos;[i]'+ colorBlock[0] +'&apos;+' + userName + ' + &apos;'+colorBlock[1]+'+&apos;[/i]:  &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10554;</button>';
 						}
-						else if (buttons[0] === 2){
+						else if (buttons === 2){
 							//create button with onclick action of getting that line's text, stripping down to 75 char with no word break, then insert into SB text field, focus cursor in text box
-							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(":"); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot; '+ colorBlock[0] +'&apos;+' userName' + &apos;'+colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
+							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(":"); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot; '+ colorBlock[0] +'&apos;+' + userName + ' + &apos;'+colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
 						}
 						//give span an ID for potential use later
 						replyButton.setAttribute("id","replyButton");
