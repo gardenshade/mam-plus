@@ -64,7 +64,7 @@ class PriorityStyle implements Feature {
 }
 
 /**
- * Allows a custom background to be applied to priority users
+ * Allows a custom background to be applied to desired muted users
  */
 class MutedUsers implements Feature {
     private _settings: TextboxSetting = {
@@ -101,6 +101,65 @@ class MutedUsers implements Feature {
 }
 
 /**
+ * Allows Reply button to be added to Shout
+ */
+class ReplySimple implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Shoutbox,
+        type: 'checkbox',
+        title: 'replySimple',
+        //tag: "Reply",
+        desc: `Places a Reply button in Shoutbox: &#10554;`,
+    }
+    private _tar: string = '#sbf';
+    private _replySimple: number = 1;
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['shoutbox','home'])
+            .then(t => { if (t) { this._init() } });
+    }
+
+    private async _init() {
+        ProcessShouts.watchShoutboxReply(this._tar, this._replySimple);
+        console.log(`[M+] Adding Reply Button...`)
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * Allows Reply With Quote button to be added to Shout
+ */
+class ReplyQuote implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Shoutbox,
+        type: 'checkbox',
+        title: 'replyQuote',
+        //tag: "Reply With Quote",
+        desc: `Places a Reply with Quote button in Shoutbox: &#10557;`,
+    }
+    private _tar: string = '#sbf';
+    private _replyQuote: number = 2;
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['shoutbox','home'])
+            .then(t => { if (t) { this._init() } });
+    }
+
+    private async _init() {
+        ProcessShouts.watchShoutboxReply(this._tar, this._replyQuote);
+        console.log(`[M+] Adding Reply with Quote Button...`)
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+
+/**
  * Process & return information from the shoutbox
  */
 class ProcessShouts {
@@ -131,6 +190,91 @@ class ProcessShouts {
                             }
                         } );
                     }
+                } );
+            } );
+        }, { childList:true }
+        );
+    }
+
+	/**
+     * Watch the shoutbox for changes, triggering actions for filtered shouts
+     * @param tar The shoutbox element selector
+     * @param buttons Number to represent checkbox selections 1 = Reply, 2 = Reply With Quote
+     * @param charLimit Number of characters to include in quote, , charLimit?:number - Currently unused
+     */
+    public static watchShoutboxReply( tar:string, buttons?:number ):void{
+        // Get the reply box
+        const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
+        // Observe the shoutbox
+        Check.elemObserver( tar, mutList => {
+            // When the shoutbox updates, process the information
+            mutList.forEach( mutRec => {
+                // Get the changed nodes
+                mutRec.addedNodes.forEach( node => {
+                    	//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
+						let colorBlock: Array<string> = ["",""];
+						//idColor created as empty string placeholder
+						let idColor: string = "";
+						//extract the shoutbox text node containing UserID color Data
+						let shoutHrefElem:HTMLElement|null = Util.nodeToElem(node).querySelector('a[href^="\/u\/"]');
+                        //use queried element to pull out the attribute value of color (had issue with getting attribute by name, room for improvement here)
+						if(shoutHrefElem != null ){
+							idColor = Util.nodeToElem(shoutHrefElem.childNodes[0]).attributes[0].value;
+						}
+						//if the color extracted from href element has more than 2 attributes, then that means it is an admin/mod with background color. skip them
+						if(idColor.split(";").length <= 2 && idColor != "" && idColor.indexOf("#") > 0){
+						//overwrite empty string with bbcode color block
+						colorBlock[0] = "[" + idColor.replace(":","=").replace(";","") + "]";
+						colorBlock[1] = "[/color]";
+						}
+						//extract the username from node for use in reply
+						let userName: string = this.extractFromShout(node, 'a > span', 'text');
+						//create a span element to be body of button added to page - button uses relative node context at click time to do calculations
+                        let replyButton: HTMLSpanElement = document.createElement('span');
+						//if this is a ReplySimple request, then create Reply Simple button
+						if(buttons === 1){
+							//create button with onclick action of setting sb text field to username with potential color block with a colon and space to reply, focus cursor in text box
+                            replyButton.innerHTML = '<button>\u293a</button>';
+                            replyButton.querySelector('button')!
+                            .addEventListener('click', () => {
+                                replyBox.value = replyBox.value + `[i]${colorBlock[0]+userName+colorBlock[1]}[/i]`;
+                                replyBox.focus();
+                            })
+						}
+						//if this is a replyQuote request, then create reply quote button
+						else if (buttons === 2){
+							//create button with onclick action of getting that line's text, stripping down to 65 char with no word break, then insert into SB text field, focus cursor in text box
+                            replyButton.innerHTML = '<button>\u293d</button>';
+                            replyButton.querySelector('button')!
+                            .addEventListener('click', () => {
+                                let extractText:string[] = [];
+                                // Get number of reply buttons to remove from text
+                                let btnCount = node.firstChild!.parentElement!.querySelectorAll('.mp_replyButton').length;
+                                // Get the text of all child nodes
+                                node.childNodes.forEach(child => {
+                                    // Links aren't clickable anyway so get rid of them
+                                    if ( child.nodeName === 'A' ) {
+                                        extractText.push( '[Link]' )
+                                    } else {
+                                        extractText.push( child.textContent! );
+                                    }
+                                });
+                                // Make a string, but toss out the first few nodes
+                                let nodeText = extractText.slice(3+btnCount).join(' ');
+                                if(nodeText.indexOf(':') === 0){
+                                    nodeText = nodeText.substr(2);
+                                }
+                                nodeText = Util.trimString(nodeText.trim(), 65);
+                                // Add quote to reply box
+                                replyBox.value = `\u201c[i]${colorBlock[ 0 ] + userName + colorBlock[ 1 ]}: ${nodeText}\u2026[/i]\u201d`;
+                                replyBox.focus();
+                            })
+						}
+						//give span an ID for potential use later
+						replyButton.setAttribute("class","mp_replyButton");
+						//insert button prior to username or another button
+						node.insertBefore(replyButton,node.childNodes[2]);
+
                 } );
             } );
         }, { childList:true }

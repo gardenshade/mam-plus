@@ -30,7 +30,7 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🆕: Added the ability to make book tags clickable on the Search page',
+            '🆕: Added "Reply" and "Reply with Quote" options to shoutbox. Thanks, ooglyboogly!',
         ] as string[],
         BUG_LIST: [
         ] as string[],
