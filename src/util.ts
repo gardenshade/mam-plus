@@ -157,7 +157,7 @@ class Util {
         if(node.firstChild !== null){
             return <HTMLElement>node.firstChild!.parentElement!;
         }else{
-            console.warn('🔥 Node-to-elem without childnode is untested');
+            console.warn('Node-to-elem without childnode is untested');
             let tempNode:Node = node;
             node.appendChild(tempNode);
             let selected:HTMLElement = <HTMLElement>node.firstChild!.parentElement!;

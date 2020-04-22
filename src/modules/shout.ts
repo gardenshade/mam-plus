@@ -195,7 +195,7 @@ class ProcessShouts {
         }, { childList:true }
         );
     }
-	
+
 	/**
      * Watch the shoutbox for changes, triggering actions for filtered shouts
      * @param tar The shoutbox element selector
@@ -203,6 +203,8 @@ class ProcessShouts {
      * @param charLimit Number of characters to include in quote, , charLimit?:number - Currently unused
      */
     public static watchShoutboxReply( tar:string, buttons?:number ):void{
+        // Get the reply box
+        const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
         // Observe the shoutbox
         Check.elemObserver( tar, mutList => {
             // When the shoutbox updates, process the information
@@ -228,22 +230,51 @@ class ProcessShouts {
 						//extract the username from node for use in reply
 						let userName: string = this.extractFromShout(node, 'a > span', 'text');
 						//create a span element to be body of button added to page - button uses relative node context at click time to do calculations
-						let replyButton: HTMLElement = document.createElement('span');
+                        let replyButton: HTMLSpanElement = document.createElement('span');
 						//if this is a ReplySimple request, then create Reply Simple button
 						if(buttons === 1){
 							//create button with onclick action of setting sb text field to username with potential color block with a colon and space to reply, focus cursor in text box
-							replyButton.innerHTML = '<button onclick="getElementById(&apos;shbox_text&apos;).value = &apos;[i]'+ colorBlock[0] + userName +colorBlock[1]+'[/i]:  &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10554;</button>';
+                            replyButton.innerHTML = '<button>\u293a</button>';
+                            replyButton.querySelector('button')!
+                            .addEventListener('click', () => {
+                                replyBox.value = replyBox.value + `[i]${colorBlock[0]+userName+colorBlock[1]}[/i]`;
+                                replyBox.focus();
+                            })
 						}
 						//if this is a replyQuote request, then create reply quote button
 						else if (buttons === 2){
-							//create button with onclick action of getting that line's text, stripping down to 75 char with no word break, then insert into SB text field, focus cursor in text box
-							replyButton.innerHTML = '<button onclick="var nodeText = this.parentNode.parentNode.textContent; var textString = nodeText.substring(21,96); if(textString.length >= 75){textString = textString.substring(0,textString.lastIndexOf(&quot; &quot;))}; textString = textString.substring(textString.indexOf(&quot;:&quot;)); getElementById(&apos;shbox_text&apos;).value = &apos;[i]&quot;'+ colorBlock[0] + userName + colorBlock[1]+'&apos; + textString +&apos;...[/i]&quot; &apos;; getElementById(&apos;shbox_text&apos;).focus();">&#10557;</button>';
+							//create button with onclick action of getting that line's text, stripping down to 65 char with no word break, then insert into SB text field, focus cursor in text box
+                            replyButton.innerHTML = '<button>\u293d</button>';
+                            replyButton.querySelector('button')!
+                            .addEventListener('click', () => {
+                                let extractText:string[] = [];
+                                // Get number of reply buttons to remove from text
+                                let btnCount = node.firstChild!.parentElement!.querySelectorAll('.mp_replyButton').length;
+                                // Get the text of all child nodes
+                                node.childNodes.forEach(child => {
+                                    // Links aren't clickable anyway so get rid of them
+                                    if ( child.nodeName === 'A' ) {
+                                        extractText.push( '[Link]' )
+                                    } else {
+                                        extractText.push( child.textContent! );
+                                    }
+                                });
+                                // Make a string, but toss out the first few nodes
+                                let nodeText = extractText.slice(3+btnCount).join(' ');
+                                if(nodeText.indexOf(':') === 0){
+                                    nodeText = nodeText.substr(2);
+                                }
+                                nodeText = Util.trimString(nodeText.trim(), 65);
+                                // Add quote to reply box
+                                replyBox.value = `\u201c[i]${colorBlock[ 0 ] + userName + colorBlock[ 1 ]}: ${nodeText}\u2026[/i]\u201d`;
+                                replyBox.focus();
+                            })
 						}
 						//give span an ID for potential use later
-						replyButton.setAttribute("id","replyButton");
+						replyButton.setAttribute("class","mp_replyButton");
 						//insert button prior to username or another button
 						node.insertBefore(replyButton,node.childNodes[2]);
-									
+
                 } );
             } );
         }, { childList:true }
