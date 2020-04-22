@@ -31,6 +31,7 @@ namespace MP {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
             '🆕: Added "Reply" and "Reply with Quote" options to shoutbox. Thanks, ooglyboogly!',
+            '🐞: Tweaked reply button style',
         ] as string[],
         BUG_LIST: [
         ] as string[],
