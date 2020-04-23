@@ -39,8 +39,8 @@ class InitFeatures{
         new PriorityUsers();
         new PriorityStyle();
         new MutedUsers();
+        new ReplySimple();
 		new ReplyQuote();
-		new ReplySimple();
 
         // Initialize Vault functions
         new SimpleVault();
