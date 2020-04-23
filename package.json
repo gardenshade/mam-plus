@@ -30,7 +30,9 @@
     "gulp-uglify-es": "^2.0.0",
     "typescript": "^3.7.5"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@types/jquery": "^3.3.35"
+  },
   "engines": {
     "node": "^11.13.0",
     "npm": "^6.9.0"
