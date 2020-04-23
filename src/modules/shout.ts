@@ -274,6 +274,7 @@ class ProcessShouts {
             mutList.forEach( mutRec => {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
+					//if the node is added by MAM+ for gift button, ignore
                     if(Util.nodeToElem(node).getAttribute("id")==="giftStatusElem"){
 							return;
 						}
@@ -311,6 +312,7 @@ class ProcessShouts {
             mutList.forEach( mutRec => {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
+						//if the node is added by MAM+ for gift button, ignore
                     	if(Util.nodeToElem(node).getAttribute("id")==="giftStatusElem"){
 							return;
 						}
