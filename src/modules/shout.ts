@@ -119,12 +119,21 @@ class GiftButton implements Feature {
     }
 
     private async _init() {
-		//add event listener for all of the triple dot menus (concept pulled from MAM src)
-		$("#shoutbox #sbf").on("click context", ".sb_menu", function () {
-				//if menu of one of your own comments
-				if ($(this).attr("data-ee")! === "1") {
+		//add event listener for whenever something is clicked in the sbf div 
+		document.querySelector('#sbf')!.addEventListener('click', (e) => {
+			//pull the event target into an HTML Element 
+			let target: HTMLElement = (e.target as HTMLElement);
+			//if the target of the click is the Triple Dot Menu
+			if (!target!.closest('.sb_menu')) {
+				return;
+			}
+				//add the Triple Dot Menu as an element
+				var sbMenuElem = target!.closest(".sb_menu");
+				//if menu of one of your own comments (only works for first 10 minutes of comment being sent)
+				if (sbMenuElem!.getAttribute("data-ee")! === "1") {
 					return; //No Gift for you!
 				}
+				let sbfDiv: HTMLElement = document.getElementById("sbf")!;
 				//get the Menu after it pops up
 				let popupMenu: HTMLElement|null = document.getElementById("sbMenuMain");
 				//get the user details from the popup menu details
@@ -141,12 +150,12 @@ class GiftButton implements Feature {
                 let giftButton: HTMLSpanElement = document.createElement('span');
 				giftButton.setAttribute("id","giftButton");
 				//create the button element as well as a text element for value of gift. Populate with value from settings
-				giftButton.innerHTML = '<button>Gift: </button><span>&nbsp;</span><input type="text" size="3" id="giftValue" title="Value between 10 and 1000" value="'+giftValueSetting+'">';
+				giftButton.innerHTML = '<button>Gift: </button><span>&nbsp;</span><input type="text" size="3" id="giftValue" title="Value between 5 and 1000" value="'+giftValueSetting+'">';
 				//add event listener for when gift button is clicked
 				giftButton.querySelector('button')!
                             .addEventListener('click', () => {
 								//pull whatever the final value of the text box equals
-								var giftFinalAmount = document.getElementById("giftValue")!.getAttribute("value")!;
+								var giftFinalAmount = (<HTMLInputElement>document.getElementById("giftValue"))!.value;
                                 //begin setting up the GET request to MAM JSON
 								var giftHTTP = new XMLHttpRequest();
 								//URL to GET results with the amount entered by user plus the username found on the menu selected
@@ -163,30 +172,31 @@ class GiftButton implements Feature {
 											var successMsg = document.createTextNode("Points Gift Successful: Value: "+ giftFinalAmount);
 											newDiv.appendChild(successMsg);
 											newDiv.setAttribute("id","giftStatusElem");
-											document.getElementById("sbf")!.appendChild(newDiv);
+											sbfDiv!.appendChild(newDiv);
 											//after we add line in SB, scroll to bottom to show result
-											$("#sbf")[0]!.scrollTop = $("#sbf")[0]!.scrollHeight
+											sbfDiv!.scrollTop = sbfDiv!.scrollHeight;
+											
 										//create a new line in SB that shows gift failed to acknowledge gift result
 										} else {
 											var newDiv = document.createElement("div");
 											var failedMsg = document.createTextNode("Points Gift Failed: Error: "+ json.error);
 											newDiv.appendChild(failedMsg);
 											newDiv.setAttribute("id","giftStatusElem");
-											document.getElementById("sbf")!.appendChild(newDiv);
+											sbfDiv!.appendChild(newDiv);
 											//after we add line in SB, scroll to bottom to show result
-											$("#sbf")[0]!.scrollTop = $("#sbf")[0]!.scrollHeight
+											sbfDiv!.scrollTop = sbfDiv!.scrollHeight;
 										}
 									}
 								};
 								giftHTTP.send();
-								//return to main SB window after gift is clicked
-								$(".sb_clicked_row").removeClass("sb_clicked_row");
-								$("#sbMenuMain").addClass("hideMe")
+								//return to main SB window after gift is clicked - these are two steps taken by MAM when clicking out of Menu
+								sbfDiv.getElementsByClassName("sb_clicked_row")[0]!.removeAttribute("class");
+								document.getElementById("sbMenuMain")!.setAttribute("class","sbBottom hideMe")
 								
                             })
 				//add gift element with button and text to the menu
 				popupMenu!.childNodes[0].appendChild(giftButton);
-			});
+		});
 
         console.log(`[M+] Adding Gift Button...`)
     }
