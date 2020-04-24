@@ -30,8 +30,8 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🆕: Added "Reply" and "Reply with Quote" options to shoutbox. Thanks, ooglyboogly!',
-            '🐞: Tweaked reply button style',
+            '🐞: Tags no longer appear twice when navigated Prev/Next',
+            '🐞: Tags that contained HTML entities (ex. >) were being sliced incorrectly',
         ] as string[],
         BUG_LIST: [
         ] as string[],
