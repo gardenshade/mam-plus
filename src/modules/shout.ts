@@ -101,6 +101,113 @@ class MutedUsers implements Feature {
 }
 
 /**
+ * Allows Gift button to be added to Shout Triple dot menu
+ */
+class GiftButton implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Shoutbox,
+        type: 'checkbox',
+        title: 'giftButton',
+        //tag: "Reply",
+        desc: `Places a Gift button in Shoutbox: &#10554;`,
+    }
+    private _tar: string = '#sbf';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['shoutbox','home'])
+            .then(t => { if (t) { this._init() } });
+    }
+
+    private async _init() {
+		//add event listener for whenever something is clicked in the sbf div 
+		document.querySelector('#sbf')!.addEventListener('click', (e) => {
+			//pull the event target into an HTML Element 
+			let target: HTMLElement = (e.target as HTMLElement);
+			//if the target of the click is the Triple Dot Menu
+			if (!target!.closest('.sb_menu')) {
+				return;
+			}
+				//add the Triple Dot Menu as an element
+				var sbMenuElem = target!.closest(".sb_menu");
+				//if menu of one of your own comments (only works for first 10 minutes of comment being sent)
+				if (sbMenuElem!.getAttribute("data-ee")! === "1") {
+					return; //No Gift for you!
+				}
+				let sbfDiv: HTMLElement = document.getElementById("sbf")!;
+				//get the Menu after it pops up
+				let popupMenu: HTMLElement|null = document.getElementById("sbMenuMain");
+				//get the user details from the popup menu details
+				let popupUser: HTMLElement = Util.nodeToElem(popupMenu!.childNodes[0]);
+				//make username equal the data-uid, force not null
+				let userName: String = popupUser!.getAttribute("data-uid")!;
+				//get the default value of gifts set in preferences for user page
+				let giftValueSetting: string|undefined = GM_getValue('userGiftDefault_val');
+				//if they did not set a value in preferences, set to 100
+				if (!giftValueSetting){
+					giftValueSetting = "100";
+				}
+				//create the HTML document that holds the button and value text
+                let giftButton: HTMLSpanElement = document.createElement('span');
+				giftButton.setAttribute("id","giftButton");
+				//create the button element as well as a text element for value of gift. Populate with value from settings
+				giftButton.innerHTML = '<button>Gift: </button><span>&nbsp;</span><input type="text" size="3" id="giftValue" title="Value between 5 and 1000" value="'+giftValueSetting+'">';
+				//add event listener for when gift button is clicked
+				giftButton.querySelector('button')!
+                            .addEventListener('click', () => {
+								//pull whatever the final value of the text box equals
+								var giftFinalAmount = (<HTMLInputElement>document.getElementById("giftValue"))!.value;
+                                //begin setting up the GET request to MAM JSON
+								var giftHTTP = new XMLHttpRequest();
+								//URL to GET results with the amount entered by user plus the username found on the menu selected
+								var url = "https://www.myanonamouse.net/json/bonusBuy.php?spendtype=gift&amount="+giftFinalAmount+"&giftTo="+userName;
+								giftHTTP.open("GET", url, true);	
+								giftHTTP.setRequestHeader("Content-Type", "application/json"); 
+								giftHTTP.onreadystatechange = function () {
+									if (giftHTTP.readyState === 4 && giftHTTP.status === 200) {
+										var json = JSON.parse(giftHTTP.responseText);
+										//if the gift succeeded
+										if(json.success){
+											//create a new line in SB that shows gift was successful to acknowledge gift worked
+											var newDiv = document.createElement("div");
+											var successMsg = document.createTextNode("Points Gift Successful: Value: "+ giftFinalAmount);
+											newDiv.appendChild(successMsg);
+											newDiv.setAttribute("id","giftStatusElem");
+											sbfDiv!.appendChild(newDiv);
+											//after we add line in SB, scroll to bottom to show result
+											sbfDiv!.scrollTop = sbfDiv!.scrollHeight;
+											
+										//create a new line in SB that shows gift failed to acknowledge gift result
+										} else {
+											var newDiv = document.createElement("div");
+											var failedMsg = document.createTextNode("Points Gift Failed: Error: "+ json.error);
+											newDiv.appendChild(failedMsg);
+											newDiv.setAttribute("id","giftStatusElem");
+											sbfDiv!.appendChild(newDiv);
+											//after we add line in SB, scroll to bottom to show result
+											sbfDiv!.scrollTop = sbfDiv!.scrollHeight;
+										}
+									}
+								};
+								giftHTTP.send();
+								//return to main SB window after gift is clicked - these are two steps taken by MAM when clicking out of Menu
+								sbfDiv.getElementsByClassName("sb_clicked_row")[0]!.removeAttribute("class");
+								document.getElementById("sbMenuMain")!.setAttribute("class","sbBottom hideMe")
+								
+                            })
+				//add gift element with button and text to the menu
+				popupMenu!.childNodes[0].appendChild(giftButton);
+		});
+
+        console.log(`[M+] Adding Gift Button...`)
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+
+/**
  * Allows Reply button to be added to Shout
  */
 class ReplySimple implements Feature {
@@ -177,7 +284,11 @@ class ProcessShouts {
             mutList.forEach( mutRec => {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
-                    // If we're looking for specific users...
+					//if the node is added by MAM+ for gift button, ignore
+                    if(Util.nodeToElem(node).getAttribute("id")==="giftStatusElem"){
+							return;
+						}
+					// If we're looking for specific users...
                     if(names !== undefined && names.length > 0){
                         if(usertype === undefined){ throw new Error('Usertype must be defined if filtering names!'); }
                         // Extract
@@ -211,7 +322,11 @@ class ProcessShouts {
             mutList.forEach( mutRec => {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
-                    	//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
+						//if the node is added by MAM+ for gift button, ignore
+                    	if(Util.nodeToElem(node).getAttribute("id")==="giftStatusElem"){
+							return;
+						}
+						//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
 						let colorBlock: Array<string> = ["",""];
 						//idColor created as empty string placeholder
 						let idColor: string = "";
