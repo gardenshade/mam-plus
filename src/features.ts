@@ -41,6 +41,7 @@ class InitFeatures{
         new MutedUsers();
         new ReplySimple();
 		new ReplyQuote();
+		new GiftButton();
 
         // Initialize Vault functions
         new SimpleVault();

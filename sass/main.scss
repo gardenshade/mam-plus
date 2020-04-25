@@ -201,7 +201,10 @@ a[id^="torDeBookmark"]{
 .mp_bpDelta{
     opacity: 0.7;
 }
-
+.mp_tags{
+    display: block;
+    padding: 0.8rem 0;
+}
 .mp_tag{
     border-radius: 3px;
     margin: 0 2px;
@@ -218,5 +221,15 @@ a[id^="torDeBookmark"]{
     button{
         border-radius: 50%;
         border: none;
+    }
+}
+#mp_giftStatusElem{
+    font-family: monospace;
+    color: white;
+    .mp_success{
+        background: #009933;
+    }
+    .mp_fail{
+        background: #cc3300;
     }
 }
