@@ -223,3 +223,13 @@ a[id^="torDeBookmark"]{
         border: none;
     }
 }
+#mp_giftStatusElem{
+    font-family: monospace;
+    color: white;
+    .mp_success{
+        background: #009933;
+    }
+    .mp_fail{
+        background: #cc3300;
+    }
+}

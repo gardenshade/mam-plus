@@ -30,7 +30,8 @@ namespace MP {
     export const CHANGELOG:ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🐞: Tags no longer appear twice when navigated Prev/Next',
+            '🆕: Added ability to send gifts from Shoutbox dot menu',
+            '🐞: Tags no longer appear twice when navigating Prev/Next',
             '🐞: Tags that contained HTML entities (ex. >) were being sliced incorrectly',
         ] as string[],
         BUG_LIST: [
