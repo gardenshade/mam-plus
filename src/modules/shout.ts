@@ -108,8 +108,7 @@ class GiftButton implements Feature {
         scope: SettingGroup.Shoutbox,
         type: 'checkbox',
         title: 'giftButton',
-        //tag: "Reply",
-        desc: `Places a Gift button in Shoutbox: &#10554;`,
+        desc: `Places a Gift button in Shoutbox dot-menu`,
     }
     private _tar: string = '#sbf';
 
@@ -119,83 +118,75 @@ class GiftButton implements Feature {
     }
 
     private async _init() {
-		//add event listener for whenever something is clicked in the sbf div 
-		document.querySelector('#sbf')!.addEventListener('click', (e) => {
-			//pull the event target into an HTML Element 
-			let target: HTMLElement = (e.target as HTMLElement);
-			//if the target of the click is the Triple Dot Menu
-			if (!target!.closest('.sb_menu')) {
+        let sbfDiv = <HTMLDivElement>document.getElementById( "sbf" )!;
+		//add event listener for whenever something is clicked in the sbf div
+        sbfDiv.addEventListener('click', (e) => {
+			//pull the event target into an HTML Element
+            const target = (e.target as HTMLElement);
+            //add the Triple Dot Menu as an element
+            const sbMenuElem = target!.closest( ".sb_menu" );
+            //if the target of the click is not the Triple Dot Menu OR
+            //if menu is one of your own comments (only works for first 10 minutes of comment being sent)
+            if ( !target!.closest( '.sb_menu' ) || sbMenuElem!.getAttribute( "data-ee" )! === "1" ) {
 				return;
 			}
-				//add the Triple Dot Menu as an element
-				var sbMenuElem = target!.closest(".sb_menu");
-				//if menu of one of your own comments (only works for first 10 minutes of comment being sent)
-				if (sbMenuElem!.getAttribute("data-ee")! === "1") {
-					return; //No Gift for you!
-				}
-				let sbfDiv: HTMLElement = document.getElementById("sbf")!;
-				//get the Menu after it pops up
-				let popupMenu: HTMLElement|null = document.getElementById("sbMenuMain");
-				//get the user details from the popup menu details
-				let popupUser: HTMLElement = Util.nodeToElem(popupMenu!.childNodes[0]);
-				//make username equal the data-uid, force not null
-				let userName: String = popupUser!.getAttribute("data-uid")!;
-				//get the default value of gifts set in preferences for user page
-				let giftValueSetting: string|undefined = GM_getValue('userGiftDefault_val');
-				//if they did not set a value in preferences, set to 100
-				if (!giftValueSetting){
-					giftValueSetting = "100";
-				}
-				//create the HTML document that holds the button and value text
-                let giftButton: HTMLSpanElement = document.createElement('span');
-				giftButton.setAttribute("id","giftButton");
-				//create the button element as well as a text element for value of gift. Populate with value from settings
-				giftButton.innerHTML = '<button>Gift: </button><span>&nbsp;</span><input type="text" size="3" id="giftValue" title="Value between 5 and 1000" value="'+giftValueSetting+'">';
-				//add event listener for when gift button is clicked
-				giftButton.querySelector('button')!
-                            .addEventListener('click', () => {
-								//pull whatever the final value of the text box equals
-								var giftFinalAmount = (<HTMLInputElement>document.getElementById("giftValue"))!.value;
-                                //begin setting up the GET request to MAM JSON
-								var giftHTTP = new XMLHttpRequest();
-								//URL to GET results with the amount entered by user plus the username found on the menu selected
-								var url = "https://www.myanonamouse.net/json/bonusBuy.php?spendtype=gift&amount="+giftFinalAmount+"&giftTo="+userName;
-								giftHTTP.open("GET", url, true);	
-								giftHTTP.setRequestHeader("Content-Type", "application/json"); 
-								giftHTTP.onreadystatechange = function () {
-									if (giftHTTP.readyState === 4 && giftHTTP.status === 200) {
-										var json = JSON.parse(giftHTTP.responseText);
-										//if the gift succeeded
-										if(json.success){
-											//create a new line in SB that shows gift was successful to acknowledge gift worked
-											var newDiv = document.createElement("div");
-											var successMsg = document.createTextNode("Points Gift Successful: Value: "+ giftFinalAmount);
-											newDiv.appendChild(successMsg);
-											newDiv.setAttribute("id","giftStatusElem");
-											sbfDiv!.appendChild(newDiv);
-											//after we add line in SB, scroll to bottom to show result
-											sbfDiv!.scrollTop = sbfDiv!.scrollHeight;
-											
-										//create a new line in SB that shows gift failed to acknowledge gift result
-										} else {
-											var newDiv = document.createElement("div");
-											var failedMsg = document.createTextNode("Points Gift Failed: Error: "+ json.error);
-											newDiv.appendChild(failedMsg);
-											newDiv.setAttribute("id","giftStatusElem");
-											sbfDiv!.appendChild(newDiv);
-											//after we add line in SB, scroll to bottom to show result
-											sbfDiv!.scrollTop = sbfDiv!.scrollHeight;
-										}
-									}
-								};
-								giftHTTP.send();
-								//return to main SB window after gift is clicked - these are two steps taken by MAM when clicking out of Menu
-								sbfDiv.getElementsByClassName("sb_clicked_row")[0]!.removeAttribute("class");
-								document.getElementById("sbMenuMain")!.setAttribute("class","sbBottom hideMe")
-								
-                            })
-				//add gift element with button and text to the menu
-				popupMenu!.childNodes[0].appendChild(giftButton);
+            //get the Menu after it pops up
+            let popupMenu: HTMLElement|null = document.getElementById("sbMenuMain");
+            //get the user details from the popup menu details
+            let popupUser: HTMLElement = Util.nodeToElem(popupMenu!.childNodes[0]);
+            //make username equal the data-uid, force not null
+            let userName: String = popupUser!.getAttribute("data-uid")!;
+            //get the default value of gifts set in preferences for user page
+            let giftValueSetting: string|undefined = GM_getValue('userGiftDefault_val');
+            //if they did not set a value in preferences, set to 100
+            if (!giftValueSetting){
+                giftValueSetting = "100";
+            }
+            //create the HTML document that holds the button and value text
+            let giftButton: HTMLSpanElement = document.createElement('span');
+            giftButton.setAttribute("id","giftButton");
+            //create the button element as well as a text element for value of gift. Populate with value from settings
+            giftButton.innerHTML = `<button>Gift: </button><span>&nbsp;</span><input type="text" size="3" id="mp_giftValue" title="Value between 5 and 1000" value="${giftValueSetting}">`;
+            //add gift element with button and text to the menu
+            popupMenu!.childNodes[ 0 ].appendChild( giftButton );
+            //add event listener for when gift button is clicked
+            giftButton.querySelector('button')!
+            .addEventListener('click', () => {
+                //pull whatever the final value of the text box equals
+                let giftFinalAmount = (<HTMLInputElement>document.getElementById("mp_giftValue"))!.value;
+                //begin setting up the GET request to MAM JSON
+                let giftHTTP = new XMLHttpRequest();
+                //URL to GET results with the amount entered by user plus the username found on the menu selected
+                let url = `https://www.myanonamouse.net/json/bonusBuy.php?spendtype=gift&amount=${giftFinalAmount}&giftTo=${userName}`;
+                giftHTTP.open("GET", url, true);
+                giftHTTP.setRequestHeader("Content-Type", "application/json");
+                giftHTTP.onreadystatechange = function () {
+                    if (giftHTTP.readyState === 4 && giftHTTP.status === 200) {
+                        let json = JSON.parse(giftHTTP.responseText);
+                        //create a new line in SB that shows gift was successful to acknowledge gift worked/failed
+                        let newDiv = document.createElement( "div" );
+                        newDiv.setAttribute( "id", "mp_giftStatusElem" );
+                        sbfDiv.appendChild( newDiv );
+                        //if the gift succeeded
+                        if(json.success){
+                            let successMsg = document.createTextNode("Points Gift Successful: Value: "+ giftFinalAmount);
+                            newDiv.appendChild(successMsg);
+                            newDiv.classList.add('mp_success')
+                        } else {
+                            let failedMsg = document.createTextNode("Points Gift Failed: Error: "+ json.error);
+                            newDiv.appendChild(failedMsg);
+                            newDiv.classList.add('mp_fail')
+                        }
+                        //after we add line in SB, scroll to bottom to show result
+                        sbfDiv.scrollTop = sbfDiv.scrollHeight;
+                    }
+                };
+                giftHTTP.send();
+                //return to main SB window after gift is clicked - these are two steps taken by MAM when clicking out of Menu
+                sbfDiv.getElementsByClassName("sb_clicked_row")[0]!.removeAttribute("class");
+                document.getElementById("sbMenuMain")!.setAttribute("class","sbBottom hideMe")
+
+            })
 		});
 
         console.log(`[M+] Adding Gift Button...`)

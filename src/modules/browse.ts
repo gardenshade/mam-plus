@@ -389,7 +389,7 @@ class ToggleSearchbox implements Feature {
 }
 
 /**
- * Generates linked tags from the site's plaintext tag field
+ * * Generates linked tags from the site's plaintext tag field
  */
 class BuildTags implements Feature{
     private _settings: CheckboxSetting = {
@@ -428,7 +428,8 @@ class BuildTags implements Feature{
     }
 
     /**
-     * Code to run for every search result
+     * * Code to run for every search result
+     * @param res A search result row
      */
     private _processTagString = (res:HTMLTableRowElement) => {
         let tagline = <HTMLSpanElement>res.querySelector('.torRowDesc');
@@ -436,18 +437,27 @@ class BuildTags implements Feature{
         if(MP.DEBUG) console.group(tagline);
 
         // Assume brackets contain tags
-        let tagString = tagline.innerHTML.replace( /(?:\[|\]|\(|\)|$)/gi, ',')
+        let tagString = tagline.innerHTML.replace( /(?:\[|\]|\(|\)|$)/gi, ',');
+        // Remove HTML Entities and turn them into breaks
+        tagString = tagString.split(/(?:\&.{1,5};)/g).join(';');
         // Split tags at ',' and ';' and '>' and '|'
         let tags = tagString.split( /\s*(?:;|,|>|\||$)\s*/ );
         // Remove empty or long tags
         tags = tags.filter( tag => tag.length <= 30 && tag.length > 0 );
-
-        // Inject the tags
-        this._injectLinks(tags,tagline);
+        // Are tags already added? Only add if null
+        const tagBox:HTMLSpanElement|null = res.querySelector('.mp_tags');
+        if(tagBox === null){
+            this._injectLinks(tags,tagline);
+        }
 
         if(MP.DEBUG){ console.log( tags ); console.groupEnd();}
     }
 
+    /**
+     * * Injects the generated tags
+     * @param tags Array of tags to add
+     * @param tar The search result row that the tags will be added to
+     */
     private _injectLinks = (tags:string[],tar:HTMLSpanElement) => {
         if(tags.length > 0){
             // Insert the new tag row
