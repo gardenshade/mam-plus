@@ -33,6 +33,9 @@ namespace MP {
             '🆕: Added ability to send gifts from Shoutbox dot menu',
             '🐞: Tags no longer appear twice when navigating Prev/Next',
             '🐞: Tags that contained HTML entities (ex. >) were being sliced incorrectly',
+            '🐞: Added a space behind the username when using Simple Quote',
+            '🐞: Fixed an issue (hopefully) where gifting a user would throw errors in the dev console',
+            '🐞: Fixed an issue (hopefully) where styling of shoutbox gifting success/fail was not displaying',
         ] as string[],
         BUG_LIST: [
         ] as string[],
