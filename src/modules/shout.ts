@@ -142,6 +142,12 @@ class GiftButton implements Feature {
             if (!giftValueSetting){
                 giftValueSetting = "100";
             }
+			else if (Number(giftValueSetting) > 1000 || isNaN(Number(giftValueSetting))){
+				giftValueSetting = "1000";
+			}
+			else if (Number(giftValueSetting) < 5){
+				giftValueSetting = "5";
+			}
             //create the HTML document that holds the button and value text
             let giftButton: HTMLSpanElement = document.createElement('span');
             giftButton.setAttribute("id","giftButton");
@@ -187,6 +193,16 @@ class GiftButton implements Feature {
                 document.getElementById("sbMenuMain")!.setAttribute("class","sbBottom hideMe")
 
             })
+			giftButton.querySelector('input')!
+            .addEventListener('input', () => {
+				let valueToNumber: String = (<HTMLInputElement>document.getElementById("mp_giftValue"))!.value
+				if( Number(valueToNumber)>1000 || Number(valueToNumber) < 5 || isNaN(Number(valueToNumber))){
+					giftButton.querySelector('button')!.disabled = true;
+				}
+				else {
+					giftButton.querySelector('button')!.disabled = false;
+				}				
+			})
 		});
 
         console.log(`[M+] Adding Gift Button...`)
@@ -276,7 +292,7 @@ class ProcessShouts {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
 					//if the node is added by MAM+ for gift button, ignore
-                    if(Util.nodeToElem(node).getAttribute("id")==="mp_giftStatusElem"){
+                    if(/^mp_/.test(Util.nodeToElem(node).getAttribute("id")!)){
 							return;
 						}
 					// If we're looking for specific users...
@@ -314,7 +330,7 @@ class ProcessShouts {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
 						//if the node is added by MAM+ for gift button, ignore
-                    	if(Util.nodeToElem(node).getAttribute("id")==="giftStatusElem"){
+                    	if(/^mp_/.test(Util.nodeToElem(node).getAttribute("id")!)){
 							return;
 						}
 						//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
