@@ -2,16 +2,17 @@
  * Types, Interfaces, etc.
  */
 
-type ValidPage = 'home' |
-                'browse'|
-                'requests'|
-                'torrent' |
-                'shoutbox' |
-                'vault' |
-                'user' |
-                'settings';
+type ValidPage =
+    | 'home'
+    | 'browse'
+    | 'requests'
+    | 'torrent'
+    | 'shoutbox'
+    | 'vault'
+    | 'user'
+    | 'settings';
 
-type BookData = 'book'|'author'|'series';
+type BookData = 'book' | 'author' | 'series';
 
 enum SettingGroup {
     'Global',
@@ -21,7 +22,7 @@ enum SettingGroup {
     'Shoutbox',
     'Vault',
     'User Pages',
-    'Other'
+    'Other',
 }
 
 type ShoutboxUserType = 'priority' | 'mute';
@@ -40,7 +41,7 @@ interface BookDataObject extends StringObject {
 }
 
 interface SettingGlobObject {
-    [key: number]: FeatureSettings[]
+    [key: number]: FeatureSettings[];
 }
 
 interface FeatureSettings {
@@ -90,4 +91,4 @@ interface NavigatorClipboard {
     readonly clipboard?: Clipboard;
 }
 
-interface NavigatorExtended extends NavigatorClipboard { }
+interface NavigatorExtended extends NavigatorClipboard {}
