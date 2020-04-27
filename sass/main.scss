@@ -226,10 +226,10 @@ a[id^="torDeBookmark"]{
 #mp_giftStatusElem{
     font-family: monospace;
     color: white;
-    .mp_success{
+    &.mp_success{
         background: #009933;
     }
-    .mp_fail{
+    &.mp_fail{
         background: #cc3300;
     }
 }

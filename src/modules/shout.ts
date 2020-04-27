@@ -276,7 +276,7 @@ class ProcessShouts {
                 // Get the changed nodes
                 mutRec.addedNodes.forEach( node => {
 					//if the node is added by MAM+ for gift button, ignore
-                    if(Util.nodeToElem(node).getAttribute("id")==="giftStatusElem"){
+                    if(Util.nodeToElem(node).getAttribute("id")==="mp_giftStatusElem"){
 							return;
 						}
 					// If we're looking for specific users...
@@ -343,7 +343,7 @@ class ProcessShouts {
                             replyButton.innerHTML = '<button>\u293a</button>';
                             replyButton.querySelector('button')!
                             .addEventListener('click', () => {
-                                replyBox.value = replyBox.value + `[i]${colorBlock[0]+userName+colorBlock[1]}[/i]`;
+                                replyBox.value = replyBox.value + `[i]${colorBlock[0]+userName+colorBlock[1]}[/i] `;
                                 replyBox.focus();
                             })
 						}
