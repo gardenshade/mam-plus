@@ -1,0 +1,40 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "greasemonkey": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "prettier/@typescript-eslint"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "plugins": ["@typescript-eslint", "prettier"],
+    "rules": {
+        "prettier/prettier": ["warn"],
+        "no-await-in-loop": ["warn"],
+        "eqeqeq": ["warn"],
+        "dot-location": ["warn", "property"],
+        "no-empty-function": ["warn"],
+        "no-multi-spaces": ["warn"],
+        "no-useless-escape": ["warn"],
+        "vars-on-top": ["warn"],
+        "no-undef": "off",
+        "no-use-before-define": ["warn"],
+        "comma-dangle": ["warn", "only-multiline"],
+        "no-lonely-if": "warn",
+        "no-mixed-spaces-and-tabs": ["warn"],
+        "no-var": ["error"],
+        "no-unused-vars": ["off"],
+        "prefer-const": ["warn"]
+    }
+}

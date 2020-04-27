@@ -8,7 +8,7 @@
 class Style {
     private _theme: string;
     private _prevTheme: string | undefined;
-    private _cssData:string|undefined;
+    private _cssData: string | undefined;
 
     constructor() {
         // The light theme is the default theme, so use M+ Light values
@@ -20,9 +20,7 @@ class Style {
         // If the previous theme object exists, assume the current theme is identical
         if (this._prevTheme !== undefined) {
             this._theme = this._prevTheme;
-        } else {
-            if (MP.DEBUG) console.warn('no previous theme');
-        }
+        } else if (MP.DEBUG) console.warn('no previous theme');
 
         // Fetch the CSS data
         this._cssData = GM_getResourceText('MP_CSS');
@@ -40,20 +38,21 @@ class Style {
 
     /** Sets the M+ theme based on the site theme */
     public async alignToSiteTheme(): Promise<void> {
-
         const theme: string = await this._getSiteCSS();
-        this._theme = (theme.indexOf('dark') > 0) ? 'dark' : 'light';
+        this._theme = theme.indexOf('dark') > 0 ? 'dark' : 'light';
         if (this._prevTheme !== this._theme) {
             this._setPrevTheme();
         }
 
         // Inject the CSS class used by M+ for theming
-        Check.elemLoad('body')
-        .then( () => {
-            const body: HTMLBodyElement|null = document.querySelector('body');
-            if (body) { body.classList.add(`mp_${this._theme}`); }
-            else if(MP.DEBUG){ console.warn(`Body is ${body}`); }
-        } );
+        Check.elemLoad('body').then(() => {
+            const body: HTMLBodyElement | null = document.querySelector('body');
+            if (body) {
+                body.classList.add(`mp_${this._theme}`);
+            } else if (MP.DEBUG) {
+                console.warn(`Body is ${body}`);
+            }
+        });
     }
 
     /** Injects the stylesheet link into the header */
@@ -62,11 +61,10 @@ class Style {
         if (!document.getElementById(id)) {
             const style: HTMLStyleElement = document.createElement('style');
             style.id = id;
-            style.innerText = (this._cssData !== undefined) ? this._cssData : '';
+            style.innerText = this._cssData !== undefined ? this._cssData : '';
             document.querySelector('head')!.appendChild(style);
-        } else {
-            if (MP.DEBUG) console.warn(`an element with the id "${id}" already exists`);
-        }
+        } else if (MP.DEBUG)
+            console.warn(`an element with the id "${id}" already exists`);
     }
 
     /** Returns the previous theme object if it exists */
@@ -81,13 +79,12 @@ class Style {
 
     private _getSiteCSS(): Promise<string> {
         return new Promise((resolve) => {
-            const themeURL: string | null = document.querySelector('head link[href*="ICGstation"]')!
+            const themeURL: string | null = document
+                .querySelector('head link[href*="ICGstation"]')!
                 .getAttribute('href');
             if (typeof themeURL === 'string') {
                 resolve(themeURL);
-            } else {
-                if (MP.DEBUG) console.warn(`themeUrl is not a string: ${themeURL}`);
-            }
+            } else if (MP.DEBUG) console.warn(`themeUrl is not a string: ${themeURL}`);
         });
     }
 }

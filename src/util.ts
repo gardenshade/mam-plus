@@ -8,18 +8,18 @@ class Util {
     /**
      * Animation frame timer
      */
-    public static afTimer():Promise<number> {
-        return new Promise( (resolve) => {
+    public static afTimer(): Promise<number> {
+        return new Promise((resolve) => {
             requestAnimationFrame(resolve);
-        } );
+        });
     }
     /**
      * Allows setting multiple attributes at once
      */
-    public static setAttr(el:Element,attr:StringObject):Promise<void>{
-        return new Promise( resolve => {
-            for(const key in attr){
-                el.setAttribute(key,attr[key]);
+    public static setAttr(el: Element, attr: StringObject): Promise<void> {
+        return new Promise((resolve) => {
+            for (const key in attr) {
+                el.setAttribute(key, attr[key]);
             }
             resolve();
         });
@@ -28,15 +28,15 @@ class Util {
     /**
      * Returns the "length" of an Object
      */
-    public static objectLength( obj:Object ):number{
+    public static objectLength(obj: Object): number {
         return Object.keys(obj).length;
     }
 
     /**
      * Forcefully empties any GM stored values
      */
-    public static purgeSettings():void{
-        for ( let value of GM_listValues() ) {
+    public static purgeSettings(): void {
+        for (const value of GM_listValues()) {
             GM_deleteValue(value);
         }
     }
@@ -44,24 +44,29 @@ class Util {
     /**
      * Log a message about a counted result
      */
-    public static reportCount(did:string,num:number,thing:string):void{
-        if(num !== 1){ thing += 's' }
-        if(MP.DEBUG) { console.log(`> ${did} ${num} ${thing}`);}
+    public static reportCount(did: string, num: number, thing: string): void {
+        const singular = 1;
+        if (num !== singular) {
+            thing += 's';
+        }
+        if (MP.DEBUG) {
+            console.log(`> ${did} ${num} ${thing}`);
+        }
     }
 
     /**
      * Initializes a feature
      */
     public static async startFeature(
-        settings:FeatureSettings,
-        elem:string,
-        page?:ValidPage[]
-    ): Promise<boolean>{
+        settings: FeatureSettings,
+        elem: string,
+        page?: ValidPage[]
+    ): Promise<boolean> {
         // Queue the settings in case they're needed
         MP.settingsGlob.push(settings);
 
         // Function to return true when the element is loaded
-        async function run () {
+        async function run() {
             await Check.elemLoad(elem);
             return true;
         }
@@ -69,23 +74,24 @@ class Util {
         // Is the setting enabled?
         if (GM_getValue(settings.title)) {
             // A specific page is needed
-            if( page && page.length > 0 ){
+            if (page && page.length > 0) {
                 // Loop over all required pages
-                let results:boolean[] = [];
-                await page.forEach( p => {
-                    Check.page(p)
-                    .then( r => { results.push( <boolean>r ); });
-                } );
+                const results: boolean[] = [];
+                await page.forEach((p) => {
+                    Check.page(p).then((r) => {
+                        results.push(<boolean>r);
+                    });
+                });
                 // If any requested page matches the current page, run the feature
                 if (results.includes(true) === true) return run();
                 else return false;
 
-            // Skip to element checking
+                // Skip to element checking
             } else {
                 return run();
             }
-        // Setting is not enabled
-        }else{
+            // Setting is not enabled
+        } else {
             return false;
         }
     }
@@ -93,10 +99,10 @@ class Util {
     /**
      * Trims a string longer than a specified char limit, to a full word
      */
-    public static trimString( inp:string,max:number ):string{
-        if(inp.length > max){
-            inp = inp.substring( 0,max+1 );
-            inp = inp.substring( 0, (Math.min( inp.length,inp.lastIndexOf(' ') )) )
+    public static trimString(inp: string, max: number): string {
+        if (inp.length > max) {
+            inp = inp.substring(0, max + 1);
+            inp = inp.substring(0, Math.min(inp.length, inp.lastIndexOf(' ')));
         }
         return inp;
     }
@@ -104,7 +110,7 @@ class Util {
     /**
      * Removes brackets & all contained words from a string
      */
-    public static bracketRemover( inp:string ):string{
+    public static bracketRemover(inp: string): string {
         return inp
             .replace(/{+.*?}+/g, '')
             .replace(/\[\[|\]\]/g, '')
@@ -116,8 +122,10 @@ class Util {
     /**
      * Converts a string to an array
      */
-    public static stringToArray( inp:string, splitPoint?:"ws" ):string[]{
-        return ((splitPoint != null) && (splitPoint !== 'ws') ? inp.split(splitPoint) : inp.match(/\S+/g) || []);
+    public static stringToArray(inp: string, splitPoint?: 'ws'): string[] {
+        return splitPoint !== undefined && splitPoint !== 'ws'
+            ? inp.split(splitPoint)
+            : inp.match(/\S+/g) || [];
     }
 
     /**
@@ -125,11 +133,11 @@ class Util {
      * @param inp String to be divided
      * @param divider The divider (default: ',')
      */
-    public static csvToArray( inp:string, divider:string = ',' ):string[]{
-        let arr: string[] = [];
-        inp.split(divider).forEach(item => {
+    public static csvToArray(inp: string, divider: string = ','): string[] {
+        const arr: string[] = [];
+        inp.split(divider).forEach((item) => {
             arr.push(item.trim());
-        })
+        });
         return arr;
     }
 
@@ -138,14 +146,14 @@ class Util {
      * @param inp string
      * @param end cut-off point
      */
-    public static arrayToString( inp:string[], end?:number ):string {
-        let outp:string = '';
-        inp.forEach( (key, val) => {
+    public static arrayToString(inp: string[], end?: number): string {
+        let outp: string = '';
+        inp.forEach((key, val) => {
             outp += key;
-            if(end && (val+1 !== inp.length)){
+            if (end && val + 1 !== inp.length) {
                 outp += ' ';
             }
-        } );
+        });
         return outp;
     }
 
@@ -153,14 +161,14 @@ class Util {
      * Converts a DOM node reference into an HTML Element reference
      * @param node The node to convert
      */
-    public static nodeToElem( node:Node ):HTMLElement{
-        if(node.firstChild !== null){
+    public static nodeToElem(node: Node): HTMLElement {
+        if (node.firstChild !== null) {
             return <HTMLElement>node.firstChild!.parentElement!;
-        }else{
+        } else {
             console.warn('Node-to-elem without childnode is untested');
-            let tempNode:Node = node;
+            const tempNode: Node = node;
             node.appendChild(tempNode);
-            let selected:HTMLElement = <HTMLElement>node.firstChild!.parentElement!;
+            const selected: HTMLElement = <HTMLElement>node.firstChild!.parentElement!;
             node.removeChild(tempNode);
             return selected;
         }
@@ -171,9 +179,11 @@ class Util {
      * @param a First string
      * @param b Second string
      */
-    public static caselessStringMatch( a:string, b:string ):boolean{
-        let compare: number = a.localeCompare(b, 'en', { sensitivity: 'base' });
-        return (compare === 0) ? true : false;
+    public static caselessStringMatch(a: string, b: string): boolean {
+        const compare: number = a.localeCompare(b, 'en', {
+            sensitivity: 'base',
+        });
+        return compare === 0 ? true : false;
     }
 
     /**
@@ -182,11 +192,18 @@ class Util {
      * @param label The name to be displayed for the new row
      * @param rowClass The row's classname (should start with mp_)
      */
-    public static async addTorDetailsRow( tar:HTMLDivElement|null, label:string, rowClass:string ):Promise<HTMLDivElement>{
+    public static addTorDetailsRow(
+        tar: HTMLDivElement | null,
+        label: string,
+        rowClass: string
+    ): HTMLDivElement {
         if (tar === null || tar.parentElement === null) {
-            throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`)
+            throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`);
         } else {
-            tar.parentElement.insertAdjacentHTML('afterend', `<div class="torDetRow"><div class="torDetLeft">${label}</div><div class="torDetRight ${rowClass}"><span class="flex"></span></div></div>`);
+            tar.parentElement.insertAdjacentHTML(
+                'afterend',
+                `<div class="torDetRow"><div class="torDetLeft">${label}</div><div class="torDetRight ${rowClass}"><span class="flex"></span></div></div>`
+            );
 
             return <HTMLDivElement>document.querySelector(`.${rowClass} .flex`);
         }
@@ -200,12 +217,17 @@ class Util {
      * @param text The text on the button
      * @param order Optional: flex flow ordering
      */
-    public static createLinkButton(tar: HTMLElement, url: string = 'none', text: string, order: number = 0 ):void {
+    public static createLinkButton(
+        tar: HTMLElement,
+        url: string = 'none',
+        text: string,
+        order: number = 0
+    ): void {
         // Create the button
-        let button: HTMLAnchorElement = document.createElement('a');
+        const button: HTMLAnchorElement = document.createElement('a');
         // Set up the button
         button.classList.add('mp_button_clone');
-        if(url !== 'none'){
+        if (url !== 'none') {
             button.setAttribute('href', url);
             button.setAttribute('target', '_blank');
         }
@@ -224,7 +246,14 @@ class Util {
      * @param relative The position of the button relative to the `tar`. Default: `afterend`
      * @param btnClass The classname of the element. Default: `mp_btn`
      */
-    public static createButton(id: string, text: string, type: string = 'h1', tar: string, relative: "beforebegin" | "afterend" = "afterend", btnClass: string = "mp_btn"): Promise<HTMLElement> {
+    public static createButton(
+        id: string,
+        text: string,
+        type: string = 'h1',
+        tar: string,
+        relative: 'beforebegin' | 'afterend' = 'afterend',
+        btnClass: string = 'mp_btn'
+    ): Promise<HTMLElement> {
         return new Promise((resolve, reject) => {
             // Choose the new button insert location and insert elements
             const target: HTMLElement | null = <HTMLElement>document.querySelector(tar);
@@ -236,9 +265,9 @@ class Util {
 
             target.insertAdjacentElement(relative, btn);
             Util.setAttr(btn, {
-                "id": `mp_${id}`,
-                "class": btnClass,
-                "role": "button"
+                id: `mp_${id}`,
+                class: btnClass,
+                role: 'button',
             });
             // Set initial button text
             btn.innerHTML = text;
@@ -251,31 +280,34 @@ class Util {
      * @param btn An HTML Element being used as a button
      * @param payload The text that will be copied to clipboard on button click, or a callback function that will use the clipboard's current text
      */
-    public static clipboardifyBtn(btn:HTMLElement,payload:any, copy:boolean = true):void{
+    public static clipboardifyBtn(
+        btn: HTMLElement,
+        payload: any,
+        copy: boolean = true
+    ): void {
         btn.style.cursor = 'pointer';
         btn.addEventListener('click', () => {
             // Have to override the Navigator type to prevent TS errors
-            let nav: NavigatorExtended | undefined = <NavigatorExtended>navigator;
+            const nav: NavigatorExtended | undefined = <NavigatorExtended>navigator;
             if (nav === undefined) {
                 alert('Failed to copy text, likely due to missing browser support.');
-                throw new Error("browser doesn't support 'navigator'?")
+                throw new Error("browser doesn't support 'navigator'?");
             } else {
                 /* Navigator Exists */
 
-                if(copy && typeof payload === 'string'){
+                if (copy && typeof payload === 'string') {
                     // Copy results to clipboard
-                    nav.clipboard!.writeText( payload );
-                    console.log( '[M+] Copied to your clipboard!' );
-                }else{
+                    nav.clipboard!.writeText(payload);
+                    console.log('[M+] Copied to your clipboard!');
+                } else {
                     // Run payload function with clipboard text
-                    nav.clipboard!.readText()
-                    .then(text => {
+                    nav.clipboard!.readText().then((text) => {
                         payload(text);
-                    })
-                    console.log( '[M+] Copied from your clipboard!' );
+                    });
+                    console.log('[M+] Copied from your clipboard!');
                 }
                 btn.style.color = 'green';
             }
-        } );
+        });
     }
 }

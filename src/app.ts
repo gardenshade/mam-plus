@@ -26,8 +26,8 @@
  * @var pagePath: The current page URL without the site address
  */
 namespace MP {
-    export const DEBUG: boolean | undefined = (GM_getValue('debug')) ? true : false;
-    export const CHANGELOG:ArrayObject = {
+    export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
+    export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
             '🆕: Added ability to send gifts from Shoutbox dot menu',
@@ -37,16 +37,15 @@ namespace MP {
             '🐞: Fixed an issue (hopefully) where gifting a user would throw errors in the dev console',
             '🐞: Fixed an issue (hopefully) where styling of shoutbox gifting success/fail was not displaying',
         ] as string[],
-        BUG_LIST: [
-        ] as string[],
+        BUG_LIST: [] as string[],
     };
-    export const TIMESTAMP:string = '##meta_timestamp##';
-    export const VERSION:string = Check.newVer;
-    export const PREV_VER:string|undefined = Check.prevVer;
-    export let errorLog:string[] = [];
-    export let pagePath:string = window.location.pathname;
-    export let mpCss:Style = new Style();
-    export let settingsGlob:AnyFeature[] = [];
+    export const TIMESTAMP: string = '##meta_timestamp##';
+    export const VERSION: string = Check.newVer;
+    export const PREV_VER: string | undefined = Check.prevVer;
+    export const errorLog: string[] = [];
+    export const pagePath: string = window.location.pathname;
+    export const mpCss: Style = new Style();
+    export const settingsGlob: AnyFeature[] = [];
 
     export const run = async () => {
         /************
@@ -66,8 +65,9 @@ namespace MP {
         new Debug();
 
         // Notify the user if the script was updated
-        Check.updated()
-        .then((result) => { if (result) alerts.notify(result, CHANGELOG); });
+        Check.updated().then((result) => {
+            if (result) alerts.notify(result, CHANGELOG);
+        });
 
         new InitFeatures();
 
@@ -75,10 +75,9 @@ namespace MP {
          * SETTINGS
          ************/
 
-        Check.page('settings')
-        .then(result => {
-            let subPg:string = window.location.search;
-            if (result === true && (subPg === '' || subPg === '?view=general') ) {
+        Check.page('settings').then((result) => {
+            const subPg: string = window.location.search;
+            if (result === true && (subPg === '' || subPg === '?view=general')) {
                 // Initialize the settings page
                 Settings.init(result, settingsGlob);
             }
@@ -90,8 +89,7 @@ namespace MP {
          ******************/
 
         // CSS stuff
-        Check.elemLoad('head link[href*="ICGstation"]')
-        .then(() => {
+        Check.elemLoad('head link[href*="ICGstation"]').then(() => {
             // Add custom CSS sheet
             mpCss.injectLink();
             // Get the current site theme
