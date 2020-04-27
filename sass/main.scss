@@ -1,19 +1,19 @@
 @import 'vars';
 
 // Notification box
-.mp_notification{
+.mp_notification {
     box-sizing: border-box;
     position: fixed;
     padding: 20px 40px;
     width: 100%;
-    bottom:0;
-    left:0;
+    bottom: 0;
+    left: 0;
     background: $mp-back;
     color: #bbb;
-    box-shadow: 0 0 4px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
     z-index: 99998;
 
-    span{
+    span {
         position: absolute;
         padding: 5px 10px;
         display: inline-block;
@@ -21,7 +21,7 @@
         right: 90px;
         background: $mp-back;
         color: red;
-        box-shadow: 0 0 4px 0 rgba(0,0,0,0.3);
+        box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
         border-radius: 50px;
         cursor: pointer;
         z-index: 99999;
@@ -29,96 +29,102 @@
 }
 
 // Hiding elements
-.mp_hide_banner #msb{
+.mp_hide_banner #msb {
     visibility: hidden;
     height: 10px;
 }
-.mp_hide_home #menu .homeLink{
+.mp_hide_home #menu .homeLink {
     display: none;
 }
-.mp_hide_browse #menu .mmTorrents li:first-of-type{
+.mp_hide_browse #menu .mmTorrents li:first-of-type {
     display: none;
 }
 
 //
-.mp_setTag{
+.mp_setTag {
     display: inline-block;
-    min-width:120px;
+    min-width: 120px;
 }
 .mp_textInput,
-.mp_dropInput{
+.mp_dropInput {
     padding: 5px;
     margin-right: 5px;
     margin-top: 5px;
 }
-.mp_textInput ~ .mp_textInput{
+.mp_textInput ~ .mp_textInput {
     margin-top: 0;
 }
-.mp_textInput::placeholder{
-    .mp_dark &{
+.mp_textInput::placeholder {
+    .mp_dark & {
         color: $dark-placeholderColor;
     }
 
-    .mp_light &{
+    .mp_light & {
         color: $light-placeholderColor;
     }
 }
-#mp_submit{
+#mp_submit {
     margin-right: 1rem;
 
-    & ~ .mp_savestate{
+    & ~ .mp_savestate {
         font-weight: bold;
         color: green;
         padding: 0 20px;
         cursor: default;
     }
 }
-.mp_settingBtn{
+.mp_settingBtn {
     box-sizing: border-box;
     padding: 0 8px;
     display: inline-block;
     height: 25px;
     line-height: 25px;
-    margin-right:4px;
+    margin-right: 4px;
     cursor: pointer;
 
-    .mp_dark &{
+    .mp_dark & {
         border: $dark-btnBorder;
         color: $dark-btnColor;
         background-image: $dark-btnBack;
     }
 
-    .mp_light &{
+    .mp_light & {
         border: $light-btnBorder;
         color: $light-btnColor;
         background-image: $light-btnBack;
     }
 }
 a.mp_button_clone,
-.mp_plainBtn{
+.mp_plainBtn {
     border: 1px solid #d0d0d0;
     color: #000;
-    background-image: radial-gradient(ellipse at center,rgba(136,136,136,0) 0,rgba(136,136,136,0) 25%,rgba(136,136,136,0) 62%,rgba(136,136,136,0.65) 100%);
+    background-image: radial-gradient(
+        ellipse at center,
+        rgba(136, 136, 136, 0) 0,
+        rgba(136, 136, 136, 0) 25%,
+        rgba(136, 136, 136, 0) 62%,
+        rgba(136, 136, 136, 0.65) 100%
+    );
     box-sizing: border-box;
     padding: 0 4px;
     margin-right: 5px;
 
-    .mp_dark &{
+    .mp_dark & {
         border: $dark-btnBorder;
         color: $dark-btnColor;
         background-image: $dark-btnBack;
     }
 
-    .mp_light &{
+    .mp_light & {
         border: $light-btnBorder;
         color: $light-btnColor;
         background-image: $light-btnBack;
     }
 }
-.mp_dl{
+.mp_dl {
     border-radius: 5px 0 0 5px;
 }
-.mp_cover{
+.mp_cover {
     display: inline-block;
     width: 130px;
     height: 200px;
@@ -127,109 +133,112 @@ a.mp_button_clone,
     color: #777;
     text-align: center;
 }
-.mp_vaultClone{
+.mp_vaultClone {
     margin-top: 20px;
 
     input,
-    select{
+    select {
         font-size: 1.5em;
         display: inline-block;
         margin-right: 10px;
     }
-    br{
+    br {
         display: none;
     }
 }
-a[class^="mp_mark_"]{
-    position:relative;
-    top:8px;
-    left:5px;
+a[class^='mp_mark_'] {
+    position: relative;
+    top: 8px;
+    left: 5px;
 }
-a[id^="torBookmark"]{
-    .mp_dark &{
-        background:url($bookmark-for-dark) no-repeat;
+a[id^='torBookmark'] {
+    .mp_dark & {
+        background: url($bookmark-for-dark) no-repeat;
     }
-    .mp_light &{
-        background:url($bookmark-for-lite) no-repeat;
-    }
-}
-a[id^="torDeBookmark"]{
-    .mp_dark &{
-        background:url($demark-for-dark) no-repeat;
-    }
-    .mp_light &{
-        background:url($demark-for-lite) no-repeat;
+    .mp_light & {
+        background: url($bookmark-for-lite) no-repeat;
     }
 }
-.mp_formButton{
-    display:inline;
+a[id^='torDeBookmark'] {
+    .mp_dark & {
+        background: url($demark-for-dark) no-repeat;
+    }
+    .mp_light & {
+        background: url($demark-for-lite) no-repeat;
+    }
+}
+.mp_formButton {
+    display: inline;
 
-    .mp_dark &{
+    .mp_dark & {
         border: $dark-btnBorder;
     }
-    .mp_light &{
+    .mp_light & {
         border: $light-btnBorder;
     }
 }
-.mp_plainBtn{
+.mp_plainBtn {
     display: inline-block;
     margin-bottom: 7px;
 
-    &:hover{
+    &:hover {
         cursor: pointer;
         color: red;
     }
-    &:active{
+    &:active {
         color: green;
     }
 }
-.mp_plaintextSearch{
+.mp_plaintextSearch {
     width: 100%;
     height: 175px;
 }
 
-.mp_muted{
+.mp_muted {
     transition: all 0.1s;
     filter: blur(3px);
     opacity: 0.3;
 
-    &:hover{
+    &:hover {
         filter: blur(0);
         opacity: 0.7;
     }
 }
-.mp_bpDelta{
+.mp_bpDelta {
     opacity: 0.7;
 }
-.mp_tags{
+.mp_tags {
     display: block;
     padding: 0.8rem 0;
 }
-.mp_tag{
+.mp_tag {
     border-radius: 3px;
     margin: 0 2px;
     padding: 0 5px;
 
-    .mp_dark &{
+    .mp_dark & {
         background: #033649;
     }
     .mp_light & {
         background: #cac4a8;
     }
 }
-.mp_replyButton{
-    button{
+.mp_replyButton {
+    button {
         border-radius: 50%;
         border: none;
     }
+    &:hover button {
+        background: hsla(0, 0%, 100%, 0.1);
+    }
 }
-#mp_giftStatusElem{
+#mp_giftStatusElem {
     font-family: monospace;
     color: white;
-    .mp_success{
+    &.mp_success {
         background: #009933;
     }
-    .mp_fail{
+    &.mp_fail {
         background: #cc3300;
     }
 }
