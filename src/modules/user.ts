@@ -21,7 +21,7 @@ class UserGiftDefault implements Feature {
         Util.startFeature(this._settings, this._tar, ['user']).then((t) => {
             if (t) {
                 this._init();
-                // Testing out lint-staged
+                let unused;
             }
         });
     }
