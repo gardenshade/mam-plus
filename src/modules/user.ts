@@ -29,7 +29,7 @@ class UserGiftDefault implements Feature {
         new Shared()
             .fillGiftBox(this._tar, this._settings.title)
             .then((points) =>
-                console.log(`[M+] Set the default gift amount to ${points}`),
+                console.log(`[M+] Set the default gift amount to ${points}`)
             );
     }
 

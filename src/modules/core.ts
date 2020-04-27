@@ -37,7 +37,7 @@ class Alerts implements Feature {
                     // Internal function to build msg text
                     const buildMsg = (
                         arr: string[],
-                        title: string,
+                        title: string
                     ): string | undefined => {
                         if (MP.DEBUG) {
                             console.log(`buildMsg( ${title} )`);
@@ -66,10 +66,10 @@ class Alerts implements Feature {
                         Check.elemLoad('body').then(() => {
                             document.body.innerHTML += `<div class='mp_notification'>${msg}<span>X</span></div>`;
                             const msgBox: Element = document.querySelector(
-                                '.mp_notification',
+                                '.mp_notification'
                             )!;
                             const closeBtn: HTMLSpanElement = msgBox.querySelector(
-                                'span',
+                                'span'
                             )!;
                             try {
                                 if (closeBtn) {
@@ -81,7 +81,7 @@ class Alerts implements Feature {
                                                 msgBox.remove();
                                             }
                                         },
-                                        false,
+                                        false
                                     );
                                 }
                             } catch (err) {

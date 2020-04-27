@@ -60,7 +60,7 @@ class Util {
     public static async startFeature(
         settings: FeatureSettings,
         elem: string,
-        page?: ValidPage[],
+        page?: ValidPage[]
     ): Promise<boolean> {
         // Queue the settings in case they're needed
         MP.settingsGlob.push(settings);
@@ -168,9 +168,7 @@ class Util {
             console.warn('Node-to-elem without childnode is untested');
             const tempNode: Node = node;
             node.appendChild(tempNode);
-            const selected: HTMLElement = <HTMLElement>(
-                node.firstChild!.parentElement!
-            );
+            const selected: HTMLElement = <HTMLElement>node.firstChild!.parentElement!;
             node.removeChild(tempNode);
             return selected;
         }
@@ -197,16 +195,14 @@ class Util {
     public static addTorDetailsRow(
         tar: HTMLDivElement | null,
         label: string,
-        rowClass: string,
+        rowClass: string
     ): HTMLDivElement {
         if (tar === null || tar.parentElement === null) {
-            throw new Error(
-                `Add Tor Details Row: empty node or parent node @ ${tar}`,
-            );
+            throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`);
         } else {
             tar.parentElement.insertAdjacentHTML(
                 'afterend',
-                `<div class="torDetRow"><div class="torDetLeft">${label}</div><div class="torDetRight ${rowClass}"><span class="flex"></span></div></div>`,
+                `<div class="torDetRow"><div class="torDetLeft">${label}</div><div class="torDetRight ${rowClass}"><span class="flex"></span></div></div>`
             );
 
             return <HTMLDivElement>document.querySelector(`.${rowClass} .flex`);
@@ -225,7 +221,7 @@ class Util {
         tar: HTMLElement,
         url: string = 'none',
         text: string,
-        order: number = 0,
+        order: number = 0
     ): void {
         // Create the button
         const button: HTMLAnchorElement = document.createElement('a');
@@ -256,13 +252,11 @@ class Util {
         type: string = 'h1',
         tar: string,
         relative: 'beforebegin' | 'afterend' = 'afterend',
-        btnClass: string = 'mp_btn',
+        btnClass: string = 'mp_btn'
     ): Promise<HTMLElement> {
         return new Promise((resolve, reject) => {
             // Choose the new button insert location and insert elements
-            const target: HTMLElement | null = <HTMLElement>(
-                document.querySelector(tar)
-            );
+            const target: HTMLElement | null = <HTMLElement>document.querySelector(tar);
             const btn: HTMLElement = document.createElement(type);
 
             if (target === null) {
@@ -289,18 +283,14 @@ class Util {
     public static clipboardifyBtn(
         btn: HTMLElement,
         payload: any,
-        copy: boolean = true,
+        copy: boolean = true
     ): void {
         btn.style.cursor = 'pointer';
         btn.addEventListener('click', () => {
             // Have to override the Navigator type to prevent TS errors
-            const nav: NavigatorExtended | undefined = <NavigatorExtended>(
-                navigator
-            );
+            const nav: NavigatorExtended | undefined = <NavigatorExtended>navigator;
             if (nav === undefined) {
-                alert(
-                    'Failed to copy text, likely due to missing browser support.',
-                );
+                alert('Failed to copy text, likely due to missing browser support.');
                 throw new Error("browser doesn't support 'navigator'?");
             } else {
                 /* Navigator Exists */

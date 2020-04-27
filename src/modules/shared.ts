@@ -15,10 +15,9 @@ class Shared {
     // TODO: with all Checking being done in `Util.startFeature()` it's no longer necessary to Check in this function
     public fillGiftBox = (
         tar: string,
-        settingTitle: string,
+        settingTitle: string
     ): Promise<number | undefined> => {
-        if (MP.DEBUG)
-            console.log(`Shared.fillGiftBox( ${tar}, ${settingTitle} )`);
+        if (MP.DEBUG) console.log(`Shared.fillGiftBox( ${tar}, ${settingTitle} )`);
 
         return new Promise((resolve) => {
             Check.elemLoad(tar).then(() => {
@@ -27,11 +26,9 @@ class Shared {
                 );
                 if (pointBox) {
                     const userSetPoints: number = parseInt(
-                        GM_getValue(`${settingTitle}_val`),
+                        GM_getValue(`${settingTitle}_val`)
                     );
-                    let maxPoints: number = parseInt(
-                        pointBox.getAttribute('max')!,
-                    );
+                    let maxPoints: number = parseInt(pointBox.getAttribute('max')!);
                     if (!isNaN(userSetPoints) && userSetPoints <= maxPoints) {
                         maxPoints = userSetPoints;
                     }

@@ -35,7 +35,7 @@ class ToggleHiddenRequesters implements Feature {
                     | NodeListOf<HTMLLIElement>
                     | null
                     | undefined = document.querySelectorAll(
-                    '#torRows .torRow',
+                    '#torRows .torRow'
                 ) as NodeListOf<HTMLLIElement>;
 
                 if (reqList === null || reqList === undefined) {
@@ -50,7 +50,7 @@ class ToggleHiddenRequesters implements Feature {
     private _filterResults(list: NodeListOf<HTMLLIElement>) {
         list.forEach((request) => {
             const requester: HTMLAnchorElement | null = request.querySelector(
-                '.torRight a',
+                '.torRight a'
             );
             if (requester === null) {
                 request.style.display = 'none';

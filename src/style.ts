@@ -84,8 +84,7 @@ class Style {
                 .getAttribute('href');
             if (typeof themeURL === 'string') {
                 resolve(themeURL);
-            } else if (MP.DEBUG)
-                console.warn(`themeUrl is not a string: ${themeURL}`);
+            } else if (MP.DEBUG) console.warn(`themeUrl is not a string: ${themeURL}`);
         });
     }
 }

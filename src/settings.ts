@@ -8,9 +8,7 @@
  */
 class Settings {
     // Function for gathering the needed scopes
-    private static _getScopes(
-        settings: AnyFeature[],
-    ): Promise<SettingGlobObject> {
+    private static _getScopes(settings: AnyFeature[]): Promise<SettingGlobObject> {
         if (MP.DEBUG) {
             console.log('_getScopes(', settings, ')');
         }
@@ -96,7 +94,7 @@ class Settings {
                         '| Set:',
                         GM_getValue(`${pref.title}`),
                         '| Value:',
-                        GM_getValue(`${pref.title}_val`),
+                        GM_getValue(`${pref.title}_val`)
                     );
                 }
 
@@ -115,8 +113,7 @@ class Settings {
                             elem.value = GM_getValue(pref.title);
                         },
                     };
-                    if (cases[pref.type] && GM_getValue(pref.title))
-                        cases[pref.type]();
+                    if (cases[pref.type] && GM_getValue(pref.title)) cases[pref.type]();
                 }
             });
         });
@@ -201,9 +198,7 @@ class Settings {
         for (const feature in gmValues) {
             if (typeof gmValues[feature] !== 'function') {
                 // Only loop over values that are feature settings
-                if (
-                    !['mp_version', 'style_theme'].includes(gmValues[feature])
-                ) {
+                if (!['mp_version', 'style_theme'].includes(gmValues[feature])) {
                     GM_setValue(gmValues[feature], false);
                 }
             }
@@ -239,18 +234,11 @@ class Settings {
 
             // Make sure the settings table has loaded
             await Check.elemLoad('#mainBody > table').then((r) => {
-                if (MP.DEBUG)
-                    console.log(`[M+] Starting to build Settings table...`);
+                if (MP.DEBUG) console.log(`[M+] Starting to build Settings table...`);
                 // Create new table elements
-                const settingNav: Element = document.querySelector(
-                    '#mainBody > table',
-                )!;
-                const settingTitle: HTMLHeadingElement = document.createElement(
-                    'h1',
-                );
-                const settingTable: HTMLTableElement = document.createElement(
-                    'table',
-                );
+                const settingNav: Element = document.querySelector('#mainBody > table')!;
+                const settingTitle: HTMLHeadingElement = document.createElement('h1');
+                const settingTable: HTMLTableElement = document.createElement('table');
                 let pageScope: SettingGlobObject;
 
                 // Insert table elements after the Pref navbar
@@ -297,13 +285,9 @@ class Settings {
                                 () => {
                                     this._saveSettings(ssTimer, scopes);
                                 },
-                                false,
+                                false
                             );
-                            Util.clipboardifyBtn(
-                                pasteBtn,
-                                this._pasteSettings,
-                                false,
-                            );
+                            Util.clipboardifyBtn(pasteBtn, this._pasteSettings, false);
                             Util.clipboardifyBtn(copyBtn, this._copySettings());
                         } catch (err) {
                             if (MP.DEBUG) console.warn(err);

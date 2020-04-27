@@ -17,7 +17,7 @@ class Check {
         if (MP.DEBUG) {
             console.log(
                 `%c Looking for ${selector}: ${elem}`,
-                'background: #222; color: #555',
+                'background: #222; color: #555'
             );
         }
 
@@ -43,7 +43,7 @@ class Check {
         config: MutationObserverInit = {
             childList: true,
             attributes: true,
-        },
+        }
     ): Promise<MutationObserver> {
         let selected: HTMLElement | null = null;
         if (typeof selector === 'string') {
@@ -55,7 +55,7 @@ class Check {
         if (MP.DEBUG) {
             console.log(
                 `%c Setting observer on ${selector}: ${selected}`,
-                'background: #222; color: #5d8aa8',
+                'background: #222; color: #5d8aa8'
             );
         }
         const observer: MutationObserver = new MutationObserver(callback);
@@ -157,9 +157,7 @@ class Check {
                 }
                 if (cases[pageStr]) {
                     if (cases[pageStr] === subPage) {
-                        currentPage = subPage
-                            .split('.')[0]
-                            .replace(/[0-9]/g, '');
+                        currentPage = subPage.split('.')[0].replace(/[0-9]/g, '');
                     } else {
                         currentPage = cases[pageStr];
                     }

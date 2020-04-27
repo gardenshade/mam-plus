@@ -30,7 +30,7 @@
         "vars-on-top": ["warn"],
         "no-undef": "off",
         "no-use-before-define": ["warn"],
-        "comma-dangle": ["warn", "always-multiline"],
+        "comma-dangle": ["warn", "only-multiline"],
         "no-lonely-if": "warn",
         "no-mixed-spaces-and-tabs": ["warn"],
         "no-var": ["error"],

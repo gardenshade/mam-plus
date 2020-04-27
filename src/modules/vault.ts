@@ -22,23 +22,19 @@ class SimpleVault implements Feature {
 
     private async _init() {
         const subPage: string = GM_getValue('mp_currentPage');
-        const page: HTMLElement = <HTMLElement>(
-            document.querySelector(this._tar)
-        );
+        const page = <HTMLElement>document.querySelector(this._tar);
         console.group(`Applying Vault (${subPage}) settings...`);
 
         // Clone the important parts and reset the page
         const donateBtn: HTMLFormElement | null = page.querySelector('form');
         const donateTbl: HTMLTableElement | null = page.querySelector(
-            'table:last-of-type',
+            'table:last-of-type'
         );
         page.innerHTML = '';
 
         // Add the donate button if it exists
         if (donateBtn !== null) {
-            const newDonate: HTMLFormElement = <HTMLFormElement>(
-                donateBtn.cloneNode(true)
-            );
+            const newDonate: HTMLFormElement = <HTMLFormElement>donateBtn.cloneNode(true);
             page.appendChild(newDonate);
             newDonate.classList.add('mp_vaultClone');
         } else {

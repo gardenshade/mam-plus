@@ -28,7 +28,7 @@ class TorGiftDefault implements Feature {
         new Shared()
             .fillGiftBox(this._tar, this._settings.title)
             .then((points) =>
-                console.log(`[M+] Set the default gift amount to ${points}`),
+                console.log(`[M+] Set the default gift amount to ${points}`)
             );
     }
 
@@ -64,7 +64,7 @@ class GoodreadsButton implements Feature {
             HTMLAnchorElement
         > | null = document.querySelectorAll('#torDetMainCon .torAuthors a');
         const bookData: HTMLSpanElement | null = document.querySelector(
-            '#torDetMainCon .TorrentTitle',
+            '#torDetMainCon .TorrentTitle'
         );
         const seriesData: NodeListOf<
             HTMLAnchorElement
@@ -92,10 +92,7 @@ class GoodreadsButton implements Feature {
         // Build Series button
         series.then((ser) => {
             if (ser.extracted !== '') {
-                const url: string = this._buildGrSearchURL(
-                    'series',
-                    ser.extracted,
-                );
+                const url: string = this._buildGrSearchURL('series', ser.extracted);
                 Util.createLinkButton(buttonTar, url, ser.desc, 4);
             }
         });
@@ -104,10 +101,7 @@ class GoodreadsButton implements Feature {
         await author
             .then((auth) => {
                 if (auth.extracted !== '') {
-                    const url: string = this._buildGrSearchURL(
-                        'author',
-                        auth.extracted,
-                    );
+                    const url: string = this._buildGrSearchURL('author', auth.extracted);
                     Util.createLinkButton(buttonTar, url, auth.desc, 3);
                 } else if (MP.DEBUG) {
                     console.warn('No author data detected!');
@@ -121,26 +115,18 @@ class GoodreadsButton implements Feature {
             .then(async (result) => {
                 const auth: BookDataObject = result.auth;
                 const book: BookDataObject = await result.book;
-                const url: string = this._buildGrSearchURL(
-                    'book',
-                    book.extracted,
-                );
+                const url: string = this._buildGrSearchURL('book', book.extracted);
                 Util.createLinkButton(buttonTar, url, book.desc, 2);
                 // If a title and author both exist, make an extra button
                 if (auth.extracted !== '' && book.extracted !== '') {
                     const bothURL: string = this._buildGrSearchURL(
                         'on',
-                        `${book.extracted} ${auth.extracted}`,
+                        `${book.extracted} ${auth.extracted}`
                     );
-                    Util.createLinkButton(
-                        buttonTar,
-                        bothURL,
-                        'Title + Author',
-                        1,
-                    );
+                    Util.createLinkButton(buttonTar, bothURL, 'Title + Author', 1);
                 } else if (MP.DEBUG) {
                     console.log(
-                        `Book+Author failed.\nBook: ${book.extracted}\nAuthor: ${auth.extracted}`,
+                        `Book+Author failed.\nBook: ${book.extracted}\nAuthor: ${auth.extracted}`
                     );
                 }
             });
@@ -154,7 +140,7 @@ class GoodreadsButton implements Feature {
     private _extractData(
         type: BookData,
         data: HTMLSpanElement | NodeListOf<HTMLAnchorElement> | null,
-        auth?: string,
+        auth?: string
     ): Promise<BookDataObject> {
         if (auth === undefined) {
             auth = '';
@@ -184,10 +170,7 @@ class GoodreadsButton implements Feature {
                         extracted = (data as HTMLSpanElement).innerText;
                         desc = 'Title';
                         // Check title for brackets & shorten it
-                        extracted = Util.trimString(
-                            Util.bracketRemover(extracted),
-                            50,
-                        );
+                        extracted = Util.trimString(Util.bracketRemover(extracted), 50);
                         extracted = this._checkDashes(extracted, auth!);
                     },
                     series: () => {
@@ -215,8 +198,8 @@ class GoodreadsButton implements Feature {
         if (MP.DEBUG) {
             console.log(
                 `GoodreadsButton._checkDashes( ${title}, ${checkAgainst} ): Count ${title.indexOf(
-                    ' - ',
-                )}`,
+                    ' - '
+                )}`
             );
         }
 
@@ -229,7 +212,7 @@ class GoodreadsButton implements Feature {
             if (split[0] === checkAgainst) {
                 if (MP.DEBUG) {
                     console.log(
-                        `> String before dash is author; using string behind dash`,
+                        `> String before dash is author; using string behind dash`
                     );
                 }
                 return split[1];
@@ -291,7 +274,7 @@ class GoodreadsButton implements Feature {
             cases[type]();
         }
         return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(
-            inp,
+            inp
         ).replace("'", '%27')}&search_type=books&search%5Bfield%5D=${grType}`;
 
         // Return a value eventually
@@ -320,11 +303,10 @@ class CurrentlyReading implements Feature {
 
     private async _init() {
         // Get the required information
-        const title: string = document!.querySelector(
-            '#torDetMainCon .TorrentTitle',
-        )!.textContent!;
+        const title: string = document!.querySelector('#torDetMainCon .TorrentTitle')!
+            .textContent!;
         const authors: NodeListOf<HTMLAnchorElement> = document.querySelectorAll(
-            '#torDetMainCon .torAuthors a',
+            '#torDetMainCon .torAuthors a'
         );
         const torID: string = window.location.pathname.split('/')[2];
         const rowTar: HTMLDivElement | null = document.querySelector('#fInfo');
@@ -338,14 +320,10 @@ class CurrentlyReading implements Feature {
         const crRow: HTMLDivElement = await Util.addTorDetailsRow(
             rowTar,
             'Currently Reading',
-            'mp_crRow',
+            'mp_crRow'
         );
         // Process data into string
-        const blurb: string = await this._generateSnippet(
-            torID,
-            title,
-            authors,
-        );
+        const blurb: string = await this._generateSnippet(torID, title, authors);
         // Build button
         const btn: HTMLDivElement = await this._buildButton(crRow, blurb);
         // Init button
@@ -356,7 +334,7 @@ class CurrentlyReading implements Feature {
     private _generateSnippet(
         id: string,
         title: string,
-        authors: NodeListOf<HTMLAnchorElement>,
+        authors: NodeListOf<HTMLAnchorElement>
     ): string {
         let authorText = '';
         authors.forEach((authorElem) => {
@@ -372,9 +350,7 @@ class CurrentlyReading implements Feature {
         tar.innerHTML = `<textarea rows="1" cols="80" style='margin-right:5px'>${content}</textarea>`;
         // Build button
         Util.createLinkButton(tar, 'none', 'Copy', 2);
-        document
-            .querySelector('.mp_crRow .mp_button_clone')!
-            .classList.add('mp_reading');
+        document.querySelector('.mp_crRow .mp_button_clone')!.classList.add('mp_reading');
         // Return button
         return <HTMLDivElement>document.querySelector('.mp_reading');
     }

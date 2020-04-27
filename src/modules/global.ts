@@ -13,8 +13,7 @@ class HideHome implements Feature {
             hideBanner: 'Hide the banner',
             hideHome: 'Hide the home button',
         },
-        desc:
-            'Remove the header image or Home button, because both link to the homepage',
+        desc: 'Remove the header image or Home button, because both link to the homepage',
     };
     private _tar: string = '#mainmenu';
 
@@ -89,25 +88,18 @@ class MiniVaultInfo implements Feature {
     }
 
     private _init() {
-        const vaultText: HTMLElement = <HTMLElement>(
-            document.querySelector(this._tar)
-        );
-        const ratioText: HTMLElement = <HTMLElement>(
-            document.querySelector('#tmR')!
-        );
+        const vaultText: HTMLElement = <HTMLElement>document.querySelector(this._tar);
+        const ratioText: HTMLElement = <HTMLElement>document.querySelector('#tmR')!;
 
         // Shorten the ratio text
         // TODO: move this to its own setting?
         ratioText.innerHTML = `${parseFloat(ratioText.innerText).toFixed(
-            2,
+            2
         )} <img src="/pic/updownBig.png" alt="ratio">`;
 
         // Turn the numeric portion of the vault link into a number
         let newText: number = parseInt(
-            vaultText
-                .textContent!.split(':')[1]
-                .split(' ')[1]
-                .replace(/,/g, ''),
+            vaultText.textContent!.split(':')[1].split(' ')[1].replace(/,/g, '')
         );
 
         // Convert the vault amount to millionths
@@ -143,9 +135,7 @@ class BonusPointDelta implements Feature {
     }
 
     _init() {
-        const currentBPEl: HTMLAnchorElement | null = document.querySelector(
-            this._tar,
-        );
+        const currentBPEl: HTMLAnchorElement | null = document.querySelector(this._tar);
 
         // Get old BP value
         this._prevBP = this._getBP();
@@ -153,7 +143,7 @@ class BonusPointDelta implements Feature {
         if (currentBPEl !== null) {
             // Extract only the number from the BP element
             const current: RegExpMatchArray = currentBPEl.textContent!.match(
-                /\d+/g,
+                /\d+/g
             ) as RegExpMatchArray;
 
             // Set new BP value
@@ -171,9 +161,7 @@ class BonusPointDelta implements Feature {
     }
 
     private _displayBP = (bp: number): void => {
-        const bonusBox: HTMLAnchorElement | null = document.querySelector(
-            this._tar,
-        );
+        const bonusBox: HTMLAnchorElement | null = document.querySelector(this._tar);
         let deltaBox: string = '';
 
         deltaBox = bp > 0 ? `+${bp}` : `${bp}`;
@@ -187,9 +175,7 @@ class BonusPointDelta implements Feature {
         GM_setValue(`${this._settings.title}Val`, `${bp}`);
     };
     private _getBP = (): number => {
-        const stored: string | undefined = GM_getValue(
-            `${this._settings.title}Val`,
-        );
+        const stored: string | undefined = GM_getValue(`${this._settings.title}Val`);
         if (stored === undefined) {
             return 0;
         } else {

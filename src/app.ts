@@ -26,9 +26,7 @@
  * @var pagePath: The current page URL without the site address
  */
 namespace MP {
-    export const DEBUG: boolean | undefined = GM_getValue('debug')
-        ? true
-        : false;
+    export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
@@ -79,10 +77,7 @@ namespace MP {
 
         Check.page('settings').then((result) => {
             const subPg: string = window.location.search;
-            if (
-                result === true &&
-                (subPg === '' || subPg === '?view=general')
-            ) {
+            if (result === true && (subPg === '' || subPg === '?view=general')) {
                 // Initialize the settings page
                 Settings.init(result, settingsGlob);
             }

@@ -32,21 +32,16 @@ class ToggleSnatched implements Feature {
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
         let results: NodeListOf<HTMLTableRowElement>;
         const storedState: string | undefined = GM_getValue(
-            `${this._settings.title}State`,
+            `${this._settings.title}State`
         );
 
-        if (
-            storedState === 'false' &&
-            GM_getValue('stickySnatchedToggle') === true
-        ) {
+        if (storedState === 'false' && GM_getValue('stickySnatchedToggle') === true) {
             this._setVisState(false);
         } else {
             this._setVisState(true);
         }
 
-        const toggleText: string = this._isVisible
-            ? 'Hide Snatched'
-            : 'Show Snatched';
+        const toggleText: string = this._isVisible ? 'Hide Snatched' : 'Show Snatched';
 
         // Queue building the button and getting the results
         await Promise.all([
@@ -56,7 +51,7 @@ class ToggleSnatched implements Feature {
                 'h1',
                 '#resetNewIcon',
                 'beforebegin',
-                'torFormButton',
+                'torFormButton'
             )),
             (resultList = this._share.getSearchList()),
         ]);
@@ -76,7 +71,7 @@ class ToggleSnatched implements Feature {
                         }
                         this._filterResults(results, this._snatchedHook);
                     },
-                    false,
+                    false
                 );
             })
             .catch((err) => {
@@ -109,10 +104,7 @@ class ToggleSnatched implements Feature {
      * @param list a search results list
      * @param subTar the elements that must be contained in our filtered results
      */
-    private _filterResults(
-        list: NodeListOf<HTMLTableRowElement>,
-        subTar: string,
-    ): void {
+    private _filterResults(list: NodeListOf<HTMLTableRowElement>, subTar: string): void {
         list.forEach((snatch) => {
             const btn: HTMLHeadingElement = <HTMLHeadingElement>(
                 document.querySelector('#mp_snatchedToggle')!
@@ -203,7 +195,7 @@ class PlaintextSearch implements Feature {
     };
     private _tar: string = '#ssr h1';
     private _isOpen: 'true' | 'false' | undefined = GM_getValue(
-        `${this._settings.title}State`,
+        `${this._settings.title}State`
     );
     private _share: Shared = new Shared();
     private _plainText: string = '';
@@ -229,7 +221,7 @@ class PlaintextSearch implements Feature {
                 'div',
                 '#ssr',
                 'beforebegin',
-                'mp_toggle mp_plainBtn',
+                'mp_toggle mp_plainBtn'
             )),
             (resultList = this._share.getSearchList()),
         ]);
@@ -244,17 +236,17 @@ class PlaintextSearch implements Feature {
                     'div',
                     '#mp_plainToggle',
                     'afterend',
-                    'mp_copy mp_plainBtn',
+                    'mp_copy mp_plainBtn'
                 );
                 // Build the plaintext box
                 copyBtn.insertAdjacentHTML(
                     'afterend',
-                    `<br><textarea class='mp_plaintextSearch' style='display: none'></textarea>`,
+                    `<br><textarea class='mp_plaintextSearch' style='display: none'></textarea>`
                 );
                 // Insert plaintext results
                 this._plainText = await this._processResults(res);
                 document.querySelector(
-                    '.mp_plaintextSearch',
+                    '.mp_plaintextSearch'
                 )!.innerHTML = this._plainText;
                 // Set up a click listener
                 Util.clipboardifyBtn(copyBtn, this._plainText);
@@ -262,14 +254,13 @@ class PlaintextSearch implements Feature {
             .then(() => {
                 // Observe the Search results
                 Check.elemObserver('#ssr', () => {
-                    document.querySelector('.mp_plaintextSearch')!.innerHTML =
-                        '';
+                    document.querySelector('.mp_plaintextSearch')!.innerHTML = '';
                     resultList = this._share.getSearchList();
                     resultList.then(async (res) => {
                         // Insert plaintext results
                         this._plainText = await this._processResults(res);
                         document.querySelector(
-                            '.mp_plaintextSearch',
+                            '.mp_plaintextSearch'
                         )!.innerHTML = this._plainText;
                     });
                 });
@@ -286,7 +277,7 @@ class PlaintextSearch implements Feature {
                     () => {
                         // Textbox should exist, but just in case...
                         const textbox: HTMLTextAreaElement | null = document.querySelector(
-                            '.mp_plaintextSearch',
+                            '.mp_plaintextSearch'
                         );
                         if (textbox === null) {
                             throw new Error(`textbox doesn't exist!`);
@@ -300,7 +291,7 @@ class PlaintextSearch implements Feature {
                             btn.innerText = 'Show Plaintext';
                         }
                     },
-                    false,
+                    false
                 );
             })
             .catch((err) => {
@@ -323,7 +314,7 @@ class PlaintextSearch implements Feature {
     }
 
     private async _processResults(
-        results: NodeListOf<HTMLTableRowElement>,
+        results: NodeListOf<HTMLTableRowElement>
     ): Promise<string> {
         let outp: string = '';
         results.forEach((node) => {
@@ -333,18 +324,16 @@ class PlaintextSearch implements Feature {
             let authTitle: string = '';
             let narrTitle: string = '';
             // Break out the important data from each node
-            const rawTitle: HTMLAnchorElement | null = node.querySelector(
-                '.torTitle',
-            );
+            const rawTitle: HTMLAnchorElement | null = node.querySelector('.torTitle');
             const seriesList: NodeListOf<
                 HTMLAnchorElement
             > | null = node.querySelectorAll('.series');
-            const authList: NodeListOf<
-                HTMLAnchorElement
-            > | null = node.querySelectorAll('.author');
-            const narrList: NodeListOf<
-                HTMLAnchorElement
-            > | null = node.querySelectorAll('.narrator');
+            const authList: NodeListOf<HTMLAnchorElement> | null = node.querySelectorAll(
+                '.author'
+            );
+            const narrList: NodeListOf<HTMLAnchorElement> | null = node.querySelectorAll(
+                '.narrator'
+            );
 
             if (rawTitle === null) {
                 console.warn('Error Node:', node);
@@ -421,13 +410,11 @@ class ToggleSearchbox implements Feature {
     }
 
     private async _init(): Promise<void> {
-        const searchbox: HTMLDivElement | null = document.querySelector(
-            this._tar,
-        );
+        const searchbox: HTMLDivElement | null = document.querySelector(this._tar);
         if (searchbox) {
             // Adjust the title to make it clear it is a toggle button
             const title: HTMLDivElement | null = searchbox.querySelector(
-                '.blockHeadCon h4',
+                '.blockHeadCon h4'
             );
             if (title) {
                 // Adjust text & style
@@ -446,19 +433,17 @@ class ToggleSearchbox implements Feature {
             });
             // Hide extra text
             const notification: HTMLHeadingElement | null = document.querySelector(
-                '#mainBody > h3',
+                '#mainBody > h3'
             );
             const guideLink: HTMLAnchorElement | null = document.querySelector(
-                '#mainBody > h3 ~ a',
+                '#mainBody > h3 ~ a'
             );
             if (notification) notification.style.display = 'none';
             if (guideLink) guideLink.style.display = 'none';
 
             console.log('[M+] Collapsed the Search box!');
         } else {
-            console.error(
-                'Could not collapse Search box! Target does not exist',
-            );
+            console.error('Could not collapse Search box! Target does not exist');
         }
     }
 
@@ -562,14 +547,11 @@ class BuildTags implements Feature {
             tagRow.classList.add('mp_tags');
             tar.insertAdjacentElement('beforebegin', tagRow);
             tar.style.display = 'none';
-            tagRow.insertAdjacentElement(
-                'afterend',
-                document.createElement('br'),
-            );
+            tagRow.insertAdjacentElement('afterend', document.createElement('br'));
             // Add the tags to the tag row
             tags.forEach((tag) => {
                 tagRow.innerHTML += `<a class='mp_tag' href='/tor/browse.php?tor%5Btext%5D=%22${encodeURIComponent(
-                    tag,
+                    tag
                 )}%22&tor%5BsrchIn%5D%5Btags%5D=true'>${tag}</a>`;
             });
         }
