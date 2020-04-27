@@ -12,8 +12,8 @@
  *
  * The order of the feature groups is not determined here.
  */
-class InitFeatures{
-    constructor(){
+class InitFeatures {
+    constructor() {
         // Initialize Global functions
         new HideHome();
         new VaultLink();
@@ -40,8 +40,8 @@ class InitFeatures{
         new PriorityStyle();
         new MutedUsers();
         new ReplySimple();
-		new ReplyQuote();
-		new GiftButton();
+        new ReplyQuote();
+        new GiftButton();
 
         // Initialize Vault functions
         new SimpleVault();
