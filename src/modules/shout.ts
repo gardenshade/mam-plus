@@ -424,6 +424,12 @@ class GiftButton implements Feature {
             if (!giftValueSetting) {
                 giftValueSetting = '100';
             }
+			else if (Number(giftValueSetting) > 1000 || isNaN(Number(giftValueSetting))){
+				giftValueSetting = "1000";
+			}
+			else if (Number(giftValueSetting) < 5){
+				giftValueSetting = "5";
+			}
             //create the HTML document that holds the button and value text
             const giftButton: HTMLSpanElement = document.createElement('span');
             giftButton.setAttribute('id', 'giftButton');
@@ -476,19 +482,29 @@ class GiftButton implements Feature {
                             //after we add line in SB, scroll to bottom to show result
                             sbfDiv.scrollTop = sbfDiv.scrollHeight;
                         }
-                    };
-                    giftHTTP.send();
-                    //return to main SB window after gift is clicked - these are two steps taken by MAM when clicking out of Menu
-                    sbfDiv
-                        .getElementsByClassName('sb_clicked_row')[0]!
-                        .removeAttribute('class');
-                    document
-                        .getElementById('sbMenuMain')!
-                        .setAttribute('class', 'sbBottom hideMe');
-                });
-        });
+                        //after we add line in SB, scroll to bottom to show result
+                        sbfDiv.scrollTop = sbfDiv.scrollHeight;
+                    }
+                };
+                giftHTTP.send();
+                //return to main SB window after gift is clicked - these are two steps taken by MAM when clicking out of Menu
+                sbfDiv.getElementsByClassName("sb_clicked_row")[0]!.removeAttribute("class");
+                document.getElementById("sbMenuMain")!.setAttribute("class","sbBottom hideMe")
 
-        console.log(`[M+] Adding Gift Button...`);
+            })
+			giftButton.querySelector('input')!
+            .addEventListener('input', () => {
+				let valueToNumber: String = (<HTMLInputElement>document.getElementById("mp_giftValue"))!.value
+				if( Number(valueToNumber)>1000 || Number(valueToNumber) < 5 || isNaN(Number(valueToNumber))){
+					giftButton.querySelector('button')!.disabled = true;
+				}
+				else {
+					giftButton.querySelector('button')!.disabled = false;
+				}				
+			})
+		});
+
+        console.log(`[M+] Adding Gift Button...`)
     }
 
     get settings(): CheckboxSetting {
@@ -561,5 +577,183 @@ class ReplyQuote implements Feature {
 
     get settings(): CheckboxSetting {
         return this._settings;
+    }
+}
+
+
+/**
+ * Process & return information from the shoutbox
+ */
+class ProcessShouts {
+
+    /**
+     * Watch the shoutbox for changes, triggering actions for filtered shouts
+     * @param tar The shoutbox element selector
+     * @param names (Optional) List of usernames/IDs to filter for
+     * @param usertype (Optional) What filter the names are for. Required if `names` is provided
+     */
+    public static watchShoutbox( tar:string, names?:string[], usertype?:ShoutboxUserType ):void{
+        // Observe the shoutbox
+        Check.elemObserver( tar, mutList => {
+            // When the shoutbox updates, process the information
+            mutList.forEach( mutRec => {
+                // Get the changed nodes
+                mutRec.addedNodes.forEach( node => {
+					//if the node is added by MAM+ for gift button, ignore
+                    if(/^mp_/.test(Util.nodeToElem(node).getAttribute("id")!)){
+							return;
+						}
+					// If we're looking for specific users...
+                    if(names !== undefined && names.length > 0){
+                        if(usertype === undefined){ throw new Error('Usertype must be defined if filtering names!'); }
+                        // Extract
+                        let userID: string = this.extractFromShout(node, 'a[href^="\/u\/"]', 'href');
+                        let userName: string = this.extractFromShout(node, 'a > span', 'text');
+                        // Filter
+                        names.forEach( name => {
+                            if(`/u/${name}` === userID || Util.caselessStringMatch(name, userName)){
+                                this.styleShout( node, usertype );
+                            }
+                        } );
+                    }
+                } );
+            } );
+        }, { childList:true }
+        );
+    }
+
+	/**
+     * Watch the shoutbox for changes, triggering actions for filtered shouts
+     * @param tar The shoutbox element selector
+     * @param buttons Number to represent checkbox selections 1 = Reply, 2 = Reply With Quote
+     * @param charLimit Number of characters to include in quote, , charLimit?:number - Currently unused
+     */
+    public static watchShoutboxReply( tar:string, buttons?:number ):void{
+        // Get the reply box
+        const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
+        // Observe the shoutbox
+        Check.elemObserver( tar, mutList => {
+            // When the shoutbox updates, process the information
+            mutList.forEach( mutRec => {
+                // Get the changed nodes
+                mutRec.addedNodes.forEach( node => {
+						//if the node is added by MAM+ for gift button, ignore
+                    	if(/^mp_/.test(Util.nodeToElem(node).getAttribute("id")!)){
+							return;
+						}
+						//colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
+						let colorBlock: Array<string> = ["",""];
+						//idColor created as empty string placeholder
+						let idColor: string = "";
+						//extract the shoutbox text node containing UserID color Data
+						let shoutHrefElem:HTMLElement|null = Util.nodeToElem(node).querySelector('a[href^="\/u\/"]');
+                        //use queried element to pull out the attribute value of color (had issue with getting attribute by name, room for improvement here)
+						if(shoutHrefElem != null ){
+							idColor = Util.nodeToElem(shoutHrefElem.childNodes[0]).attributes[0].value;
+						}
+						//if the color extracted from href element has more than 2 attributes, then that means it is an admin/mod with background color. skip them
+						if(idColor.split(";").length <= 2 && idColor != "" && idColor.indexOf("#") > 0){
+						//overwrite empty string with bbcode color block
+						colorBlock[0] = "[" + idColor.replace(":","=").replace(";","") + "]";
+						colorBlock[1] = "[/color]";
+						}
+						//extract the username from node for use in reply
+						let userName: string = this.extractFromShout(node, 'a > span', 'text');
+						//create a span element to be body of button added to page - button uses relative node context at click time to do calculations
+                        let replyButton: HTMLSpanElement = document.createElement('span');
+						//if this is a ReplySimple request, then create Reply Simple button
+						if(buttons === 1){
+							//create button with onclick action of setting sb text field to username with potential color block with a colon and space to reply, focus cursor in text box
+                            replyButton.innerHTML = '<button>\u293a</button>';
+                            replyButton.querySelector('button')!
+                            .addEventListener('click', () => {
+                                replyBox.value = replyBox.value + `[i]${colorBlock[0]+userName+colorBlock[1]}[/i] `;
+                                replyBox.focus();
+                            })
+						}
+						//if this is a replyQuote request, then create reply quote button
+						else if (buttons === 2){
+							//create button with onclick action of getting that line's text, stripping down to 65 char with no word break, then insert into SB text field, focus cursor in text box
+                            replyButton.innerHTML = '<button>\u293d</button>';
+                            replyButton.querySelector('button')!
+                            .addEventListener('click', () => {
+                                let extractText:string[] = [];
+                                // Get number of reply buttons to remove from text
+                                let btnCount = node.firstChild!.parentElement!.querySelectorAll('.mp_replyButton').length;
+                                // Get the text of all child nodes
+                                node.childNodes.forEach(child => {
+                                    // Links aren't clickable anyway so get rid of them
+                                    if ( child.nodeName === 'A' ) {
+                                        extractText.push( '[Link]' )
+                                    } else {
+                                        extractText.push( child.textContent! );
+                                    }
+                                });
+                                // Make a string, but toss out the first few nodes
+                                let nodeText = extractText.slice(3+btnCount).join(' ');
+                                if(nodeText.indexOf(':') === 0){
+                                    nodeText = nodeText.substr(2);
+                                }
+                                nodeText = Util.trimString(nodeText.trim(), 65);
+                                // Add quote to reply box
+                                replyBox.value = `\u201c[i]${colorBlock[ 0 ] + userName + colorBlock[ 1 ]}: ${nodeText}\u2026[/i]\u201d`;
+                                replyBox.focus();
+                            })
+						}
+						//give span an ID for potential use later
+						replyButton.setAttribute("class","mp_replyButton");
+						//insert button prior to username or another button
+						node.insertBefore(replyButton,node.childNodes[2]);
+
+                } );
+            } );
+        }, { childList:true }
+        );
+    }
+
+    /**
+     * Extract information from shouts
+     * @param shout The node containing shout info
+     * @param tar The element selector string
+     * @param get The requested info (href or text)
+     * @returns The string that was specified
+     */
+    public static extractFromShout( shout:Node, tar:string, get:'href'|'text' ):string{
+        if(shout !== null){
+            let shoutElem:HTMLElement|null = Util.nodeToElem(shout).querySelector(tar);
+            if(shoutElem !== null){
+                let extracted: string | null;
+                if(get !== 'text'){
+                    extracted = shoutElem.getAttribute(get);
+                }else{
+                    extracted = shoutElem.textContent;
+                }
+                if(extracted !== null){
+                    return extracted;
+                }else{
+                    throw new Error('Could not extract shout! Attribute was null')
+                }
+            } else { throw new Error('Could not extract shout! Element was null') }
+
+        }else{ throw new Error('Could not extract shout! Node was null') }
+    }
+
+    /**
+     * Change the style of a shout based on filter lists
+     * @param shout The node containing shout info
+     * @param usertype The type of users that have been filtered
+     */
+    public static styleShout( shout:Node, usertype:ShoutboxUserType ):void{
+        let shoutElem:HTMLElement = Util.nodeToElem(shout);
+        if(usertype === 'priority'){
+            let customStyle: string|undefined = GM_getValue('priorityStyle_val');
+            if ( customStyle ){
+                shoutElem.style.background = `hsla(${customStyle})`;
+            }else{
+                shoutElem.style.background = 'hsla(0,0%,50%,0.3)';
+            }
+        }else if(usertype === 'mute'){
+            shoutElem.classList.add('mp_muted');
+        }
     }
 }
