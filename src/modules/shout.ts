@@ -124,9 +124,9 @@ class ProcessShouts {
                                 .addEventListener('click', () => {
                                     replyBox.value =
                                         replyBox.value +
-                                        `[i]${
-                                            colorBlock[0] + userName + colorBlock[1]
-                                        }[/i] `;
+                                        `[i]${colorBlock[0] + userName} ${
+                                            colorBlock[1]
+                                        }[/i]`;
                                     replyBox.focus();
                                 });
                         }
@@ -161,8 +161,8 @@ class ProcessShouts {
                                     nodeText = Util.trimString(nodeText.trim(), 65);
                                     // Add quote to reply box
                                     replyBox.value = `\u201c[i]${
-                                        colorBlock[0] + userName + colorBlock[1]
-                                    }: ${nodeText}\u2026[/i]\u201d`;
+                                        colorBlock[0] + userName
+                                    } ${colorBlock[1]}: ${nodeText}\u2026[/i]\u201d`;
                                     replyBox.focus();
                                 });
                         }
