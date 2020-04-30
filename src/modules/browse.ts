@@ -612,8 +612,8 @@ class RandomBook implements Feature {
 						let catValue: string = catSelection!.options[catSelection.selectedIndex].value;
 						//depending on category selected, create a category string for the JSON GET
 						switch (String(catValue)){
-							case 'ALL': categories = "";
-							case 'defaults': categories = "";
+							case 'ALL': categories = "";break;
+							case 'defaults': categories = "";break;
 							case 'm13': categories = "&tor[main_cat][]=13";break;
 							case 'm14': categories = "&tor[main_cat][]=14";break;
 							case 'm15': categories = "&tor[main_cat][]=15";break;
