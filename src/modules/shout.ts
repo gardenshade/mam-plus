@@ -281,7 +281,7 @@ class PriorityStyle implements Feature {
         title: 'priorityStyle',
         tag: 'Emphasis Style',
         placeholder: 'default: 0, 0%, 50%, 0.3',
-        desc: `Change the color/opacity of the highlighting rule for emphasized users' posts. (<em>This is formatted as Hue,Saturation,Lightness,Opacity. H is 0-360, SL are 0-100%, and O is 0-1</em>)`,
+        desc: `Change the color/opacity of the highlighting rule for emphasized users' posts. (<em>This is formatted as Hue (0-360), Saturation (0-100%), Lightness (0-100%), Opacity (0-1)</em>)`,
     };
     private _tar: string = '#sbf';
 
