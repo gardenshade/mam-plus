@@ -26,7 +26,10 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
-        UPDATE_LIST: [] as string[],
+        UPDATE_LIST: [
+            '🆕: Added a "Random Book" button. It uses the currently selected Category in the dropdown',
+            '♻️: Updated preferences text with a link to feature descriptions',
+        ] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
