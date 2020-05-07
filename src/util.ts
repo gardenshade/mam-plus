@@ -311,7 +311,10 @@ class Util {
         });
     }
 	
-	
+	/**
+     * Creates an HTTPRequest for GET JSON, returns the full text of HTTP GET
+     * @param url - a string of the URL to submit for GET request
+     */
 	public static getJSON(
         url: string
     ): Promise<string> {
@@ -329,10 +332,48 @@ class Util {
         });
 	}
 	
+	/**
+     * Returns a random number between two parameters
+     * @param min a number of the bottom of random number pool
+     * @param max a number of the top of the random number pool
+     */
 	public static randomNumber(
         min: number,
 		max: number
     ): number {
         	return(Math.floor(Math.random() * (max - min + 1) + min));
 	}
+	
+	/**
+     * Trims the gifted list to last 50 names to avoid getting too large over time.
+     */
+	public static trimGiftList(
+        ): void {
+			//if value exists in GM
+			if(GM_getValue("stor_lastNewGifted")){
+				//GM value is a comma delim value, split value into array of names
+				let giftNames = GM_getValue("stor_lastNewGifted").split(",");
+				let newGiftNames: string = "";
+				if(giftNames.length > 50){
+					for (const giftName of giftNames){
+						if(giftNames.indexOf(giftName)<= 49){
+							//rebuild a comma delim string out of the first 49 names
+							newGiftNames = newGiftNames+giftName+",";
+							//set new string in GM
+							GM_setValue("stor_lastNewGifted", newGiftNames);
+						}
+						else {break;}
+					}
+				}
+			} else {
+				//set value if doesnt exist
+				GM_setValue("stor_lastNewGifted", "");
+			}
+	}
+	
+	/**
+     * Sleep util to be used in async functions to delay program
+     */
+	public static sleep = (m: any) => new Promise(r => setTimeout(r, m))
+	
 }

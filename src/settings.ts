@@ -199,7 +199,10 @@ class Settings {
             if (typeof gmValues[feature] !== 'function') {
                 // Only loop over values that are feature settings
                 if (!['mp_version', 'style_theme'].includes(gmValues[feature])) {
-                    GM_setValue(gmValues[feature], false);
+					//if not part of preferences page
+					if(gmValues[feature].indexOf("stor_") !== 0){
+						GM_setValue(gmValues[feature], false);
+					}
                 }
             }
         }
