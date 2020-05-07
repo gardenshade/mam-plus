@@ -570,10 +570,9 @@ class RandomBook implements Feature {
         scope: SettingGroup['Browse & Search'],
         type: 'checkbox',
         title: 'randomBook',
-        desc: `Add a button to take you to randomly selected book (Uses the "Category" dropdown to filter RandomBook category. *Cannot read Site Defaults*)`,
+        desc: `Add a button to open a randomly selected book page. (<em>Uses the currently selected category in the dropdown</em>)`,
     };
     private _tar: string = '#ssr';
-    private _isVisible: boolean = true;
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
@@ -604,70 +603,89 @@ class RandomBook implements Feature {
                 btn.addEventListener(
                     'click',
                     () => {
-						let countResult: Promise<number>;
-						let categories: string = "";
-						//get the Category dropdown element
-						let catSelection: HTMLSelectElement = <HTMLSelectElement>document.getElementById("categoryPartial");
-						//get the value currently selected in Category Dropdown
-						let catValue: string = catSelection!.options[catSelection.selectedIndex].value;
-						//depending on category selected, create a category string for the JSON GET
-						switch (String(catValue)){
-							case 'ALL': categories = "";break;
-							case 'defaults': categories = "";break;
-							case 'm13': categories = "&tor[main_cat][]=13";break;
-							case 'm14': categories = "&tor[main_cat][]=14";break;
-							case 'm15': categories = "&tor[main_cat][]=15";break;
-							case 'm16': categories = "&tor[main_cat][]=16";break;
-							default: if(catValue.charAt(0)==="c"){categories = "&tor[cat][]="+catValue.substring(1);}
-						}
-						Promise.all([
-							(countResult = this._getRandomBookResults(
-								categories
-							)),
-						]);
-						countResult
-							.then((getRandomResult) => {
-								//open new tab with the random book
-								window.open('https://www.myanonamouse.net/t/'+getRandomResult, '_blank');
-							})
-							.catch((err) => {
-								throw new Error(err);
-							});
-						},
-					false
-				);
-				console.log('[M+] Added the Random Book button!');
-
-			})
-			.catch((err) => {
-				throw new Error(err);
-			});
-        }
+                        let countResult: Promise<number>;
+                        let categories: string = '';
+                        //get the Category dropdown element
+                        const catSelection: HTMLSelectElement = <HTMLSelectElement>(
+                            document.getElementById('categoryPartial')
+                        );
+                        //get the value currently selected in Category Dropdown
+                        const catValue: string = catSelection!.options[
+                            catSelection.selectedIndex
+                        ].value;
+                        //depending on category selected, create a category string for the JSON GET
+                        switch (String(catValue)) {
+                            case 'ALL':
+                                categories = '';
+                                break;
+                            case 'defaults':
+                                categories = '';
+                                break;
+                            case 'm13':
+                                categories = '&tor[main_cat][]=13';
+                                break;
+                            case 'm14':
+                                categories = '&tor[main_cat][]=14';
+                                break;
+                            case 'm15':
+                                categories = '&tor[main_cat][]=15';
+                                break;
+                            case 'm16':
+                                categories = '&tor[main_cat][]=16';
+                                break;
+                            default:
+                                if (catValue.charAt(0) === 'c') {
+                                    categories = '&tor[cat][]=' + catValue.substring(1);
+                                }
+                        }
+                        Promise.all([
+                            (countResult = this._getRandomBookResults(categories)),
+                        ]);
+                        countResult
+                            .then((getRandomResult) => {
+                                //open new tab with the random book
+                                window.open(
+                                    'https://www.myanonamouse.net/t/' + getRandomResult,
+                                    '_blank'
+                                );
+                            })
+                            .catch((err) => {
+                                throw new Error(err);
+                            });
+                    },
+                    false
+                );
+                console.log('[M+] Added the Random Book button!');
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    }
 
     /**
      * Filters search results
      * @param cat a string containing the categories needed for JSON Get
      */
     private async _getRandomBookResults(cat: string): Promise<number> {
-		return new Promise(async (resolve, reject) => {
-			let jsonResult: Promise<string>;
-			//URL to GET random search results. *could not figure out how to use ${} to include the parameter variable, so did +cat+
-			const url = 'https://www.myanonamouse.net/tor/js/loadSearchJSONbasic.php?tor[searchType]=all&tor[searchIn]=torrents'+cat+'&tor[perpage]=5&tor[browseFlagsHideVsShow]=0&tor[startDate]=&tor[endDate]=&tor[hash]=&tor[sortType]=random&thumbnail=true?'+Util.randomNumber(1,100000);
-			await Promise.all([
-				(jsonResult = Util.getJSON(
-					url
-				)),
-			]);
-			jsonResult
-            .then((jsonFull) => {
-				//return the first torrent ID of the random JSON text
-				resolve(JSON.parse(jsonFull).data[0].id);				
-			})
-            .catch((err) => {
-                throw new Error(err);
+
+        return new Promise((resolve, reject) => {
+            let jsonResult: Promise<string>;
+            //URL to GET random search results. *could not figure out how to use ${} to include the parameter variable, so did +cat+
+            const url = `https://www.myanonamouse.net/tor/js/loadSearchJSONbasic.php?tor[searchType]=all&tor[searchIn]=torrents${cat}&tor[perpage]=5&tor[browseFlagsHideVsShow]=0&tor[startDate]=&tor[endDate]=&tor[hash]=&tor[sortType]=random&thumbnail=true?${Util.randomNumber(
+                1,
+                100000
+            )}`;
+            Promise.all([(jsonResult = Util.getJSON(url))]).then(() => {
+                jsonResult
+                    .then((jsonFull) => {
+                        //return the first torrent ID of the random JSON text
+                        resolve(JSON.parse(jsonFull).data[0].id);
+                    })
+                    .catch((err) => {
+                        throw new Error(err);
+                    });
             });
-		});
-        
+        });
     }
 
     get settings(): CheckboxSetting {

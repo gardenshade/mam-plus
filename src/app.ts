@@ -12,69 +12,58 @@
 /// <reference path="settings.ts" />
 
 /**
- * BREAKING CHANGES INTRODUCED WHILE CODING
- * None yet...
- */
-
-/**
- * Userscript namespace
+ * * Userscript namespace
  * @constant CHANGELOG: Object containing a list of changes and known bugs
  * @constant TIMESTAMP: Placeholder hook for the current build time
  * @constant VERSION: The current userscript version
  * @constant PREV_VER: The last installed userscript version
- * @var errorLog: The target array for logging errors
- * @var pagePath: The current page URL without the site address
+ * @constant ERRORLOG: The target array for logging errors
+ * @constant PAGE_PATH: The current page URL without the site address
+ * @constant MP_CSS: The MAM+ stylesheet
+ * @constant run(): Starts the userscript
  */
 namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🆕: Added ability to send gifts from Shoutbox dot menu',
-            '🐞: Tags no longer appear twice when navigating Prev/Next',
-            '🐞: Tags that contained HTML entities (ex. >) were being sliced incorrectly',
-            '🐞: Added a space behind the username when using Simple Quote',
-            '🐞: Fixed an issue (hopefully) where gifting a user would throw errors in the dev console',
-            '🐞: Fixed an issue (hopefully) where styling of shoutbox gifting success/fail was not displaying',
+            '🆕: Added a "Random Book" button. It uses the currently selected Category in the dropdown',
+            '♻️: Updated preferences text with a link to feature descriptions',
         ] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
     export const VERSION: string = Check.newVer;
     export const PREV_VER: string | undefined = Check.prevVer;
-    export const errorLog: string[] = [];
-    export const pagePath: string = window.location.pathname;
-    export const mpCss: Style = new Style();
+    export const ERRORLOG: string[] = [];
+    export const PAGE_PATH: string = window.location.pathname;
+    export const MP_CSS: Style = new Style();
     export const settingsGlob: AnyFeature[] = [];
 
     export const run = async () => {
-        /************
-         * PRE SCRIPT
-         ************/
-        console.group(`Welcome to MAM+ v${VERSION}!!!`);
+        /**
+         * * PRE SCRIPT
+         */
+        console.group(`Welcome to MAM+ v${VERSION}!`);
 
         // The current page is not yet known
         GM_deleteValue('mp_currentPage');
         Check.page();
-
         // Add a simple cookie to announce the script is being used
-        document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/';
-
-        // initialize core functions
+        document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/;samesite=lax';
+        // Initialize core functions
         const alerts: Alerts = new Alerts();
         new Debug();
-
         // Notify the user if the script was updated
         Check.updated().then((result) => {
             if (result) alerts.notify(result, CHANGELOG);
         });
-
+        // Initialize the features
         new InitFeatures();
 
-        /************
-         * SETTINGS
-         ************/
-
+        /**
+         * * SETTINGS
+         */
         Check.page('settings').then((result) => {
             const subPg: string = window.location.search;
             if (result === true && (subPg === '' || subPg === '?view=general')) {
@@ -83,22 +72,20 @@ namespace MP {
             }
         });
 
-        /******************
-         * STYLES
+        /**
+         * * STYLES
          * Injects CSS
-         ******************/
-
-        // CSS stuff
+         */
         Check.elemLoad('head link[href*="ICGstation"]').then(() => {
             // Add custom CSS sheet
-            mpCss.injectLink();
+            MP_CSS.injectLink();
             // Get the current site theme
-            mpCss.alignToSiteTheme();
+            MP_CSS.alignToSiteTheme();
         });
 
         console.groupEnd();
     };
 }
 
-// Start the userscript
+// * Start the userscript
 MP.run();
