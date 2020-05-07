@@ -1,44 +1,54 @@
 {
-  "name": "mam-plus",
-  "version": "4.2.9",
-  "description": "Tweaks and features for MAM",
-  "author": "GardenShade",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gardenshade/mam-plus.git"
-  },
-  "homepage": "https://github.com/gardenshade/mam-plus#readme",
-  "license": "ISC",
-  "main": "src/app.ts",
-  "scripts": {
-    "watch": "npx gulp watch",
-    "build": "npx gulp build",
-    "release": "npx gulp release",
-    "clean": "npx gulp clean",
-    "version": "npm run release && git add .",
-    "postversion": "git push && git push --tags && npm run clean"
-  },
-  "devDependencies": {
-    "@types/greasemonkey": "3.0.0",
-    "@typescript-eslint/eslint-plugin": "^2.29.0",
-    "@typescript-eslint/parser": "^2.29.0",
-    "del": "^5.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
-    "gulp": "^4.0.2",
-    "gulp-header": "^2.0.9",
-    "gulp-inject-string": "^1.1.2",
-    "gulp-sass": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "gulp-uglify-es": "^2.0.0",
-    "prettier": "^2.0.5",
-    "typescript": "^3.7.5"
-  },
-  "dependencies": {},
-  "engines": {
-    "node": "^11.13.0",
-    "npm": "^6.9.0"
-  }
+    "name": "mam-plus",
+    "version": "4.2.10",
+    "description": "Tweaks and features for MAM",
+    "author": "GardenShade",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gardenshade/mam-plus.git"
+    },
+    "homepage": "https://github.com/gardenshade/mam-plus#readme",
+    "license": "ISC",
+    "main": "src/app.ts",
+    "scripts": {
+        "watch": "npx gulp watch",
+        "build": "npx gulp build",
+        "release": "npx gulp release",
+        "clean": "npx gulp clean",
+        "version": "npm run release && git add .",
+        "postversion": "git push && git push --tags && npm run clean"
+    },
+    "devDependencies": {
+        "@types/greasemonkey": "3.0.0",
+        "@typescript-eslint/eslint-plugin": "^2.30.0",
+        "@typescript-eslint/parser": "^2.30.0",
+        "del": "^5.1.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-prettier": "^3.1.3",
+        "gulp": "^4.0.2",
+        "gulp-header": "^2.0.9",
+        "gulp-inject-string": "^1.1.2",
+        "gulp-sass": "^4.1.0",
+        "gulp-sourcemaps": "^2.6.5",
+        "gulp-typescript": "^6.0.0-alpha.1",
+        "gulp-uglify-es": "^2.0.0",
+        "husky": "^4.2.5",
+        "lint-staged": "^10.1.7",
+        "prettier": "^2.0.5",
+        "typescript": "3.7.5"
+    },
+    "dependencies": {},
+    "engines": {
+        "node": "^11.13.0",
+        "npm": "^6.14.4"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.ts": "eslint --cache --fix"
+    }
 }

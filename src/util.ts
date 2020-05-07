@@ -310,4 +310,29 @@ class Util {
             }
         });
     }
+	
+	
+	public static getJSON(
+        url: string
+    ): Promise<string> {
+        return new Promise((resolve, reject) => {
+        const getHTTP = new XMLHttpRequest();
+		//URL to GET results with the amount entered by user plus the username found on the menu selected
+		getHTTP.open('GET', url, true);
+		getHTTP.setRequestHeader('Content-Type', 'application/json');
+		getHTTP.onreadystatechange = function () {
+			if (getHTTP.readyState === 4 && getHTTP.status === 200) {
+				resolve(getHTTP.responseText);
+			}
+		};
+		getHTTP.send();
+        });
+	}
+	
+	public static randomNumber(
+        min: number,
+		max: number
+    ): number {
+        	return(Math.floor(Math.random() * (max - min + 1) + min));
+	}
 }

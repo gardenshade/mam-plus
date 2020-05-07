@@ -124,9 +124,9 @@ class ProcessShouts {
                                 .addEventListener('click', () => {
                                     replyBox.value =
                                         replyBox.value +
-                                        `[i]${
-                                            colorBlock[0] + userName + colorBlock[1]
-                                        }[/i] `;
+                                        `[i]${colorBlock[0] + userName} ${
+                                            colorBlock[1]
+                                        }[/i]`;
                                     replyBox.focus();
                                 });
                         }
@@ -161,8 +161,8 @@ class ProcessShouts {
                                     nodeText = Util.trimString(nodeText.trim(), 65);
                                     // Add quote to reply box
                                     replyBox.value = `\u201c[i]${
-                                        colorBlock[0] + userName + colorBlock[1]
-                                    }: ${nodeText}\u2026[/i]\u201d`;
+                                        colorBlock[0] + userName
+                                    } ${colorBlock[1]}: ${nodeText}\u2026[/i]\u201d`;
                                     replyBox.focus();
                                 });
                         }
@@ -281,7 +281,7 @@ class PriorityStyle implements Feature {
         title: 'priorityStyle',
         tag: 'Emphasis Style',
         placeholder: 'default: 0, 0%, 50%, 0.3',
-        desc: `Change the color/opacity of the highlighting rule for emphasized users' posts. (<em>This is formatted as Hue,Saturation,Lightness,Opacity. H is 0-360, SL are 0-100%, and O is 0-1</em>)`,
+        desc: `Change the color/opacity of the highlighting rule for emphasized users' posts. (<em>This is formatted as Hue (0-360), Saturation (0-100%), Lightness (0-100%), Opacity (0-1)</em>)`,
     };
     private _tar: string = '#sbf';
 
