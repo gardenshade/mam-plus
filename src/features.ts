@@ -26,7 +26,7 @@ class InitFeatures {
         new PlaintextSearch();
         new ToggleSearchbox();
         new BuildTags();
-		new RandomBook();
+        new RandomBook();
 
         // Initialize Request Page functions
         new ToggleHiddenRequesters();
