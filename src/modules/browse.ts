@@ -662,7 +662,7 @@ class RandomBook implements Feature {
             .then((jsonFull) => {
 				//return the first torrent ID of the random JSON text
 				resolve(JSON.parse(jsonFull).data[0].id);				
-			})			
+			})
             .catch((err) => {
                 throw new Error(err);
             });
