@@ -667,6 +667,7 @@ class RandomBook implements Feature {
      * @param cat a string containing the categories needed for JSON Get
      */
     private async _getRandomBookResults(cat: string): Promise<number> {
+
         return new Promise((resolve, reject) => {
             let jsonResult: Promise<string>;
             //URL to GET random search results. *could not figure out how to use ${} to include the parameter variable, so did +cat+
