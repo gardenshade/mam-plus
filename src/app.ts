@@ -2,6 +2,7 @@
 /// <reference path="style.ts" />
 /// <reference path="./modules/core.ts" />
 /// <reference path="./modules/global.ts" />
+/// <reference path="./modules/home.ts" />
 /// <reference path="./modules/tor.ts" />
 /// <reference path="./modules/shout.ts" />
 /// <reference path="./modules/browse.ts" />
@@ -27,8 +28,7 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🆕: Added a "Random Book" button. It uses the currently selected Category in the dropdown',
-            '♻️: Updated preferences text with a link to feature descriptions',
+            '🆕: Added "Gift All" and "Open Ungifted" to the New Members section of the home page',
         ] as string[],
         BUG_LIST: [] as string[],
     };

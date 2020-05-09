@@ -250,28 +250,30 @@ class Util {
         id: string,
         text: string,
         type: string = 'h1',
-        tar: string,
+        tar: string | HTMLElement,
         relative: 'beforebegin' | 'afterend' = 'afterend',
         btnClass: string = 'mp_btn'
     ): Promise<HTMLElement> {
         return new Promise((resolve, reject) => {
             // Choose the new button insert location and insert elements
-            const target: HTMLElement | null = <HTMLElement>document.querySelector(tar);
+            // const target: HTMLElement | null = <HTMLElement>document.querySelector(tar);
+            const target: HTMLElement | null =
+                typeof tar === 'string' ? document.querySelector(tar) : tar;
             const btn: HTMLElement = document.createElement(type);
 
             if (target === null) {
                 reject(`${tar} is null!`);
+            } else {
+                target.insertAdjacentElement(relative, btn);
+                Util.setAttr(btn, {
+                    id: `mp_${id}`,
+                    class: btnClass,
+                    role: 'button',
+                });
+                // Set initial button text
+                btn.innerHTML = text;
+                resolve(btn);
             }
-
-            target.insertAdjacentElement(relative, btn);
-            Util.setAttr(btn, {
-                id: `mp_${id}`,
-                class: btnClass,
-                role: 'button',
-            });
-            // Set initial button text
-            btn.innerHTML = text;
-            resolve(btn);
         });
     }
 
@@ -310,29 +312,45 @@ class Util {
             }
         });
     }
-	
-	
-	public static getJSON(
-        url: string
-    ): Promise<string> {
+
+    /**
+     * Creates an HTTPRequest for GET JSON, returns the full text of HTTP GET
+     * @param url - a string of the URL to submit for GET request
+     */
+    public static getJSON(url: string): Promise<string> {
         return new Promise((resolve, reject) => {
-        const getHTTP = new XMLHttpRequest();
-		//URL to GET results with the amount entered by user plus the username found on the menu selected
-		getHTTP.open('GET', url, true);
-		getHTTP.setRequestHeader('Content-Type', 'application/json');
-		getHTTP.onreadystatechange = function () {
-			if (getHTTP.readyState === 4 && getHTTP.status === 200) {
-				resolve(getHTTP.responseText);
-			}
-		};
-		getHTTP.send();
+            const getHTTP = new XMLHttpRequest();
+            //URL to GET results with the amount entered by user plus the username found on the menu selected
+            getHTTP.open('GET', url, true);
+            getHTTP.setRequestHeader('Content-Type', 'application/json');
+            getHTTP.onreadystatechange = function () {
+                if (getHTTP.readyState === 4 && getHTTP.status === 200) {
+                    resolve(getHTTP.responseText);
+                }
+            };
+            getHTTP.send();
         });
-	}
-	
-	public static randomNumber(
-        min: number,
-		max: number
-    ): number {
-        	return(Math.floor(Math.random() * (max - min + 1) + min));
-	}
+    }
+
+    /**
+     * Returns a random number between two parameters
+     * @param min a number of the bottom of random number pool
+     * @param max a number of the top of the random number pool
+     */
+    public static randomNumber(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    /**
+     * Sleep util to be used in async functions to delay program
+     */
+    public static sleep = (m: any): Promise<void> => new Promise((r) => setTimeout(r, m));
+
+    /**
+     * Return the last section of an HREF
+     * @param elem An anchor element
+     * @param split Optional divider. Defaults to `/`
+     */
+    public static endOfHref = (elem: HTMLAnchorElement, split = '/') =>
+        elem.href.split(split).pop();
 }

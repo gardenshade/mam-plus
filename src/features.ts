@@ -20,13 +20,16 @@ class InitFeatures {
         new MiniVaultInfo();
         new BonusPointDelta();
 
-        // Initialize Browse/Search Page functions
+        // Initialize Home Page functions
+        new GiftNewest();
+
+        // Initialize Search Page functions
         new ToggleSnatched();
         new StickySnatchedToggle();
         new PlaintextSearch();
         new ToggleSearchbox();
         new BuildTags();
-		new RandomBook();
+        new RandomBook();
 
         // Initialize Request Page functions
         new ToggleHiddenRequesters();
