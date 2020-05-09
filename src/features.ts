@@ -20,7 +20,10 @@ class InitFeatures {
         new MiniVaultInfo();
         new BonusPointDelta();
 
-        // Initialize Browse/Search Page functions
+        // Initialize Home Page functions
+        new GiftNewest();
+
+        // Initialize Search Page functions
         new ToggleSnatched();
         new StickySnatchedToggle();
         new PlaintextSearch();
@@ -43,7 +46,6 @@ class InitFeatures {
         new ReplySimple();
         new ReplyQuote();
         new GiftButton();
-		new GiftNewest();
 
         // Initialize Vault functions
         new SimpleVault();

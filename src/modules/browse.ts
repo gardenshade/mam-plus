@@ -8,7 +8,7 @@
  */
 class ToggleSnatched implements Feature {
     private _settings: CheckboxSetting = {
-        scope: SettingGroup['Browse & Search'],
+        scope: SettingGroup.Search,
         type: 'checkbox',
         title: 'toggleSnatched',
         desc: `Add a button to hide/show results that you've snatched`,
@@ -159,7 +159,7 @@ class ToggleSnatched implements Feature {
  */
 class StickySnatchedToggle implements Feature {
     private _settings: CheckboxSetting = {
-        scope: SettingGroup['Browse & Search'],
+        scope: SettingGroup.Search,
         type: 'checkbox',
         title: 'stickySnatchedToggle',
         desc: `Make toggle state persist between page loads`,
@@ -188,7 +188,7 @@ class StickySnatchedToggle implements Feature {
  */
 class PlaintextSearch implements Feature {
     private _settings: CheckboxSetting = {
-        scope: SettingGroup['Browse & Search'],
+        scope: SettingGroup.Search,
         type: 'checkbox',
         title: 'plaintextSearch',
         desc: `Insert plaintext search results at top of page`,
@@ -392,7 +392,7 @@ class PlaintextSearch implements Feature {
  */
 class ToggleSearchbox implements Feature {
     private _settings: CheckboxSetting = {
-        scope: SettingGroup['Browse & Search'],
+        scope: SettingGroup.Search,
         type: 'checkbox',
         title: 'toggleSearchbox',
         desc: `Collapse the Search box and make it toggleable`,
@@ -468,7 +468,7 @@ class ToggleSearchbox implements Feature {
  */
 class BuildTags implements Feature {
     private _settings: CheckboxSetting = {
-        scope: SettingGroup['Browse & Search'],
+        scope: SettingGroup.Search,
         type: 'checkbox',
         title: 'buildTags',
         desc: `Generate clickable Tags automatically`,
@@ -567,7 +567,7 @@ class BuildTags implements Feature {
  */
 class RandomBook implements Feature {
     private _settings: CheckboxSetting = {
-        scope: SettingGroup['Browse & Search'],
+        scope: SettingGroup.Search,
         type: 'checkbox',
         title: 'randomBook',
         desc: `Add a button to open a randomly selected book page. (<em>Uses the currently selected category in the dropdown</em>)`,
@@ -667,10 +667,9 @@ class RandomBook implements Feature {
      * @param cat a string containing the categories needed for JSON Get
      */
     private async _getRandomBookResults(cat: string): Promise<number> {
-
         return new Promise((resolve, reject) => {
             let jsonResult: Promise<string>;
-            //URL to GET random search results. *could not figure out how to use ${} to include the parameter variable, so did +cat+
+            //URL to GET random search results
             const url = `https://www.myanonamouse.net/tor/js/loadSearchJSONbasic.php?tor[searchType]=all&tor[searchIn]=torrents${cat}&tor[perpage]=5&tor[browseFlagsHideVsShow]=0&tor[startDate]=&tor[endDate]=&tor[hash]=&tor[sortType]=random&thumbnail=true?${Util.randomNumber(
                 1,
                 100000

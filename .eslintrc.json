@@ -21,7 +21,6 @@
     "plugins": ["@typescript-eslint", "prettier"],
     "rules": {
         "prettier/prettier": ["warn"],
-        "no-await-in-loop": ["warn"],
         "eqeqeq": ["warn"],
         "dot-location": ["warn", "property"],
         "no-empty-function": ["warn"],
