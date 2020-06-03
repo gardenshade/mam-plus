@@ -27,9 +27,7 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
-        UPDATE_LIST: [
-            '🆕: Added "Gift All" and "Open Ungifted" to the New Members section of the home page',
-        ] as string[],
+        UPDATE_LIST: ['🐞: Fixed shoutbox Gift button not appearing'] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';

@@ -243,7 +243,7 @@ class PriorityUsers implements Feature {
         desc:
             'Emphasizes messages from the listed users in the shoutbox. (<em>This accepts user IDs and usernames. It is not case sensitive.</em>)',
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf';
     private _priorityUsers: string[] = [];
     private _userType: ShoutboxUserType = 'priority';
 
@@ -283,7 +283,7 @@ class PriorityStyle implements Feature {
         placeholder: 'default: 0, 0%, 50%, 0.3',
         desc: `Change the color/opacity of the highlighting rule for emphasized users' posts. (<em>This is formatted as Hue (0-360), Saturation (0-100%), Lightness (0-100%), Opacity (0-1)</em>)`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
@@ -314,7 +314,7 @@ class MutedUsers implements Feature {
         placeholder: 'ex. 1234, gardenshade',
         desc: `Obscures messages from the listed users in the shoutbox until hovered. (<em>This accepts user IDs and usernames. It is not case sensitive.</em>)`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf';
     private _mutedUsers: string[] = [];
     private _userType: ShoutboxUserType = 'mute';
 
@@ -352,7 +352,7 @@ class GiftButton implements Feature {
         title: 'giftButton',
         desc: `Places a Gift button in Shoutbox dot-menu`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
@@ -363,8 +363,9 @@ class GiftButton implements Feature {
     }
 
     private async _init() {
+        console.log(`[M+] Initialized Gift Button.`);
         const sbfDiv = <HTMLDivElement>document.getElementById('sbf')!;
-		const sbfDivChild = sbfDiv!.firstChild;
+        const sbfDivChild = sbfDiv!.firstChild;
 
         //add event listener for whenever something is clicked in the sbf div
         sbfDiv.addEventListener('click', async (e) => {
@@ -381,9 +382,11 @@ class GiftButton implements Feature {
                 return;
             }
             //get the Menu after it pops up
+            console.log(`[M+] Adding Gift Button...`);
             const popupMenu: HTMLElement | null = document.getElementById('sbMenuMain');
-			do {await Util.sleep(1);}
-			while(!popupMenu!.hasChildNodes());
+            do {
+                await Util.sleep(5);
+            } while (!popupMenu!.hasChildNodes());
             //get the user details from the popup menu details
             const popupUser: HTMLElement = Util.nodeToElem(popupMenu!.childNodes[0]);
             //make username equal the data-uid, force not null
@@ -471,9 +474,8 @@ class GiftButton implements Feature {
                     giftButton.querySelector('button')!.disabled = false;
                 }
             });
+            console.log(`[M+] Gift Button added!`);
         });
-
-        console.log(`[M+] Adding Gift Button...`);
     }
 
     get settings(): CheckboxSetting {
@@ -492,7 +494,7 @@ class ReplySimple implements Feature {
         //tag: "Reply",
         desc: `Places a Reply button in Shoutbox: &#10554;`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf';
     private _replySimple: number = 1;
 
     constructor() {
@@ -524,7 +526,7 @@ class ReplyQuote implements Feature {
         //tag: "Reply With Quote",
         desc: `Places a Reply with Quote button in Shoutbox: &#10557;`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf';
     private _replyQuote: number = 2;
 
     constructor() {

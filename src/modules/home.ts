@@ -8,7 +8,7 @@ class GiftNewest implements Feature {
         title: 'giftNewest',
         desc: `Add buttons to Gift/Open all newest members`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '#fpNM';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['home']).then((t) => {
@@ -22,7 +22,7 @@ class GiftNewest implements Feature {
         //ensure gifted list is under 50 member names long
         this._trimGiftList();
         //get the FrontPage NewMembers element containing newest 10 members
-        const fpNM = <HTMLDivElement>document.getElementById('fpNM');
+        const fpNM = <HTMLDivElement>document.getElementById(this._tar);
         const members: HTMLAnchorElement[] = Array.prototype.slice.call(
             fpNM.getElementsByTagName('a')
         );
