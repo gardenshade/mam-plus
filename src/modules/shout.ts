@@ -364,8 +364,10 @@ class GiftButton implements Feature {
 
     private async _init() {
         const sbfDiv = <HTMLDivElement>document.getElementById('sbf')!;
+		const sbfDivChild = sbfDiv!.firstChild;
+
         //add event listener for whenever something is clicked in the sbf div
-        sbfDiv.addEventListener('click', (e) => {
+        sbfDiv.addEventListener('click', async (e) => {
             //pull the event target into an HTML Element
             const target = e.target as HTMLElement;
             //add the Triple Dot Menu as an element
@@ -380,6 +382,8 @@ class GiftButton implements Feature {
             }
             //get the Menu after it pops up
             const popupMenu: HTMLElement | null = document.getElementById('sbMenuMain');
+			do {await Util.sleep(1);}
+			while(!popupMenu!.hasChildNodes());
             //get the user details from the popup menu details
             const popupUser: HTMLElement = Util.nodeToElem(popupMenu!.childNodes[0]);
             //make username equal the data-uid, force not null
@@ -422,7 +426,7 @@ class GiftButton implements Feature {
                         //create a new line in SB that shows gift was successful to acknowledge gift worked/failed
                         const newDiv = document.createElement('div');
                         newDiv.setAttribute('id', 'mp_giftStatusElem');
-                        sbfDiv.appendChild(newDiv);
+                        sbfDivChild!.appendChild(newDiv);
                         //if the gift succeeded
                         if (json.success) {
                             const successMsg = document.createTextNode(
