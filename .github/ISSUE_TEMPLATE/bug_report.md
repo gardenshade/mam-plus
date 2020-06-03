@@ -13,12 +13,18 @@ A clear and concise description of what the bug is.
 ### Walkthrough:
 Steps to reproduce the behavior:
 1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. Click on '....'
+1. Scroll down to '....'
+1. See error
 
 ### Expected Behavior:
 A clear and concise description of what you expected to happen.
+
+### Error Log:
+1. If you are able to, please enable the "Error Log" setting near the bottom of the MAM+ Settings on your preference page.
+1. Navigate to the page that is experiencing the bug
+1. Open your browser's console ([How do I open the browser console?](https://webmasters.stackexchange.com/questions/8525/how-do-i-open-the-javascript-console-in-different-browsers)).
+1. Screenshot or copy/paste everything that appears in the console and add it here.
 
 ### Technical Details:
  - OS: [ex. Windows 10, Android 9.0]
