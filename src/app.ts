@@ -30,6 +30,7 @@ namespace MP {
         UPDATE_LIST: [
             '🐞: Fixed shoutbox Gift button not appearing',
             '🐞: Fixed shoutbox reply/quote buttons not appearing',
+            '🐞: Fixed shoutbox priority/blocked user style not applying',
         ] as string[],
         BUG_LIST: [] as string[],
     };

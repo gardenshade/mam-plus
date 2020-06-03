@@ -244,7 +244,7 @@ class PriorityUsers implements Feature {
         desc:
             'Emphasizes messages from the listed users in the shoutbox. (<em>This accepts user IDs and usernames. It is not case sensitive.</em>)',
     };
-    private _tar: string = '.sbf';
+    private _tar: string = '.sbf div';
     private _priorityUsers: string[] = [];
     private _userType: ShoutboxUserType = 'priority';
 
@@ -284,7 +284,7 @@ class PriorityStyle implements Feature {
         placeholder: 'default: 0, 0%, 50%, 0.3',
         desc: `Change the color/opacity of the highlighting rule for emphasized users' posts. (<em>This is formatted as Hue (0-360), Saturation (0-100%), Lightness (0-100%), Opacity (0-1)</em>)`,
     };
-    private _tar: string = '.sbf';
+    private _tar: string = '.sbf div';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
@@ -315,7 +315,7 @@ class MutedUsers implements Feature {
         placeholder: 'ex. 1234, gardenshade',
         desc: `Obscures messages from the listed users in the shoutbox until hovered. (<em>This accepts user IDs and usernames. It is not case sensitive.</em>)`,
     };
-    private _tar: string = '.sbf';
+    private _tar: string = '.sbf div';
     private _mutedUsers: string[] = [];
     private _userType: ShoutboxUserType = 'mute';
 
