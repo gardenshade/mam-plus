@@ -67,6 +67,7 @@ class ProcessShouts {
      * @param charLimit Number of characters to include in quote, , charLimit?:number - Currently unused
      */
     public static watchShoutboxReply(tar: string, buttons?: number): void {
+        if (MP.DEBUG) console.log('watchShoutboxReply(', tar, buttons, ')');
         // Get the reply box
         const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
         // Observe the shoutbox
@@ -494,7 +495,7 @@ class ReplySimple implements Feature {
         //tag: "Reply",
         desc: `Places a Reply button in Shoutbox: &#10554;`,
     };
-    private _tar: string = '.sbf';
+    private _tar: string = '.sbf div';
     private _replySimple: number = 1;
 
     constructor() {
@@ -526,7 +527,7 @@ class ReplyQuote implements Feature {
         //tag: "Reply With Quote",
         desc: `Places a Reply with Quote button in Shoutbox: &#10557;`,
     };
-    private _tar: string = '.sbf';
+    private _tar: string = '.sbf div';
     private _replyQuote: number = 2;
 
     constructor() {
