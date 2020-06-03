@@ -28,7 +28,9 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
-            '🆕: Added "Gift All" and "Open Ungifted" to the New Members section of the home page',
+            '🐞: Fixed shoutbox Gift button not appearing',
+            '🐞: Fixed shoutbox reply/quote buttons not appearing',
+            '🐞: Fixed shoutbox priority/blocked user style not applying',
         ] as string[],
         BUG_LIST: [] as string[],
     };
