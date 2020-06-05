@@ -26,9 +26,11 @@
 namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
-        /* 🆕🐞♻️ */
+        /* 🆕♻️🐞 */
         UPDATE_LIST: [
             '🆕: Added the ability to hide Recent News articles on the home page',
+            '♻️: Tweaked shoutbox replying to be inline with the official new Drag-and-Drop reply style',
+            '♻️: Quoting a message that contains a quote will not quote the quote',
             '🐞: Fixed shoutbox Gift button not appearing',
             '🐞: Fixed shoutbox reply/quote buttons not appearing',
             '🐞: Fixed shoutbox priority/blocked user style not applying',

@@ -82,6 +82,7 @@ class ProcessShouts {
                         if (/^mp_/.test(Util.nodeToElem(node).getAttribute('id')!)) {
                             return;
                         }
+                        // TODO: Grab color from background if needed
                         //colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
                         const colorBlock: Array<string> = ['', ''];
                         //idColor created as empty string placeholder
@@ -125,8 +126,8 @@ class ProcessShouts {
                                 .addEventListener('click', () => {
                                     replyBox.value =
                                         replyBox.value +
-                                        `[i]${colorBlock[0] + userName} ${
-                                            colorBlock[1]
+                                        `@[i]${
+                                            colorBlock[0] + userName + colorBlock[1]
                                         }[/i]`;
                                     replyBox.focus();
                                 });
@@ -138,32 +139,12 @@ class ProcessShouts {
                             replyButton
                                 .querySelector('button')!
                                 .addEventListener('click', () => {
-                                    const extractText: string[] = [];
-                                    // Get number of reply buttons to remove from text
-                                    const btnCount = node.firstChild!.parentElement!.querySelectorAll(
-                                        '.mp_replyButton'
-                                    ).length;
-                                    // Get the text of all child nodes
-                                    node.childNodes.forEach((child) => {
-                                        // Links aren't clickable anyway so get rid of them
-                                        if (child.nodeName === 'A') {
-                                            extractText.push('[Link]');
-                                        } else {
-                                            extractText.push(child.textContent!);
-                                        }
-                                    });
-                                    // Make a string, but toss out the first few nodes
-                                    let nodeText = extractText
-                                        .slice(3 + btnCount)
-                                        .join(' ');
-                                    if (nodeText.indexOf(':') === 0) {
-                                        nodeText = nodeText.substr(2);
-                                    }
-                                    nodeText = Util.trimString(nodeText.trim(), 65);
+                                    const text = this.quoteShout(node, 65);
+
                                     // Add quote to reply box
-                                    replyBox.value = `\u201c[i]${
-                                        colorBlock[0] + userName
-                                    } ${colorBlock[1]}: ${nodeText}\u2026[/i]\u201d`;
+                                    replyBox.value = `@[i]${
+                                        colorBlock[0] + userName + colorBlock[1]
+                                    }: \u201c${text}[/i]\u201d`;
                                     replyBox.focus();
                                 });
                         }
@@ -176,6 +157,38 @@ class ProcessShouts {
             },
             { childList: true }
         );
+    }
+
+    public static quoteShout(shout: Node, length: number) {
+        const textArr: string[] = [];
+        // Get number of reply buttons to remove from text
+        const btnCount = shout.firstChild!.parentElement!.querySelectorAll(
+            '.mp_replyButton'
+        ).length;
+        // Get the text of all child nodes
+        shout.childNodes.forEach((child) => {
+            // Links aren't clickable anyway so get rid of them
+            if (child.nodeName === 'A') {
+                textArr.push('[Link]');
+            } else {
+                textArr.push(child.textContent!);
+            }
+        });
+        // Make a string, but toss out the first few nodes
+        let nodeText = textArr.slice(3 + btnCount).join('');
+        if (nodeText.indexOf(':') === 0) {
+            nodeText = nodeText.substr(2);
+        }
+        // At this point we should have just the message text.
+        // Remove any quotes that might be contained:
+        nodeText = nodeText.replace(/\u{201c}(.*?)\u{201d}/gu, '');
+        // Trim the text to a max length and add ... if shortened
+        let trimmedText = Util.trimString(nodeText.trim(), length);
+        if (trimmedText !== nodeText.trim()) {
+            trimmedText += ' [\u2026]';
+        }
+        // Done!
+        return trimmedText;
     }
 
     /**
