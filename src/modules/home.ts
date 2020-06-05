@@ -248,7 +248,7 @@ class HideNews implements Feature {
         this._adjustHeaderSize(this._tar);
         await this._checkForSeen();
         this._addHiderButton();
-        // this._cleanValues();
+        this._cleanValues();
 
         console.log('[M+] Cleaned up the home page!');
     }
