@@ -21,6 +21,7 @@ class InitFeatures {
         new BonusPointDelta();
 
         // Initialize Home Page functions
+        new HideNews();
         new GiftNewest();
 
         // Initialize Search Page functions

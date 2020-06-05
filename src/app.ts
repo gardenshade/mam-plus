@@ -28,11 +28,15 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕🐞♻️ */
         UPDATE_LIST: [
+            '🆕: Added the ability to hide Recent News articles on the home page',
             '🐞: Fixed shoutbox Gift button not appearing',
             '🐞: Fixed shoutbox reply/quote buttons not appearing',
             '🐞: Fixed shoutbox priority/blocked user style not applying',
+            '🐞: Fixed Gift New Members feature not appearing',
         ] as string[],
-        BUG_LIST: [] as string[],
+        BUG_LIST: [
+            'There was only one Recent News item when I wrote this so it might behave strangely when there are more items',
+        ] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
     export const VERSION: string = Check.newVer;
