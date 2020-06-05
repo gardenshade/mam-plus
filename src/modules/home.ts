@@ -242,25 +242,25 @@ class HideNews implements Feature {
 
     private async _init() {
         // NOTE: for development
-        // GM_deleteValue(this._valueTitle);
+        // GM_deleteValue(this._valueTitle);console.warn(`Value of ${this._valueTitle} will be deleted!`);
 
         this._removeClock();
         this._adjustHeaderSize(this._tar);
         await this._checkForSeen();
         this._addHiderButton();
-        this._cleanValues();
+        // this._cleanValues();
 
         console.log('[M+] Cleaned up the home page!');
     }
 
     _checkForSeen = async (): Promise<void> => {
-        const previousValue: string | undefined = GM_getValue(this._valueTitle);
+        const prevValue: string | undefined = GM_getValue(this._valueTitle);
         const news = this._getNewsItems();
-        if (MP.DEBUG) console.log(this._valueTitle, ':\n', previousValue);
+        if (MP.DEBUG) console.log(this._valueTitle, ':\n', prevValue);
 
-        if (previousValue !== undefined && news) {
+        if (prevValue && news) {
             // Use the icon to split out the known hidden messages
-            const hiddenArray = previousValue.split(this._icon);
+            const hiddenArray = prevValue.split(this._icon);
             /* If any of the hidden messages match a current message
                 remove the current message from the DOM */
             hiddenArray.forEach((hidden) => {
@@ -312,9 +312,12 @@ class HideNews implements Feature {
             xbutton.addEventListener('click', () => {
                 // When clicked, append the content of the current news post to the
                 // list of remembered news items
-                const previousValue: string = GM_getValue(this._valueTitle)
+                const previousValue: string | undefined = GM_getValue(this._valueTitle)
                     ? GM_getValue(this._valueTitle)
                     : '';
+                if (MP.DEBUG)
+                    console.log(`Hiding... ${previousValue}${entry.textContent}`);
+
                 GM_setValue(this._valueTitle, `${previousValue}${entry.textContent}`);
                 entry.remove();
                 // If there are no more news items, remove the header
@@ -332,6 +335,7 @@ class HideNews implements Feature {
 
     _cleanValues = (num = 3) => {
         let value: string | undefined = GM_getValue(this._valueTitle);
+        if (MP.DEBUG) console.log(`GM_getValue(${this._valueTitle})`, value);
         if (value) {
             // Return the last 3 stored items after splitting them at the icon
             value = Util.arrayToString(value.split(this._icon).slice(0 - num));
