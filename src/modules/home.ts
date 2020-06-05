@@ -22,7 +22,7 @@ class GiftNewest implements Feature {
         //ensure gifted list is under 50 member names long
         this._trimGiftList();
         //get the FrontPage NewMembers element containing newest 10 members
-        const fpNM = <HTMLDivElement>document.getElementById(this._tar);
+        const fpNM = <HTMLDivElement>document.querySelector(this._tar);
         const members: HTMLAnchorElement[] = Array.prototype.slice.call(
             fpNM.getElementsByTagName('a')
         );
@@ -217,6 +217,134 @@ class GiftNewest implements Feature {
         }
     }
 
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+class HideNews implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Home,
+        title: 'hideNews',
+        type: 'checkbox',
+        desc: 'Tidy the homepage and allow News to be hidden',
+    };
+    private _tar: string = '.mainPageNewsHead';
+    private _valueTitle: string = `${this._settings.title}_val`;
+    private _icon = '\u274e';
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['home']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private async _init() {
+        // NOTE: for development
+        // GM_deleteValue(this._valueTitle);
+
+        this._removeClock();
+        this._adjustHeaderSize(this._tar);
+        await this._checkForSeen();
+        this._addHiderButton();
+        this._cleanValues();
+
+        console.log('[M+] Cleaned up the home page!');
+    }
+
+    _checkForSeen = async (): Promise<void> => {
+        const previousValue: string | undefined = GM_getValue(this._valueTitle);
+        const news = this._getNewsItems();
+        if (MP.DEBUG) console.log(this._valueTitle, ':\n', previousValue);
+
+        if (previousValue !== undefined && news) {
+            // Use the icon to split out the known hidden messages
+            const hiddenArray = previousValue.split(this._icon);
+            /* If any of the hidden messages match a current message
+                remove the current message from the DOM */
+            hiddenArray.forEach((hidden) => {
+                news.forEach((entry) => {
+                    if (entry.textContent === hidden) {
+                        entry.remove();
+                    }
+                });
+            });
+            // If there are no current messages, hide the header
+            if (!document.querySelector('.mainPageNewsSub')) {
+                this._adjustHeaderSize(this._tar, false);
+            }
+        } else {
+            return;
+        }
+    };
+
+    _removeClock = () => {
+        const clock: HTMLDivElement | null = document.querySelector('#mainBody .fpTime');
+        if (clock) clock.remove();
+    };
+
+    _adjustHeaderSize = (selector: string, visible?: boolean) => {
+        const newsHeader: HTMLHeadingElement | null = document.querySelector(selector);
+        if (newsHeader) {
+            if (visible === false) {
+                newsHeader.style.display = 'none';
+            } else {
+                newsHeader.style.fontSize = '2em';
+            }
+        }
+    };
+
+    _addHiderButton = () => {
+        const news = this._getNewsItems();
+        if (!news) return;
+
+        // Loop over each news entry
+        news.forEach((entry) => {
+            // Create a button
+            const xbutton = document.createElement('div');
+            xbutton.textContent = this._icon;
+            Util.setAttr(xbutton, {
+                style: 'display:inline-block;margin-right:0.7em;cursor:pointer;',
+                class: 'mp_clearBtn',
+            });
+            // Listen for clicks
+            xbutton.addEventListener('click', () => {
+                // When clicked, append the content of the current news post to the
+                // list of remembered news items
+                const previousValue: string = GM_getValue(this._valueTitle)
+                    ? GM_getValue(this._valueTitle)
+                    : '';
+                GM_setValue(this._valueTitle, `${previousValue}${entry.textContent}`);
+                entry.remove();
+                // If there are no more news items, remove the header
+                const updatedNews = this._getNewsItems();
+
+                if (updatedNews && updatedNews.length < 1) {
+                    this._adjustHeaderSize(this._tar, false);
+                }
+            });
+
+            // Add the button as the first child of the entry
+            if (entry.firstChild) entry.firstChild.before(xbutton);
+        });
+    };
+
+    _cleanValues = (num = 3) => {
+        let value: string | undefined = GM_getValue(this._valueTitle);
+        if (value) {
+            // Return the last 3 stored items after splitting them at the icon
+            value = Util.arrayToString(value.split(this._icon).slice(0 - num));
+            // Store the new value
+            GM_setValue(this._valueTitle, value);
+        }
+    };
+
+    _getNewsItems = (): NodeListOf<HTMLDivElement> | null => {
+        return document.querySelectorAll('.mainPageNewsSub');
+    };
+
+    // This must match the type selected for `this._settings`
     get settings(): CheckboxSetting {
         return this._settings;
     }
