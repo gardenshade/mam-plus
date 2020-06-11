@@ -68,6 +68,37 @@ class ProcessShouts {
      */
     public static watchShoutboxReply(tar: string, buttons?: number): void {
         if (MP.DEBUG) console.log('watchShoutboxReply(', tar, buttons, ')');
+
+        const _getRawColor = (elem: HTMLSpanElement): string => {
+            if (elem.style.backgroundColor) {
+                return elem.style.backgroundColor;
+            } else if (elem.style.color) {
+                return elem.style.color;
+            } else {
+                throw new Error(
+                    `Element has no color or background color!\n${elem}\n${elem.style}`
+                );
+            }
+        };
+        const _getNameColor = (elem: HTMLSpanElement | null) => {
+            if (elem) {
+                // Convert to hex
+                const rgb: string[] = Util.bracketContents(_getRawColor(elem!)).split(
+                    ','
+                );
+                return Util.rgbToHex(
+                    parseInt(rgb[0]),
+                    parseInt(rgb[1]),
+                    parseInt(rgb[2])
+                );
+            } else {
+                throw new Error(`Element is null!\n${elem}`);
+            }
+        };
+        const _makeNameTag = (name: string, hex: string): string => {
+            return `@[color=${hex}][i]${name}[/i][/color]`;
+        };
+
         // Get the reply box
         const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
         // Observe the shoutbox
@@ -82,31 +113,13 @@ class ProcessShouts {
                         if (/^mp_/.test(Util.nodeToElem(node).getAttribute('id')!)) {
                             return;
                         }
-                        // TODO: Grab color from background if needed
-                        //colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
-                        const colorBlock: Array<string> = ['', ''];
-                        //idColor created as empty string placeholder
-                        let idColor: string = '';
-                        //extract the shoutbox text node containing UserID color Data
-                        const shoutHrefElem: HTMLElement | null = Util.nodeToElem(
+
+                        // Select the name information
+                        const shoutName: HTMLSpanElement | null = Util.nodeToElem(
                             node
-                        ).querySelector('a[href^="/u/"]');
-                        //use queried element to pull out the attribute value of color (had issue with getting attribute by name, room for improvement here)
-                        if (shoutHrefElem !== null) {
-                            idColor = Util.nodeToElem(shoutHrefElem.childNodes[0])
-                                .attributes[0].value;
-                        }
-                        //if the color extracted from href element has more than 2 attributes, then that means it is an admin/mod with background color. skip them
-                        if (
-                            idColor.split(';').length <= 2 &&
-                            idColor !== '' &&
-                            idColor.indexOf('#') > 0
-                        ) {
-                            //overwrite empty string with bbcode color block
-                            colorBlock[0] =
-                                '[' + idColor.replace(':', '=').replace(';', '') + ']';
-                            colorBlock[1] = '[/color]';
-                        }
+                        ).querySelector('a[href^="/u/"] span');
+                        // Grab the background color of the name, or text color
+                        const nameColor: string = _getNameColor(shoutName);
                         //extract the username from node for use in reply
                         const userName: string = this.extractFromShout(
                             node,
@@ -124,11 +137,18 @@ class ProcessShouts {
                             replyButton
                                 .querySelector('button')!
                                 .addEventListener('click', () => {
-                                    replyBox.value =
-                                        replyBox.value +
-                                        `@[i]${
-                                            colorBlock[0] + userName + colorBlock[1]
-                                        }[/i]`;
+                                    // Add the styled name tag to the reply box
+                                    // If nothing was in the reply box, add a colon
+                                    if (replyBox.value === '') {
+                                        replyBox.value = `${_makeNameTag(
+                                            userName,
+                                            nameColor
+                                        )}: `;
+                                    } else {
+                                        replyBox.value = `${
+                                            replyBox.value
+                                        } ${_makeNameTag(userName, nameColor)} `;
+                                    }
                                     replyBox.focus();
                                 });
                         }
@@ -142,9 +162,10 @@ class ProcessShouts {
                                     const text = this.quoteShout(node, 65);
 
                                     // Add quote to reply box
-                                    replyBox.value = `@[i]${
-                                        colorBlock[0] + userName + colorBlock[1]
-                                    }: \u201c${text}[/i]\u201d`;
+                                    replyBox.value = `${_makeNameTag(
+                                        userName,
+                                        nameColor
+                                    )}: \u201c${text}[/i]\u201d `;
                                     replyBox.focus();
                                 });
                         }

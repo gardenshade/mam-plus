@@ -27,7 +27,9 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
-        UPDATE_LIST: [] as string[],
+        UPDATE_LIST: [
+            '♻️: Tweaked SB Reply/Quote further. The feature should be essentially identical to the official reply feature.',
+        ] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
