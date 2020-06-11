@@ -28,17 +28,10 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added the ability to hide Recent News articles on the home page',
-            '♻️: Tweaked shoutbox replying to be inline with the official new Drag-and-Drop reply style',
-            '♻️: Quoting a message that contains a quote will not quote the quote',
-            '🐞: Fixed shoutbox Gift button not appearing',
-            '🐞: Fixed shoutbox reply/quote buttons not appearing',
-            '🐞: Fixed shoutbox priority/blocked user style not applying',
-            '🐞: Fixed Gift New Members feature not appearing',
+            '♻️: Tweaked SB Reply/Quote further. The feature should be essentially identical to the official reply feature.',
+            '♻️: Goodreads buttons should only appear in book-related categories.',
         ] as string[],
-        BUG_LIST: [
-            'There was only one Recent News item when I wrote this so it might behave strangely when there are more items',
-        ] as string[],
+        BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
     export const VERSION: string = Check.newVer;

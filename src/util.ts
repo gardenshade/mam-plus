@@ -118,6 +118,15 @@ class Util {
             .replace(/\(.*?\)/g, '')
             .trim();
     }
+    /**
+     *Return the contents between brackets
+     *
+     * @static
+     * @memberof Util
+     */
+    public static bracketContents = (inp: string) => {
+        return inp.match(/\(([^)]+)\)/)![1];
+    };
 
     /**
      * Converts a string to an array
@@ -337,9 +346,9 @@ class Util {
      * @param min a number of the bottom of random number pool
      * @param max a number of the top of the random number pool
      */
-    public static randomNumber(min: number, max: number): number {
+    public static randomNumber = (min: number, max: number): number => {
         return Math.floor(Math.random() * (max - min + 1) + min);
-    }
+    };
 
     /**
      * Sleep util to be used in async functions to delay program
@@ -353,4 +362,30 @@ class Util {
      */
     public static endOfHref = (elem: HTMLAnchorElement, split = '/') =>
         elem.href.split(split).pop();
+
+    /**
+     * Return the hex value of a component as a string.
+     * From https://stackoverflow.com/questions/5623838
+     *
+     * @static
+     * @param {number} c
+     * @returns {string}
+     * @memberof Util
+     */
+    public static componentToHex = (c: number | string): string => {
+        const hex = c.toString(16);
+        return hex.length === 1 ? `0${hex}` : hex;
+    };
+    /**
+     * Return a hex color code from RGB.
+     * From https://stackoverflow.com/questions/5623838
+     *
+     * @static
+     * @memberof Util
+     */
+    public static rgbToHex = (r: number, g: number, b: number): string => {
+        return `#${Util.componentToHex(r)}${Util.componentToHex(g)}${Util.componentToHex(
+            b
+        )}`;
+    };
 }
