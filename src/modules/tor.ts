@@ -52,7 +52,13 @@ class GoodreadsButton implements Feature {
     constructor() {
         Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
             if (t) {
-                this._init();
+                // The feature should only run on book categories
+                const cat = document.querySelector('#fInfo [class^=cat]');
+                if (cat && Check.isBookCat(parseInt(cat.className.substr(3)))) {
+                    this._init();
+                } else {
+                    console.log('[M+] Not a book category; skipping Goodreads buttons');
+                }
             }
         });
     }

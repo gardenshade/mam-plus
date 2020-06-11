@@ -186,4 +186,10 @@ class Check {
             }
         });
     }
+
+    // Check to see if a given category is an ebook/audiobook category
+    public static isBookCat(cat: number): boolean {
+        // Currently, all book categories are assumed to be in the range of 39-120
+        return cat >= 39 && cat <= 120 ? true : false;
+    }
 }

@@ -29,6 +29,7 @@ namespace MP {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
             '♻️: Tweaked SB Reply/Quote further. The feature should be essentially identical to the official reply feature.',
+            '♻️: Goodreads buttons should only appear in book-related categories.',
         ] as string[],
         BUG_LIST: [] as string[],
     };
