@@ -28,8 +28,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '♻️: Tweaked SB Reply/Quote further. The feature should be essentially identical to the official reply feature.',
-            '♻️: Goodreads buttons should only appear in book-related categories.',
+            "🐞: Defered, but didn't fix, an issue with homepage tidying",
+            '🐞: Fixed a formatting bug with Reply Quotes',
         ] as string[],
         BUG_LIST: [] as string[],
     };

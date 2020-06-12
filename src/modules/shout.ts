@@ -165,7 +165,7 @@ class ProcessShouts {
                                     replyBox.value = `${_makeNameTag(
                                         userName,
                                         nameColor
-                                    )}: \u201c${text}[/i]\u201d `;
+                                    )}: \u201c[i]${text}[/i]\u201d `;
                                     replyBox.focus();
                                 });
                         }
