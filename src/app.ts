@@ -27,10 +27,7 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
-        UPDATE_LIST: [
-            "🐞: Defered, but didn't fix, an issue with homepage tidying",
-            '🐞: Fixed a formatting bug with Reply Quotes',
-        ] as string[],
+        UPDATE_LIST: ['🆕: Added Blurred Header background feature'] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
