@@ -27,7 +27,10 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
-        UPDATE_LIST: ['🆕: Added Blurred Header background feature'] as string[],
+        UPDATE_LIST: [
+            '🆕: Added Blurred Header background feature',
+            '🐞: Fixed an issue where shoutbox posts by Mouse-ranked users broke Reply/Quote features',
+        ] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';

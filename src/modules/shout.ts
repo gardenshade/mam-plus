@@ -69,34 +69,39 @@ class ProcessShouts {
     public static watchShoutboxReply(tar: string, buttons?: number): void {
         if (MP.DEBUG) console.log('watchShoutboxReply(', tar, buttons, ')');
 
-        const _getRawColor = (elem: HTMLSpanElement): string => {
+        const _getRawColor = (elem: HTMLSpanElement): string | null => {
             if (elem.style.backgroundColor) {
                 return elem.style.backgroundColor;
             } else if (elem.style.color) {
                 return elem.style.color;
             } else {
-                throw new Error(
-                    `Element has no color or background color!\n${elem}\n${elem.style}`
-                );
+                return null;
             }
         };
-        const _getNameColor = (elem: HTMLSpanElement | null) => {
+        const _getNameColor = (elem: HTMLSpanElement | null): string | null => {
             if (elem) {
-                // Convert to hex
-                const rgb: string[] = Util.bracketContents(_getRawColor(elem!)).split(
-                    ','
-                );
-                return Util.rgbToHex(
-                    parseInt(rgb[0]),
-                    parseInt(rgb[1]),
-                    parseInt(rgb[2])
-                );
+                const rawColor: string | null = _getRawColor(elem);
+                if (rawColor) {
+                    // Convert to hex
+                    const rgb: string[] = Util.bracketContents(rawColor).split(',');
+                    return Util.rgbToHex(
+                        parseInt(rgb[0]),
+                        parseInt(rgb[1]),
+                        parseInt(rgb[2])
+                    );
+                } else {
+                    return null;
+                }
             } else {
                 throw new Error(`Element is null!\n${elem}`);
             }
         };
-        const _makeNameTag = (name: string, hex: string): string => {
-            return `@[color=${hex}][i]${name}[/i][/color]`;
+        const _makeNameTag = (name: string, hex: string | null): string => {
+            if (!hex) {
+                return `@[i]${name}[/i]`;
+            } else {
+                return `@[color=${hex}][i]${name}[/i][/color]`;
+            }
         };
 
         // Get the reply box
@@ -119,7 +124,7 @@ class ProcessShouts {
                             node
                         ).querySelector('a[href^="/u/"] span');
                         // Grab the background color of the name, or text color
-                        const nameColor: string = _getNameColor(shoutName);
+                        const nameColor: string | null = _getNameColor(shoutName);
                         //extract the username from node for use in reply
                         const userName: string = this.extractFromShout(
                             node,
