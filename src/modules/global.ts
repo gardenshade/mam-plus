@@ -216,6 +216,7 @@ class BlurredHeader implements Feature {
             header.classList.add('mp_blurredBack');
             header.append(blurredBack);
             blurredBack.style.backgroundImage = headerSrc ? `url(${headerSrc})` : '';
+            blurredBack.classList.add('mp_container');
         }
 
         console.log('[M+] Added a blurred background to the header!');
