@@ -28,8 +28,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            "🐞: Defered, but didn't fix, an issue with homepage tidying",
-            '🐞: Fixed a formatting bug with Reply Quotes',
+            '🆕: Added Blurred Header background feature',
+            '🐞: Fixed an issue where shoutbox posts by Mouse-ranked users broke Reply/Quote features',
         ] as string[],
         BUG_LIST: [] as string[],
     };

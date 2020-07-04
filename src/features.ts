@@ -16,6 +16,7 @@ class InitFeatures {
     constructor() {
         // Initialize Global functions
         new HideHome();
+        new BlurredHeader();
         new VaultLink();
         new MiniVaultInfo();
         new BonusPointDelta();

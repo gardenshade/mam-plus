@@ -187,3 +187,42 @@ class BonusPointDelta implements Feature {
         return this._settings;
     }
 }
+
+class BlurredHeader implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Global,
+        type: 'checkbox',
+        title: 'blurredHeader',
+        desc: `Add a blurred background to the header area`,
+    };
+    private _tar: string = '#siteMain > header';
+    constructor() {
+        Util.startFeature(this._settings, this._tar).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private async _init() {
+        const header: HTMLElement = <HTMLElement>document.querySelector(`${this._tar}`);
+        const headerImg: HTMLImageElement | null = header.querySelector(`img`);
+
+        if (headerImg) {
+            const headerSrc: string | null = headerImg.getAttribute('src');
+            // Generate a container for the background
+            const blurredBack: HTMLDivElement = document.createElement('div');
+
+            header.classList.add('mp_blurredBack');
+            header.append(blurredBack);
+            blurredBack.style.backgroundImage = headerSrc ? `url(${headerSrc})` : '';
+        }
+
+        console.log('[M+] Added a blurred background to the header!');
+    }
+
+    // This must match the type selected for `this._settings`
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
