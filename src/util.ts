@@ -388,4 +388,16 @@ class Util {
             b
         )}`;
     };
+
+    /**
+     * Extract numbers (with float) from text and return them
+     * @param tar An HTML element that contains numbers
+     */
+    public static extractFloat = (tar: HTMLElement): number[] => {
+        if (tar.textContent) {
+            return (tar.textContent!.match(/\d+\.\d+/) || []).map((n) => parseFloat(n));
+        } else {
+            throw new Error('Target contains no text');
+        }
+    };
 }

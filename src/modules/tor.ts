@@ -308,6 +308,7 @@ class CurrentlyReading implements Feature {
     }
 
     private async _init() {
+        console.log('[M+] Adding Currently Reading section...');
         // Get the required information
         const title: string = document!.querySelector('#torDetMainCon .TorrentTitle')!
             .textContent!;
@@ -361,6 +362,76 @@ class CurrentlyReading implements Feature {
         return <HTMLDivElement>document.querySelector('.mp_reading');
     }
 
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+class RatioProtect implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        scope: SettingGroup['Torrent Page'],
+        title: 'ratioProtect',
+        desc: `Protect your ratio with warnings &amp; ratio calculations`,
+    };
+    private _tar: string = '#ratio';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        console.log('[M+] Enabling ratio protection...');
+        // The download text area
+        const dlBtn: HTMLAnchorElement | null = document.querySelector('#tddl');
+        // The currently unused label area above the download text
+        const dlLabel: HTMLDivElement | null = document.querySelector(
+            '#download .torDetInnerTop'
+        );
+        // Would become ratio
+        const rNew: HTMLDivElement | null = document.querySelector(this._tar);
+        // Current ratio
+        const rCur: HTMLSpanElement | null = document.querySelector('#tmR');
+        // Seeding or downloading
+        const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
+
+        // Only run the code if the ratio exists
+        if (rNew && rCur) {
+            // Extract the number values and calculate the dif
+            const rdiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
+
+            if (!seeding && dlLabel) {
+                // if NOT already seeding or downloading
+                dlLabel.innerHTML = `Ratio loss ${rdiff.toPrecision(2)}`;
+                dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
+            }
+
+            if (dlBtn && dlLabel) {
+                // Change this number to your "trivial ratio loss" amount
+                // These changes will always happen if the ratio conditions are met
+                if (rdiff > 0.3) {
+                    dlBtn.style.backgroundColor = 'SpringGreen';
+                    dlBtn.style.color = 'black';
+                }
+
+                // Change this number to your I never want to dl w/o FL ratio loss amount
+                if (rdiff > 1) {
+                    dlBtn.style.backgroundColor = 'Red';
+                    // Disable link to prevent download
+                    dlBtn.style.pointerEvents = 'none';
+                    // maybe hide the button, and add the Ratio Loss warning in its place?
+                    dlBtn.innerHTML = 'FL Recommended';
+                    dlLabel.style.fontWeight = 'bold';
+                    // Change this number to your "I need to think about using a FL ratio loss" amount
+                } else if (rdiff > 0.5) {
+                    dlBtn.style.backgroundColor = 'Orange';
+                }
+            }
+        }
+    }
     get settings(): CheckboxSetting {
         return this._settings;
     }

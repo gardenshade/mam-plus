@@ -40,6 +40,7 @@ class InitFeatures {
         new GoodreadsButton();
         new CurrentlyReading();
         new TorGiftDefault();
+        new RatioProtect();
 
         // Initialize Shoutbox functions
         new PriorityUsers();

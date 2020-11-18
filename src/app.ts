@@ -28,8 +28,7 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added Blurred Header background feature',
-            '🐞: Fixed an issue where shoutbox posts by Mouse-ranked users broke Reply/Quote features',
+            '🆕: Added ratio protection feature by displaying ratio changes and adding warnings. Big thanks to yyyzzz999 for contributing!',
         ] as string[],
         BUG_LIST: [] as string[],
     };
