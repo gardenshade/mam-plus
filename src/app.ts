@@ -29,6 +29,7 @@ namespace MP {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
             '🆕: Added ratio protection feature by displaying ratio changes and adding warnings. Big thanks to yyyzzz999 for contributing!',
+            '🆕: Added plaintext results to the Requests page',
         ] as string[],
         BUG_LIST: [] as string[],
     };
