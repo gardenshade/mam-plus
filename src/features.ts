@@ -41,6 +41,9 @@ class InitFeatures {
         new CurrentlyReading();
         new TorGiftDefault();
         new RatioProtect();
+        new RatioProtectL1();
+        new RatioProtectL2();
+        new RatioProtectL3();
 
         // Initialize Shoutbox functions
         new PriorityUsers();

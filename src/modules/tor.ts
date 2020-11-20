@@ -2,7 +2,7 @@
 /// <reference path="../util.ts" />
 
 /**
- * Autofills the Gift box with a specified number of points.
+ * * Autofills the Gift box with a specified number of points.
  */
 class TorGiftDefault implements Feature {
     private _settings: TextboxSetting = {
@@ -38,7 +38,7 @@ class TorGiftDefault implements Feature {
 }
 
 /**
- * Adds various links to Goodreads
+ * * Adds various links to Goodreads
  */
 class GoodreadsButton implements Feature {
     private _settings: CheckboxSetting = {
@@ -291,6 +291,9 @@ class GoodreadsButton implements Feature {
     }
 }
 
+/**
+ * * Generates a field for "Currently Reading" bbcode
+ */
 class CurrentlyReading implements Feature {
     private _settings: CheckboxSetting = {
         type: 'checkbox',
@@ -367,6 +370,9 @@ class CurrentlyReading implements Feature {
     }
 }
 
+/**
+ * * Protects the user from ratio troubles by adding warnings and displaying ratio delta
+ */
 class RatioProtect implements Feature {
     private _settings: CheckboxSetting = {
         type: 'checkbox',
@@ -398,6 +404,10 @@ class RatioProtect implements Feature {
         // Seeding or downloading
         const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
 
+        // Get the custom ratio amounts (will return default values otherwise)
+        const [r1, r2, r3] = this._checkCustomSettings();
+        if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
+
         // Only run the code if the ratio exists
         if (rNew && rCur) {
             // Extract the number values and calculate the dif
@@ -412,13 +422,13 @@ class RatioProtect implements Feature {
             if (dlBtn && dlLabel) {
                 // Change this number to your "trivial ratio loss" amount
                 // These changes will always happen if the ratio conditions are met
-                if (rdiff > 0.3) {
+                if (rdiff > r1) {
                     dlBtn.style.backgroundColor = 'SpringGreen';
                     dlBtn.style.color = 'black';
                 }
 
                 // Change this number to your I never want to dl w/o FL ratio loss amount
-                if (rdiff > 1) {
+                if (rdiff > r3) {
                     dlBtn.style.backgroundColor = 'Red';
                     // Disable link to prevent download
                     dlBtn.style.pointerEvents = 'none';
@@ -426,13 +436,127 @@ class RatioProtect implements Feature {
                     dlBtn.innerHTML = 'FL Recommended';
                     dlLabel.style.fontWeight = 'bold';
                     // Change this number to your "I need to think about using a FL ratio loss" amount
-                } else if (rdiff > 0.5) {
+                } else if (rdiff > r2) {
                     dlBtn.style.backgroundColor = 'Orange';
                 }
             }
         }
     }
+
+    private _checkCustomSettings() {
+        let l1 = parseFloat(GM_getValue('ratioProtectL1_val'));
+        let l2 = parseFloat(GM_getValue('ratioProtectL2_val'));
+        let l3 = parseFloat(GM_getValue('ratioProtectL3_val'));
+
+        if (isNaN(l3)) l3 = 1;
+        if (isNaN(l2)) l2 = 2 / 3;
+        if (isNaN(l1)) l1 = 1 / 3;
+
+        // If someone put things in a dumb order, ignore smaller numbers
+        if (l2 > l3) l2 = l3;
+        if (l1 > l2) l1 = l2;
+
+        // If custom numbers are smaller than default values, ignore the lower warning
+        if (isNaN(l2)) l2 = l3 < 2 / 3 ? l3 : 2 / 3;
+        if (isNaN(l1)) l1 = l2 < 1 / 3 ? l2 : 1 / 3;
+
+        return [l1, l2, l3];
+    }
+
     get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * Low ratio protection amount
+ */
+class RatioProtectL1 implements Feature {
+    private _settings: TextboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'textbox',
+        title: 'ratioProtectL1',
+        tag: 'Ratio Warn L1',
+        placeholder: 'default: 0.3',
+        desc: `Set the smallest threshhold to warn of ratio changes. (<em>This is a slight color change</em>).`,
+    };
+    private _tar: string = '#download';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private _init() {
+        console.log('[M+] Set custom L1 Ratio Protection!');
+    }
+
+    get settings(): TextboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * Medium ratio protection amount
+ */
+class RatioProtectL2 implements Feature {
+    private _settings: TextboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'textbox',
+        title: 'ratioProtectL2',
+        tag: 'Ratio Warn L2',
+        placeholder: 'default: 0.6',
+        desc: `Set the median threshhold to warn of ratio changes. (<em>This is a noticeable color change</em>).`,
+    };
+    private _tar: string = '#download';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private _init() {
+        console.log('[M+] Set custom L2 Ratio Protection!');
+    }
+
+    get settings(): TextboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * High ratio protection amount
+ */
+class RatioProtectL3 implements Feature {
+    private _settings: TextboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'textbox',
+        title: 'ratioProtectL3',
+        tag: 'Ratio Warn L3',
+        placeholder: 'default: 1',
+        desc: `Set the highest threshhold to warn of ratio changes. (<em>This disables download without FL use</em>).`,
+    };
+    private _tar: string = '#download';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private _init() {
+        console.log('[M+] Set custom L2 Ratio Protection!');
+    }
+
+    get settings(): TextboxSetting {
         return this._settings;
     }
 }
