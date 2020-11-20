@@ -1,6 +1,6 @@
 /// <reference path="shared.ts" />
 /**
- * BROWSE/REQUESTS FEATURES
+ * #BROWSE PAGE FEATURES
  */
 
 /**

@@ -35,6 +35,7 @@ class InitFeatures {
 
         // Initialize Request Page functions
         new ToggleHiddenRequesters();
+        new PlaintextRequest();
 
         // Initialize Torrent Page functions
         new GoodreadsButton();
