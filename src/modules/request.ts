@@ -24,6 +24,7 @@ class ToggleHiddenRequesters implements Feature {
     }
 
     private async _init(): Promise<void> {
+        this._addToggleSwitch();
         this._searchList = await this._getRequestList();
         this._filterResults(this._searchList);
 
@@ -31,6 +32,17 @@ class ToggleHiddenRequesters implements Feature {
             this._searchList = await this._getRequestList();
             this._filterResults(this._searchList);
         });
+    }
+
+    private _addToggleSwitch() {
+        Util.createButton(
+            '#mp_hideToggle',
+            'Toggle Hidden',
+            'div',
+            '#requestSearch .torrentSearch',
+            'afterend',
+            'torFormButton'
+        );
     }
 
     private _getRequestList(): Promise<NodeListOf<HTMLLIElement>> {
