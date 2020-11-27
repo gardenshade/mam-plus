@@ -263,7 +263,7 @@ class GoodreadsButton implements Feature {
      */
     private _buildGrSearchURL(type: BookData | 'on', inp: string): string {
         if (MP.DEBUG) {
-            console.log(`GoodreadsButton._buildURL( ${type}, ${inp} )`);
+            console.log(`GoodreadsButton._buildGrSearchURL( ${type}, ${inp} )`);
         }
 
         let grType: string = type;
@@ -280,7 +280,7 @@ class GoodreadsButton implements Feature {
             cases[type]();
         }
         return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(
-            inp
+            inp.replace('%', '')
         ).replace("'", '%27')}&search_type=books&search%5Bfield%5D=${grType}`;
 
         // Return a value eventually
@@ -413,31 +413,36 @@ class RatioProtect implements Feature {
             // Extract the number values and calculate the dif
             const rdiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
 
-            if (!seeding && dlLabel) {
-                // if NOT already seeding or downloading
-                dlLabel.innerHTML = `Ratio loss ${rdiff.toPrecision(2)}`;
-                dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
-            }
-
-            if (dlBtn && dlLabel) {
-                // Change this number to your "trivial ratio loss" amount
-                // These changes will always happen if the ratio conditions are met
-                if (rdiff > r1) {
-                    dlBtn.style.backgroundColor = 'SpringGreen';
-                    dlBtn.style.color = 'black';
+            // Only activate if a ratio change is expected
+            if (!isNaN(rdiff)) {
+                if (!seeding && dlLabel) {
+                    // if NOT already seeding or downloading
+                    dlLabel.innerHTML = `Ratio loss ${rdiff.toPrecision(2)}`;
+                    dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
                 }
 
-                // Change this number to your I never want to dl w/o FL ratio loss amount
-                if (rdiff > r3) {
-                    dlBtn.style.backgroundColor = 'Red';
-                    // Disable link to prevent download
-                    dlBtn.style.pointerEvents = 'none';
-                    // maybe hide the button, and add the Ratio Loss warning in its place?
-                    dlBtn.innerHTML = 'FL Recommended';
-                    dlLabel.style.fontWeight = 'bold';
-                    // Change this number to your "I need to think about using a FL ratio loss" amount
-                } else if (rdiff > r2) {
-                    dlBtn.style.backgroundColor = 'Orange';
+                if (dlBtn && dlLabel) {
+                    // This is the "trivial ratio loss" threshold
+                    // These changes will always happen if the ratio conditions are met
+                    if (rdiff > r1) {
+                        dlBtn.style.backgroundColor = 'SpringGreen';
+                        dlBtn.style.color = 'black';
+                    }
+
+                    // This is the "I never want to dl w/o FL" threshold
+                    // TODO: Replace disable button with buy FL button
+                    if (rdiff > r3) {
+                        dlBtn.style.backgroundColor = 'Red';
+                        ////Disable link to prevent download
+                        //// dlBtn.style.pointerEvents = 'none';
+                        dlBtn.style.cursor = 'no-drop';
+                        // maybe hide the button, and add the Ratio Loss warning in its place?
+                        dlBtn.innerHTML = 'FL Recommended';
+                        dlLabel.style.fontWeight = 'bold';
+                        // This is the "I need to think about using a FL" threshold
+                    } else if (rdiff > r2) {
+                        dlBtn.style.backgroundColor = 'Orange';
+                    }
                 }
             }
         }

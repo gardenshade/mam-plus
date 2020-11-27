@@ -28,8 +28,10 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added ratio protection feature by displaying ratio changes and adding warnings. Big thanks to yyyzzz999 for contributing!',
-            '🆕: Added plaintext results to the Requests page',
+            '♻️: Removed DL button disabling in Ratio Protect',
+            '🐞: Fixed an issue where ratio protect was running on FL pages and displaying as "Ratio loss NaN". @yyyzzz999.',
+            '🐞: Fixed an issue where ratio numbers would be horribly wrong if greater than 999. @yyyzzz999.',
+            '🐞: Fixed an issue where books with "%" in their titles would break Goodreads searches.',
         ] as string[],
         BUG_LIST: [] as string[],
     };

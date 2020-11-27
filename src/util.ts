@@ -395,7 +395,9 @@ class Util {
      */
     public static extractFloat = (tar: HTMLElement): number[] => {
         if (tar.textContent) {
-            return (tar.textContent!.match(/\d+\.\d+/) || []).map((n) => parseFloat(n));
+            return (tar.textContent!.replace(/,/g, '').match(/\d+\.\d+/) || []).map((n) =>
+                parseFloat(n)
+            );
         } else {
             throw new Error('Target contains no text');
         }
