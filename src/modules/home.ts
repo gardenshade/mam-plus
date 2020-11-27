@@ -222,6 +222,9 @@ class GiftNewest implements Feature {
     }
 }
 
+/**
+ * ### Adds ability to hide news items on the page
+ */
 class HideNews implements Feature {
     private _settings: CheckboxSetting = {
         scope: SettingGroup.Home,
@@ -345,7 +348,7 @@ class HideNews implements Feature {
     };
 
     _getNewsItems = (): NodeListOf<HTMLDivElement> | null => {
-        return document.querySelectorAll('.mainPageNewsSub');
+        return document.querySelectorAll('div[class^="mainPageNews"]');
     };
 
     // This must match the type selected for `this._settings`

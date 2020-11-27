@@ -32,6 +32,7 @@ namespace MP {
             '🐞: Fixed an issue where ratio protect was running on FL pages and displaying as "Ratio loss NaN". @yyyzzz999.',
             '🐞: Fixed an issue where ratio numbers would be horribly wrong if greater than 999. @yyyzzz999.',
             '🐞: Fixed an issue where books with "%" in their titles would break Goodreads searches.',
+            '🐞: Fixed an issue where not all frontpage news items could be hidden.',
         ] as string[],
         BUG_LIST: [] as string[],
     };
