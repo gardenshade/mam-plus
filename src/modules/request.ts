@@ -14,6 +14,7 @@ class ToggleHiddenRequesters implements Feature {
     };
     private _tar: string = '#torRows';
     private _searchList: NodeListOf<HTMLLIElement> | undefined;
+    private _hide = true;
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['requests']).then((t) => {
@@ -24,12 +25,50 @@ class ToggleHiddenRequesters implements Feature {
     }
 
     private async _init(): Promise<void> {
+        this._addToggleSwitch();
         this._searchList = await this._getRequestList();
         this._filterResults(this._searchList);
 
         Check.elemObserver(this._tar, async () => {
             this._searchList = await this._getRequestList();
             this._filterResults(this._searchList);
+        });
+    }
+
+    private _addToggleSwitch() {
+        // Make a new button and insert beside the Search button
+        Util.createButton(
+            'showHidden',
+            'Show Hidden',
+            'div',
+            '#requestSearch .torrentSearch',
+            'afterend',
+            'torFormButton'
+        );
+        // Select the new button and add a click listener
+        const toggleSwitch: HTMLDivElement = <HTMLDivElement>(
+            document.querySelector('#mp_showHidden')
+        );
+        toggleSwitch.addEventListener('click', () => {
+            const hiddenList: NodeListOf<HTMLLIElement> = document.querySelectorAll(
+                '#torRows > .mp_hidden'
+            );
+
+            if (this._hide) {
+                this._hide = false;
+                toggleSwitch.innerText = 'Hide Hidden';
+                hiddenList.forEach((item) => {
+                    item.style.display = 'list-item';
+                    item.style.opacity = '0.5';
+                });
+            } else {
+                this._hide = true;
+                toggleSwitch.innerText = 'Show Hidden';
+                hiddenList.forEach((item) => {
+                    item.style.display = 'none';
+                    item.style.opacity = '0';
+                });
+            }
         });
     }
 
@@ -61,6 +100,7 @@ class ToggleHiddenRequesters implements Feature {
             );
             if (requester === null) {
                 request.style.display = 'none';
+                request.classList.add('mp_hidden');
             }
         });
     }
