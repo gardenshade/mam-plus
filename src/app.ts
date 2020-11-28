@@ -28,6 +28,7 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
+            '♻️: Hide Hidden Requesters now includes a button to temporarily toggle the feature off',
             '♻️: Removed DL button disabling in Ratio Protect',
             '🐞: Fixed an issue where ratio protect was running on FL pages and displaying as "Ratio loss NaN". @yyyzzz999.',
             '🐞: Fixed an issue where ratio numbers would be horribly wrong if greater than 999. @yyyzzz999.',
