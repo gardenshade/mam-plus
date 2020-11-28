@@ -1,15 +1,15 @@
 /// <reference path="util.ts" />
 /**
- * Class for handling validation & confirmation
+ * # Class for handling validation & confirmation
  */
-
 class Check {
     public static newVer: string = GM_info.script.version;
     public static prevVer: string | undefined = GM_getValue('mp_version');
 
     /**
-     * Waits for an element to exist, then returns it
-     * @param selector css selector string
+     * * Wait for an element to exist, then return it
+     * @param {string} selector - The DOM string that will be used to select an element
+     * @return {Promise<HTMLElement>} Promise of an element that was selected
      */
     public static async elemLoad(selector: string): Promise<HTMLElement> {
         // Select the actual element
@@ -33,9 +33,10 @@ class Check {
     }
 
     /**
-     * Runs a function whenever an element changes
-     * @param selector The element to be observed. Can be a string.
-     * @param callback The function to run when the observer triggers
+     * * Run a function whenever an element changes
+     * @param selector - The element to be observed. Can be a string.
+     * @param callback - The function to run when the observer triggers
+     * @return Promise of a mutation observer
      */
     public static async elemObserver(
         selector: string | HTMLElement | null,
@@ -65,7 +66,8 @@ class Check {
     }
 
     /**
-     * Checks to see if the script has been updated from an older version
+     * * Check to see if the script has been updated from an older version
+     * @return The version string or false
      */
     public static updated(): Promise<string | boolean> {
         if (MP.DEBUG) {
@@ -110,7 +112,10 @@ class Check {
     }
 
     /**
-     * Check to see what page is being accessed
+     * * Check to see what page is being accessed
+     * @param {ValidPage} pageQuery - An optional page to specifically check for
+     * @return {Promise<string>} A promise containing the name of the current page
+     * @return {Promise<boolean>} Optionally, a boolean if the current page matches the `pageQuery`
      */
     public static page(pageQuery?: ValidPage): Promise<string | boolean> {
         if (MP.DEBUG) {
@@ -187,7 +192,9 @@ class Check {
         });
     }
 
-    // Check to see if a given category is an ebook/audiobook category
+    /**
+     * * Check to see if a given category is an ebook/audiobook category
+     */
     public static isBookCat(cat: number): boolean {
         // Currently, all book categories are assumed to be in the range of 39-120
         return cat >= 39 && cat <= 120 ? true : false;
