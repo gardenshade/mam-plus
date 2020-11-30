@@ -67,6 +67,43 @@ class ProcessShouts {
      * @param charLimit Number of characters to include in quote, , charLimit?:number - Currently unused
      */
     public static watchShoutboxReply(tar: string, buttons?: number): void {
+        if (MP.DEBUG) console.log('watchShoutboxReply(', tar, buttons, ')');
+
+        const _getRawColor = (elem: HTMLSpanElement): string | null => {
+            if (elem.style.backgroundColor) {
+                return elem.style.backgroundColor;
+            } else if (elem.style.color) {
+                return elem.style.color;
+            } else {
+                return null;
+            }
+        };
+        const _getNameColor = (elem: HTMLSpanElement | null): string | null => {
+            if (elem) {
+                const rawColor: string | null = _getRawColor(elem);
+                if (rawColor) {
+                    // Convert to hex
+                    const rgb: string[] = Util.bracketContents(rawColor).split(',');
+                    return Util.rgbToHex(
+                        parseInt(rgb[0]),
+                        parseInt(rgb[1]),
+                        parseInt(rgb[2])
+                    );
+                } else {
+                    return null;
+                }
+            } else {
+                throw new Error(`Element is null!\n${elem}`);
+            }
+        };
+        const _makeNameTag = (name: string, hex: string | null): string => {
+            if (!hex) {
+                return `@[i]${name}[/i]`;
+            } else {
+                return `@[color=${hex}][i]${name}[/i][/color]`;
+            }
+        };
+
         // Get the reply box
         const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
         // Observe the shoutbox
@@ -81,30 +118,13 @@ class ProcessShouts {
                         if (/^mp_/.test(Util.nodeToElem(node).getAttribute('id')!)) {
                             return;
                         }
-                        //colorBlock is the empty strings representing potential for color bbcode in text. done in array to keep paired bbcode blocks
-                        const colorBlock: Array<string> = ['', ''];
-                        //idColor created as empty string placeholder
-                        let idColor: string = '';
-                        //extract the shoutbox text node containing UserID color Data
-                        const shoutHrefElem: HTMLElement | null = Util.nodeToElem(
+
+                        // Select the name information
+                        const shoutName: HTMLSpanElement | null = Util.nodeToElem(
                             node
-                        ).querySelector('a[href^="/u/"]');
-                        //use queried element to pull out the attribute value of color (had issue with getting attribute by name, room for improvement here)
-                        if (shoutHrefElem !== null) {
-                            idColor = Util.nodeToElem(shoutHrefElem.childNodes[0])
-                                .attributes[0].value;
-                        }
-                        //if the color extracted from href element has more than 2 attributes, then that means it is an admin/mod with background color. skip them
-                        if (
-                            idColor.split(';').length <= 2 &&
-                            idColor !== '' &&
-                            idColor.indexOf('#') > 0
-                        ) {
-                            //overwrite empty string with bbcode color block
-                            colorBlock[0] =
-                                '[' + idColor.replace(':', '=').replace(';', '') + ']';
-                            colorBlock[1] = '[/color]';
-                        }
+                        ).querySelector('a[href^="/u/"] span');
+                        // Grab the background color of the name, or text color
+                        const nameColor: string | null = _getNameColor(shoutName);
                         //extract the username from node for use in reply
                         const userName: string = this.extractFromShout(
                             node,
@@ -122,11 +142,18 @@ class ProcessShouts {
                             replyButton
                                 .querySelector('button')!
                                 .addEventListener('click', () => {
-                                    replyBox.value =
-                                        replyBox.value +
-                                        `[i]${colorBlock[0] + userName} ${
-                                            colorBlock[1]
-                                        }[/i]`;
+                                    // Add the styled name tag to the reply box
+                                    // If nothing was in the reply box, add a colon
+                                    if (replyBox.value === '') {
+                                        replyBox.value = `${_makeNameTag(
+                                            userName,
+                                            nameColor
+                                        )}: `;
+                                    } else {
+                                        replyBox.value = `${
+                                            replyBox.value
+                                        } ${_makeNameTag(userName, nameColor)} `;
+                                    }
                                     replyBox.focus();
                                 });
                         }
@@ -137,32 +164,13 @@ class ProcessShouts {
                             replyButton
                                 .querySelector('button')!
                                 .addEventListener('click', () => {
-                                    const extractText: string[] = [];
-                                    // Get number of reply buttons to remove from text
-                                    const btnCount = node.firstChild!.parentElement!.querySelectorAll(
-                                        '.mp_replyButton'
-                                    ).length;
-                                    // Get the text of all child nodes
-                                    node.childNodes.forEach((child) => {
-                                        // Links aren't clickable anyway so get rid of them
-                                        if (child.nodeName === 'A') {
-                                            extractText.push('[Link]');
-                                        } else {
-                                            extractText.push(child.textContent!);
-                                        }
-                                    });
-                                    // Make a string, but toss out the first few nodes
-                                    let nodeText = extractText
-                                        .slice(3 + btnCount)
-                                        .join(' ');
-                                    if (nodeText.indexOf(':') === 0) {
-                                        nodeText = nodeText.substr(2);
-                                    }
-                                    nodeText = Util.trimString(nodeText.trim(), 65);
+                                    const text = this.quoteShout(node, 65);
+
                                     // Add quote to reply box
-                                    replyBox.value = `\u201c[i]${
-                                        colorBlock[0] + userName
-                                    } ${colorBlock[1]}: ${nodeText}\u2026[/i]\u201d`;
+                                    replyBox.value = `${_makeNameTag(
+                                        userName,
+                                        nameColor
+                                    )}: \u201c[i]${text}[/i]\u201d `;
                                     replyBox.focus();
                                 });
                         }
@@ -175,6 +183,38 @@ class ProcessShouts {
             },
             { childList: true }
         );
+    }
+
+    public static quoteShout(shout: Node, length: number) {
+        const textArr: string[] = [];
+        // Get number of reply buttons to remove from text
+        const btnCount = shout.firstChild!.parentElement!.querySelectorAll(
+            '.mp_replyButton'
+        ).length;
+        // Get the text of all child nodes
+        shout.childNodes.forEach((child) => {
+            // Links aren't clickable anyway so get rid of them
+            if (child.nodeName === 'A') {
+                textArr.push('[Link]');
+            } else {
+                textArr.push(child.textContent!);
+            }
+        });
+        // Make a string, but toss out the first few nodes
+        let nodeText = textArr.slice(3 + btnCount).join('');
+        if (nodeText.indexOf(':') === 0) {
+            nodeText = nodeText.substr(2);
+        }
+        // At this point we should have just the message text.
+        // Remove any quotes that might be contained:
+        nodeText = nodeText.replace(/\u{201c}(.*?)\u{201d}/gu, '');
+        // Trim the text to a max length and add ... if shortened
+        let trimmedText = Util.trimString(nodeText.trim(), length);
+        if (trimmedText !== nodeText.trim()) {
+            trimmedText += ' [\u2026]';
+        }
+        // Done!
+        return trimmedText;
     }
 
     /**
@@ -243,7 +283,7 @@ class PriorityUsers implements Feature {
         desc:
             'Emphasizes messages from the listed users in the shoutbox. (<em>This accepts user IDs and usernames. It is not case sensitive.</em>)',
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf div';
     private _priorityUsers: string[] = [];
     private _userType: ShoutboxUserType = 'priority';
 
@@ -283,7 +323,7 @@ class PriorityStyle implements Feature {
         placeholder: 'default: 0, 0%, 50%, 0.3',
         desc: `Change the color/opacity of the highlighting rule for emphasized users' posts. (<em>This is formatted as Hue (0-360), Saturation (0-100%), Lightness (0-100%), Opacity (0-1)</em>)`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf div';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
@@ -314,7 +354,7 @@ class MutedUsers implements Feature {
         placeholder: 'ex. 1234, gardenshade',
         desc: `Obscures messages from the listed users in the shoutbox until hovered. (<em>This accepts user IDs and usernames. It is not case sensitive.</em>)`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf div';
     private _mutedUsers: string[] = [];
     private _userType: ShoutboxUserType = 'mute';
 
@@ -352,7 +392,7 @@ class GiftButton implements Feature {
         title: 'giftButton',
         desc: `Places a Gift button in Shoutbox dot-menu`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
@@ -363,8 +403,9 @@ class GiftButton implements Feature {
     }
 
     private async _init() {
+        console.log(`[M+] Initialized Gift Button.`);
         const sbfDiv = <HTMLDivElement>document.getElementById('sbf')!;
-		const sbfDivChild = sbfDiv!.firstChild;
+        const sbfDivChild = sbfDiv!.firstChild;
 
         //add event listener for whenever something is clicked in the sbf div
         sbfDiv.addEventListener('click', async (e) => {
@@ -381,9 +422,11 @@ class GiftButton implements Feature {
                 return;
             }
             //get the Menu after it pops up
+            console.log(`[M+] Adding Gift Button...`);
             const popupMenu: HTMLElement | null = document.getElementById('sbMenuMain');
-			do {await Util.sleep(1);}
-			while(!popupMenu!.hasChildNodes());
+            do {
+                await Util.sleep(5);
+            } while (!popupMenu!.hasChildNodes());
             //get the user details from the popup menu details
             const popupUser: HTMLElement = Util.nodeToElem(popupMenu!.childNodes[0]);
             //make username equal the data-uid, force not null
@@ -471,9 +514,8 @@ class GiftButton implements Feature {
                     giftButton.querySelector('button')!.disabled = false;
                 }
             });
+            console.log(`[M+] Gift Button added!`);
         });
-
-        console.log(`[M+] Adding Gift Button...`);
     }
 
     get settings(): CheckboxSetting {
@@ -492,7 +534,7 @@ class ReplySimple implements Feature {
         //tag: "Reply",
         desc: `Places a Reply button in Shoutbox: &#10554;`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf div';
     private _replySimple: number = 1;
 
     constructor() {
@@ -524,7 +566,7 @@ class ReplyQuote implements Feature {
         //tag: "Reply With Quote",
         desc: `Places a Reply with Quote button in Shoutbox: &#10557;`,
     };
-    private _tar: string = '#sbf';
+    private _tar: string = '.sbf div';
     private _replyQuote: number = 2;
 
     constructor() {

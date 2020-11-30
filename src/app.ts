@@ -26,9 +26,14 @@
 namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
-        /* 🆕🐞♻️ */
+        /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added "Gift All" and "Open Ungifted" to the New Members section of the home page',
+            '♻️: Hide Hidden Requesters now includes a button to temporarily toggle the feature off',
+            '♻️: Removed DL button disabling in Ratio Protect',
+            '🐞: Fixed an issue where ratio protect was running on FL pages and displaying as "Ratio loss NaN". @yyyzzz999.',
+            '🐞: Fixed an issue where ratio numbers would be horribly wrong if greater than 999. @yyyzzz999.',
+            '🐞: Fixed an issue where books with "%" in their titles would break Goodreads searches.',
+            '🐞: Fixed an issue where not all frontpage news items could be hidden.',
         ] as string[],
         BUG_LIST: [] as string[],
     };

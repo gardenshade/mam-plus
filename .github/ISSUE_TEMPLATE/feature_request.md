@@ -13,5 +13,5 @@ What will the feature do?
 ### Implementation:
 - [ ] How can the feature be added? This section may be left blank.
 
-### Links
+### Links:
 Relevant discussions. Remove the domain name if linking to MAM.

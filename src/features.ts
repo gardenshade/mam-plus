@@ -16,11 +16,13 @@ class InitFeatures {
     constructor() {
         // Initialize Global functions
         new HideHome();
+        new BlurredHeader();
         new VaultLink();
         new MiniVaultInfo();
         new BonusPointDelta();
 
         // Initialize Home Page functions
+        new HideNews();
         new GiftNewest();
 
         // Initialize Search Page functions
@@ -33,11 +35,16 @@ class InitFeatures {
 
         // Initialize Request Page functions
         new ToggleHiddenRequesters();
+        new PlaintextRequest();
 
         // Initialize Torrent Page functions
         new GoodreadsButton();
         new CurrentlyReading();
         new TorGiftDefault();
+        new RatioProtect();
+        new RatioProtectL1();
+        new RatioProtectL2();
+        new RatioProtectL3();
 
         // Initialize Shoutbox functions
         new PriorityUsers();

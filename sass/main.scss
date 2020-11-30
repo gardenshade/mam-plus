@@ -242,3 +242,18 @@ a[id^='torDeBookmark'] {
         background: #cc3300;
     }
 }
+.mp_blurredBack {
+    position: relative;
+    z-index: 1;
+
+    .mp_container {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        filter: blur(50px);
+        z-index: -1;
+        opacity: 0.5;
+    }
+}

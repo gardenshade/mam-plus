@@ -2,7 +2,7 @@
 /// <reference path="../util.ts" />
 
 /**
- * Autofills the Gift box with a specified number of points.
+ * * Autofills the Gift box with a specified number of points.
  */
 class TorGiftDefault implements Feature {
     private _settings: TextboxSetting = {
@@ -38,7 +38,7 @@ class TorGiftDefault implements Feature {
 }
 
 /**
- * Adds various links to Goodreads
+ * * Adds various links to Goodreads
  */
 class GoodreadsButton implements Feature {
     private _settings: CheckboxSetting = {
@@ -52,7 +52,13 @@ class GoodreadsButton implements Feature {
     constructor() {
         Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
             if (t) {
-                this._init();
+                // The feature should only run on book categories
+                const cat = document.querySelector('#fInfo [class^=cat]');
+                if (cat && Check.isBookCat(parseInt(cat.className.substr(3)))) {
+                    this._init();
+                } else {
+                    console.log('[M+] Not a book category; skipping Goodreads buttons');
+                }
             }
         });
     }
@@ -257,7 +263,7 @@ class GoodreadsButton implements Feature {
      */
     private _buildGrSearchURL(type: BookData | 'on', inp: string): string {
         if (MP.DEBUG) {
-            console.log(`GoodreadsButton._buildURL( ${type}, ${inp} )`);
+            console.log(`GoodreadsButton._buildGrSearchURL( ${type}, ${inp} )`);
         }
 
         let grType: string = type;
@@ -274,7 +280,7 @@ class GoodreadsButton implements Feature {
             cases[type]();
         }
         return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(
-            inp
+            inp.replace('%', '')
         ).replace("'", '%27')}&search_type=books&search%5Bfield%5D=${grType}`;
 
         // Return a value eventually
@@ -285,6 +291,9 @@ class GoodreadsButton implements Feature {
     }
 }
 
+/**
+ * * Generates a field for "Currently Reading" bbcode
+ */
 class CurrentlyReading implements Feature {
     private _settings: CheckboxSetting = {
         type: 'checkbox',
@@ -302,6 +311,7 @@ class CurrentlyReading implements Feature {
     }
 
     private async _init() {
+        console.log('[M+] Adding Currently Reading section...');
         // Get the required information
         const title: string = document!.querySelector('#torDetMainCon .TorrentTitle')!
             .textContent!;
@@ -356,6 +366,202 @@ class CurrentlyReading implements Feature {
     }
 
     get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * Protects the user from ratio troubles by adding warnings and displaying ratio delta
+ */
+class RatioProtect implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        scope: SettingGroup['Torrent Page'],
+        title: 'ratioProtect',
+        desc: `Protect your ratio with warnings &amp; ratio calculations`,
+    };
+    private _tar: string = '#ratio';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        console.log('[M+] Enabling ratio protection...');
+        // The download text area
+        const dlBtn: HTMLAnchorElement | null = document.querySelector('#tddl');
+        // The currently unused label area above the download text
+        const dlLabel: HTMLDivElement | null = document.querySelector(
+            '#download .torDetInnerTop'
+        );
+        // Would become ratio
+        const rNew: HTMLDivElement | null = document.querySelector(this._tar);
+        // Current ratio
+        const rCur: HTMLSpanElement | null = document.querySelector('#tmR');
+        // Seeding or downloading
+        const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
+
+        // Get the custom ratio amounts (will return default values otherwise)
+        const [r1, r2, r3] = this._checkCustomSettings();
+        if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
+
+        // Only run the code if the ratio exists
+        if (rNew && rCur) {
+            // Extract the number values and calculate the dif
+            const rdiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
+
+            // Only activate if a ratio change is expected
+            if (!isNaN(rdiff)) {
+                if (!seeding && dlLabel) {
+                    // if NOT already seeding or downloading
+                    dlLabel.innerHTML = `Ratio loss ${rdiff.toPrecision(2)}`;
+                    dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
+                }
+
+                if (dlBtn && dlLabel) {
+                    // This is the "trivial ratio loss" threshold
+                    // These changes will always happen if the ratio conditions are met
+                    if (rdiff > r1) {
+                        dlBtn.style.backgroundColor = 'SpringGreen';
+                        dlBtn.style.color = 'black';
+                    }
+
+                    // This is the "I never want to dl w/o FL" threshold
+                    // TODO: Replace disable button with buy FL button
+                    if (rdiff > r3) {
+                        dlBtn.style.backgroundColor = 'Red';
+                        ////Disable link to prevent download
+                        //// dlBtn.style.pointerEvents = 'none';
+                        dlBtn.style.cursor = 'no-drop';
+                        // maybe hide the button, and add the Ratio Loss warning in its place?
+                        dlBtn.innerHTML = 'FL Recommended';
+                        dlLabel.style.fontWeight = 'bold';
+                        // This is the "I need to think about using a FL" threshold
+                    } else if (rdiff > r2) {
+                        dlBtn.style.backgroundColor = 'Orange';
+                    }
+                }
+            }
+        }
+    }
+
+    private _checkCustomSettings() {
+        let l1 = parseFloat(GM_getValue('ratioProtectL1_val'));
+        let l2 = parseFloat(GM_getValue('ratioProtectL2_val'));
+        let l3 = parseFloat(GM_getValue('ratioProtectL3_val'));
+
+        if (isNaN(l3)) l3 = 1;
+        if (isNaN(l2)) l2 = 2 / 3;
+        if (isNaN(l1)) l1 = 1 / 3;
+
+        // If someone put things in a dumb order, ignore smaller numbers
+        if (l2 > l3) l2 = l3;
+        if (l1 > l2) l1 = l2;
+
+        // If custom numbers are smaller than default values, ignore the lower warning
+        if (isNaN(l2)) l2 = l3 < 2 / 3 ? l3 : 2 / 3;
+        if (isNaN(l1)) l1 = l2 < 1 / 3 ? l2 : 1 / 3;
+
+        return [l1, l2, l3];
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * Low ratio protection amount
+ */
+class RatioProtectL1 implements Feature {
+    private _settings: TextboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'textbox',
+        title: 'ratioProtectL1',
+        tag: 'Ratio Warn L1',
+        placeholder: 'default: 0.3',
+        desc: `Set the smallest threshhold to warn of ratio changes. (<em>This is a slight color change</em>).`,
+    };
+    private _tar: string = '#download';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private _init() {
+        console.log('[M+] Set custom L1 Ratio Protection!');
+    }
+
+    get settings(): TextboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * Medium ratio protection amount
+ */
+class RatioProtectL2 implements Feature {
+    private _settings: TextboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'textbox',
+        title: 'ratioProtectL2',
+        tag: 'Ratio Warn L2',
+        placeholder: 'default: 0.6',
+        desc: `Set the median threshhold to warn of ratio changes. (<em>This is a noticeable color change</em>).`,
+    };
+    private _tar: string = '#download';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private _init() {
+        console.log('[M+] Set custom L2 Ratio Protection!');
+    }
+
+    get settings(): TextboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * High ratio protection amount
+ */
+class RatioProtectL3 implements Feature {
+    private _settings: TextboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'textbox',
+        title: 'ratioProtectL3',
+        tag: 'Ratio Warn L3',
+        placeholder: 'default: 1',
+        desc: `Set the highest threshhold to warn of ratio changes. (<em>This disables download without FL use</em>).`,
+    };
+    private _tar: string = '#download';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private _init() {
+        console.log('[M+] Set custom L2 Ratio Protection!');
+    }
+
+    get settings(): TextboxSetting {
         return this._settings;
     }
 }

@@ -4,7 +4,8 @@ node_modules
 .sass-cache
 build
 *.sublime*
-*.code-*
-.vscode
+*.code-workspace
+.vscode/*
+!.vscode/*.code-snippets
 notes.md
 .eslintcache
