@@ -4,6 +4,7 @@
 /// <reference path="./modules/global.ts" />
 /// <reference path="./modules/home.ts" />
 /// <reference path="./modules/tor.ts" />
+/// <reference path="./modules/forum.ts" />
 /// <reference path="./modules/shout.ts" />
 /// <reference path="./modules/browse.ts" />
 /// <reference path="./modules/request.ts" />
