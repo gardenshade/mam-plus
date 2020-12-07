@@ -59,5 +59,6 @@ class InitFeatures {
 
         // Initialize User Page functions
         new UserGiftDefault();
+        new UserGiftHistory();
     }
 }
