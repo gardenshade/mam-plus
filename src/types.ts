@@ -10,7 +10,7 @@ type ValidPage =
     | 'shoutbox'
     | 'vault'
     | 'user'
-	| 'forum'
+    | 'forum'
     | 'settings';
 
 type BookData = 'book' | 'author' | 'series';
@@ -24,7 +24,7 @@ enum SettingGroup {
     'Shoutbox',
     'Vault',
     'User Pages',
-	'Forum Pages',
+    'Forum Pages',
     'Other',
 }
 
