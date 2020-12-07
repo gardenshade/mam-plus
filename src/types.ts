@@ -30,6 +30,16 @@ enum SettingGroup {
 
 type ShoutboxUserType = 'priority' | 'mute';
 
+interface UserGiftHistory {
+    amount: number;
+    other_name: string;
+    other_userid: number;
+    tid: number | null;
+    timestamp: number;
+    title: string | null;
+    type: string;
+}
+
 interface ArrayObject {
     [key: string]: string[];
 }

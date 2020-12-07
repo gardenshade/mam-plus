@@ -417,7 +417,7 @@ class RatioProtect implements Feature {
             if (!isNaN(rdiff)) {
                 if (!seeding && dlLabel) {
                     // if NOT already seeding or downloading
-                    dlLabel.innerHTML = `Ratio loss ${rdiff.toPrecision(2)}`;
+                    dlLabel.innerHTML = `Ratio loss ${rdiff.toFixed(2)}`;
                     dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
                 }
 
