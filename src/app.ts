@@ -28,6 +28,7 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
+            '🆕: Added the ability to see your gift history with another user',
             '🐞: Fixed an issue where Ratio Protect text might display in exponential notation. @yyyzzz999',
         ] as string[],
         BUG_LIST: [] as string[],
