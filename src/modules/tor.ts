@@ -411,27 +411,33 @@ class RatioProtect implements Feature {
         // Only run the code if the ratio exists
         if (rNew && rCur) {
             // Extract the number values and calculate the dif
-            const rdiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
+            const rDiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
+            if (MP.DEBUG)
+                console.log(
+                    `Current ${Util.extractFloat(rCur)[0]} | New ${
+                        Util.extractFloat(rNew)[0]
+                    } | Dif ${rDiff}`
+                );
 
             // Only activate if a ratio change is expected
-            if (!isNaN(rdiff)) {
+            if (!isNaN(rDiff) && rDiff > 0.009) {
                 if (!seeding && dlLabel) {
                     // if NOT already seeding or downloading
-                    dlLabel.innerHTML = `Ratio loss ${rdiff.toFixed(2)}`;
+                    dlLabel.innerHTML = `Ratio loss ${rDiff.toFixed(2)}`;
                     dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
                 }
 
                 if (dlBtn && dlLabel) {
                     // This is the "trivial ratio loss" threshold
                     // These changes will always happen if the ratio conditions are met
-                    if (rdiff > r1) {
+                    if (rDiff > r1) {
                         dlBtn.style.backgroundColor = 'SpringGreen';
                         dlBtn.style.color = 'black';
                     }
 
                     // This is the "I never want to dl w/o FL" threshold
                     // TODO: Replace disable button with buy FL button
-                    if (rdiff > r3) {
+                    if (rDiff > r3) {
                         dlBtn.style.backgroundColor = 'Red';
                         ////Disable link to prevent download
                         //// dlBtn.style.pointerEvents = 'none';
@@ -440,7 +446,7 @@ class RatioProtect implements Feature {
                         dlBtn.innerHTML = 'FL Recommended';
                         dlLabel.style.fontWeight = 'bold';
                         // This is the "I need to think about using a FL" threshold
-                    } else if (rdiff > r2) {
+                    } else if (rDiff > r2) {
                         dlBtn.style.backgroundColor = 'Orange';
                     }
                 }
@@ -488,7 +494,7 @@ class RatioProtectL1 implements Feature {
     private _tar: string = '#download';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
             if (t) {
                 this._init();
             }
@@ -519,7 +525,7 @@ class RatioProtectL2 implements Feature {
     private _tar: string = '#download';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
             if (t) {
                 this._init();
             }
@@ -550,7 +556,7 @@ class RatioProtectL3 implements Feature {
     private _tar: string = '#download';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['browse']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
             if (t) {
                 this._init();
             }

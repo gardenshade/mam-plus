@@ -24,7 +24,7 @@ enum SettingGroup {
     'Shoutbox',
     'Vault',
     'User Pages',
-    'Forum Pages',
+    'Forum',
     'Other',
 }
 

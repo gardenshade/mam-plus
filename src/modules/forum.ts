@@ -7,9 +7,9 @@
 class ForumFLGift implements Feature {
     private _settings: CheckboxSetting = {
         type: 'checkbox',
-        scope: SettingGroup['Forum Pages'],
+        scope: SettingGroup.Forum,
         title: 'forumFLGift',
-        desc: `Enables Button to Gift FL Wedges in Forum Posts`,
+        desc: `Add a Thank button to forum posts. (<em>Sends a FL wedge</em>)`,
     };
     private _tar: string = '.forumLink';
 
