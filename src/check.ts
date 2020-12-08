@@ -153,6 +153,7 @@ class Check {
                     t: 'torrent',
                     preferences: 'settings',
                     u: 'user',
+                    'f/t': 'forum',
                     tor: subPage,
                     millionaires: 'vault',
                 };
@@ -160,9 +161,12 @@ class Check {
                 if (MP.DEBUG) {
                     console.log(`Page @ ${pageStr}\nSubpage @ ${subPage}`);
                 }
-                if (cases[pageStr]) {
+                if (cases[pageStr] || cases[pageStr + '/' + subPage]) {
                     if (cases[pageStr] === subPage) {
                         currentPage = subPage.split('.')[0].replace(/[0-9]/g, '');
+                    } else if (cases[pageStr + '/' + subPage]) {
+                        currentPage = cases[pageStr + '/' + subPage];
+                        console.log('Forum Case');
                     } else {
                         currentPage = cases[pageStr];
                     }
