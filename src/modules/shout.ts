@@ -413,12 +413,16 @@ class GiftButton implements Feature {
             const target = e.target as HTMLElement;
             //add the Triple Dot Menu as an element
             const sbMenuElem = target!.closest('.sb_menu');
-			//find the message div
-			const sbMenuParent = target!.closest(`div`);
-			//get the full text of the message div
-			var giftMessage = sbMenuParent!.innerText;
-			//format message with standard text + message contents + server time of the message
-			giftMessage = `Sent on Shoutbox message: "`+ giftMessage.substring(giftMessage.indexOf(": ")+2)+ `" at `+giftMessage.substring(0,8);
+            //find the message div
+            const sbMenuParent = target!.closest(`div`);
+            //get the full text of the message div
+            let giftMessage = sbMenuParent!.innerText;
+            //format message with standard text + message contents + server time of the message
+            giftMessage =
+                `Sent on Shoutbox message: "` +
+                giftMessage.substring(giftMessage.indexOf(': ') + 2) +
+                `" at ` +
+                giftMessage.substring(0, 8);
             //if the target of the click is not the Triple Dot Menu OR
             //if menu is one of your own comments (only works for first 10 minutes of comment being sent)
             if (
@@ -466,8 +470,10 @@ class GiftButton implements Feature {
                 //begin setting up the GET request to MAM JSON
                 const giftHTTP = new XMLHttpRequest();
                 //URL to GET results with the amount entered by user plus the username found on the menu selected
-				//added message contents encoded to prevent unintended characters from breaking JSON URL
-                const url = `https://www.myanonamouse.net/json/bonusBuy.php?spendtype=gift&amount=${giftFinalAmount}&giftTo=${userName}&message=${encodeURIComponent(giftMessage)}`;
+                //added message contents encoded to prevent unintended characters from breaking JSON URL
+                const url = `https://www.myanonamouse.net/json/bonusBuy.php?spendtype=gift&amount=${giftFinalAmount}&giftTo=${userName}&message=${encodeURIComponent(
+                    giftMessage
+                )}`;
                 giftHTTP.open('GET', url, true);
                 giftHTTP.setRequestHeader('Content-Type', 'application/json');
                 giftHTTP.onreadystatechange = function () {

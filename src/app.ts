@@ -29,12 +29,11 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '♻️: Hide Hidden Requesters now includes a button to temporarily toggle the feature off',
-            '♻️: Removed DL button disabling in Ratio Protect',
-            '🐞: Fixed an issue where ratio protect was running on FL pages and displaying as "Ratio loss NaN". @yyyzzz999.',
-            '🐞: Fixed an issue where ratio numbers would be horribly wrong if greater than 999. @yyyzzz999.',
-            '🐞: Fixed an issue where books with "%" in their titles would break Goodreads searches.',
-            '🐞: Fixed an issue where not all frontpage news items could be hidden.',
+            '🆕: Added "Thank" button to forum posts. @ooglyboogly',
+            '🆕: Added the ability to see your gift history with another user.',
+            '♻️: Gifts from SB will now include the text of the message they originated from.',
+            '🐞: Fixed an issue where Ratio Protect text might display in exponential notation or not display at all. @yyyzzz999',
+            '🐞: Fixed an issue where the Ratio Protect thresholds were unnecessarily running on the Browse page.',
         ] as string[],
         BUG_LIST: [] as string[],
     };

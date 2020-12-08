@@ -10,7 +10,7 @@ type ValidPage =
     | 'shoutbox'
     | 'vault'
     | 'user'
-	| 'forum'
+    | 'forum'
     | 'settings';
 
 type BookData = 'book' | 'author' | 'series';
@@ -24,11 +24,21 @@ enum SettingGroup {
     'Shoutbox',
     'Vault',
     'User Pages',
-	'Forum Pages',
+    'Forum',
     'Other',
 }
 
 type ShoutboxUserType = 'priority' | 'mute';
+
+interface UserGiftHistory {
+    amount: number;
+    other_name: string;
+    other_userid: number;
+    tid: number | null;
+    timestamp: number;
+    title: string | null;
+    type: string;
+}
 
 interface ArrayObject {
     [key: string]: string[];

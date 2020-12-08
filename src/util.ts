@@ -402,4 +402,30 @@ class Util {
             throw new Error('Target contains no text');
         }
     };
+
+    /**
+     * #### Get the user gift history between the logged in user and a given ID
+     * @param userID A user ID; can be a string or number
+     */
+    public static async getUserGiftHistory(
+        userID: number | string
+    ): Promise<UserGiftHistory[]> {
+        const rawGiftHistory: string = await Util.getJSON(
+            `https://www.myanonamouse.net/json/userBonusHistory.php?other_userid=${userID}`
+        );
+        const giftHistory: Array<UserGiftHistory> = JSON.parse(rawGiftHistory);
+        // Return the full data
+        return giftHistory;
+    }
+
+    public static prettySiteTime(unixTimestamp: number, date?: boolean, time?: boolean) {
+        const timestamp = new Date(unixTimestamp * 1000).toISOString();
+        if (date && !time) {
+            return timestamp.split('T')[0];
+        } else if (!date && time) {
+            return timestamp.split('T')[1];
+        } else {
+            return timestamp;
+        }
+    }
 }
