@@ -14,9 +14,8 @@
         "watch": "npx gulp watch",
         "build": "npx gulp build",
         "release": "npx gulp release",
-        "clean": "npx gulp clean",
         "version": "npm run release && git add .",
-        "postversion": "git push && git push --tags && npm run clean"
+        "postversion": "git push && git push --tags"
     },
     "devDependencies": {
         "@types/greasemonkey": "3.0.0",
