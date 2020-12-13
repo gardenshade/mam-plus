@@ -435,8 +435,13 @@ class RatioProtect implements Feature {
                     }
 
                     // This is the "I never want to dl w/o FL" threshold
+                    // This also uses the Minimum Ratio, if enabled
                     // TODO: Replace disable button with buy FL button
-                    if (rDiff > r3) {
+
+                    if (
+                        rDiff > r3 ||
+                        Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val')
+                    ) {
                         dlBtn.style.backgroundColor = 'Red';
                         ////Disable link to prevent download
                         //// dlBtn.style.pointerEvents = 'none';
@@ -566,6 +571,34 @@ class RatioProtectL3 implements Feature {
         console.log('[M+] Set custom L2 Ratio Protection!');
     }
 
+    get settings(): TextboxSetting {
+        return this._settings;
+    }
+}
+
+class RatioProtectMin implements Feature {
+    private _settings: TextboxSetting = {
+        type: 'textbox',
+        title: 'ratioProtectMin',
+        scope: SettingGroup['Torrent Page'],
+        tag: 'Minimum Ratio',
+        placeholder: 'ex. 100',
+        desc: 'Trigger the maximum warning if your ratio would drop below this number.',
+    };
+    // An element that must exist in order for the feature to run
+    private _tar: string = '#download';
+    // The code that runs when the feature is created on `features.ts`.
+    constructor() {
+        // Add 1+ valid page type. Exclude for global
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        console.log('[M+] Added custom minimum ratio!');
+    }
     get settings(): TextboxSetting {
         return this._settings;
     }

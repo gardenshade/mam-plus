@@ -45,6 +45,7 @@ class InitFeatures {
         new RatioProtectL1();
         new RatioProtectL2();
         new RatioProtectL3();
+        new RatioProtectMin();
 
         // Initialize Shoutbox functions
         new PriorityUsers();

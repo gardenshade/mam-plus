@@ -30,6 +30,7 @@ namespace MP {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
             '🆕: Added Quick Shout to the shoutbox, enabling storage of pre-written messages for fast sending. @ooglyboogly',
+            '🆕: Added custom Minimum Ratio setting to Ratio Protect. ',
             '♻️: Display M+ version on Settings page.',
         ] as string[],
         BUG_LIST: [] as string[],
