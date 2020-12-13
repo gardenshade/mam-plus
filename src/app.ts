@@ -28,13 +28,7 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
-        UPDATE_LIST: [
-            '🆕: Added "Thank" button to forum posts. @ooglyboogly',
-            '🆕: Added the ability to see your gift history with another user.',
-            '♻️: Gifts from SB will now include the text of the message they originated from.',
-            '🐞: Fixed an issue where Ratio Protect text might display in exponential notation or not display at all. @yyyzzz999',
-            '🐞: Fixed an issue where the Ratio Protect thresholds were unnecessarily running on the Browse page.',
-        ] as string[],
+        UPDATE_LIST: [] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';

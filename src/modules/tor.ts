@@ -410,7 +410,6 @@ class RatioProtect implements Feature {
 
         // Only run the code if the ratio exists
         if (rNew && rCur) {
-            // Extract the number values and calculate the dif
             const rDiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
             if (MP.DEBUG)
                 console.log(
