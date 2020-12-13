@@ -28,7 +28,9 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
-        UPDATE_LIST: [] as string[],
+        UPDATE_LIST: [
+            '🆕: Added Quick Shout to the shoutbox, enabling storage of pre-written messages for fast sending. @ooglyboogly',
+        ] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';

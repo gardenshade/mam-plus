@@ -600,7 +600,6 @@ class ReplyQuote implements Feature {
     }
 }
 
-
 /**
  * Creates feature for building a library of quick shout items that can act as a copy/paste replacement.
  */
@@ -609,7 +608,7 @@ class QuickShout implements Feature {
         scope: SettingGroup.Shoutbox,
         type: 'checkbox',
         title: 'quickShout',
-        desc: `Creates feature below shoutbox in the footer to make library of stored pre-set messages.`,
+        desc: `Create feature below shoutbox to store pre-set messages.`,
     };
     private _tar: string = '.sbf div';
 
@@ -623,297 +622,306 @@ class QuickShout implements Feature {
 
     private async _init() {
         console.log(`[M+] Adding Quick Shout Buttons...`);
-		//get the main shoutbox input field
-		const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
-		//empty JSON was giving me issues, so decided to just make an intro for when the GM variable is empty
-		var jsonList = JSON.parse(`{ "Intro":"Welcome to QuickShout MAM+er! Here you can create preset Shout messages for quick responses and knowledge sharing. 'Clear' clears the entry to start selection process over. 'Select' takes whatever QuickShout is in the TextArea and puts in your Shout response area. 'Save' will store the Selection Name and Text Area Combo for future use as a QuickShout, and has color indicators. Green = saved as-is. Yellow = QuickShout Name exists and is saved, but content does not match what is stored. Orange = no entry matching that name, not saved. 'Delete' will permanently remove that entry from your stored QuickShouts (button only shows when exists in storage). For new entries have your QuickShout Name typed in BEFORE you craft your text or risk it being overwritten by something that exists as you type it. Thanks for using MAM+!" }`);
-		//get Shoutbox DIV
-		const shoutBox = document.getElementById("fpShout");
-		//get the footer where we will insert our feature
-		const shoutFoot = <HTMLElement>shoutBox!.querySelector(".blockFoot");
-		//give it an ID and set the size
-		shoutFoot!.setAttribute("id", "mp_blockFoot");
-		shoutFoot!.style.height = "2.5em";
-		//create a new dive to hold our comboBox and buttons and set the style for formatting
-		var comboBoxDiv = document.createElement("div");
-		comboBoxDiv.style.float = "left";
-		comboBoxDiv.style.marginLeft = "1em";
-		comboBoxDiv.style.marginBottom = ".5em";
-		comboBoxDiv.style.marginTop = ".5em";
-		//create the label text element and add the text and attributes for ID
-		var comboBoxLabel = document.createElement("label");
-		comboBoxLabel.setAttribute("for","quickShoutData");
-		comboBoxLabel.innerText = "Choose a QuickShout";
-		comboBoxLabel.setAttribute("id", "mp_comboBoxLabel");
-		//create the input field to link to datalist and format style
-		var comboBoxInput = document.createElement("input");
-		comboBoxInput.style.marginLeft = ".5em";
-		comboBoxInput.setAttribute("list", "mp_comboBoxList");
-		comboBoxInput.setAttribute("id", "mp_comboBoxInput");
-		//create a datalist to store our quickshouts
-		var comboBoxList = document.createElement("datalist");
-		comboBoxList.setAttribute("id", "mp_comboBoxList");
-		//if the GM variable exists
-		if(GM_getValue("mp_quickShout")){
-			//overwrite jsonList variable with parsed data
-			jsonList = JSON.parse(GM_getValue("mp_quickShout"));
-			//for each key item
-			Object.keys(jsonList).forEach(key => {
-				//create a new Option element and add our data for display to user
-				var comboBoxOption = document.createElement("option");
-				comboBoxOption.value = key.replace("ಠ"," ");
-				comboBoxList.appendChild(comboBoxOption);
-			})
-		//if no GM variable
-		} else {
-			//create variable with out Intro data
-			GM_setValue("mp_quickShout", JSON.stringify(jsonList));
-			//for each key item
-			// TODO: probably can get rid of the forEach and just do single execution since we know this is Intro only
-			Object.keys(jsonList).forEach(key => {
-				var comboBoxOption = document.createElement("option");
-				comboBoxOption.value = key.replace("ಠ"," ");
-				comboBoxList.appendChild(comboBoxOption);
-			})
-		}
-		
-		//append the above elements to our DIV for the combo box
-		comboBoxDiv.appendChild(comboBoxLabel);
-		comboBoxDiv.appendChild(comboBoxInput);
-		comboBoxDiv.appendChild(comboBoxList);
-		//create the clear button and add style
-		var clearButton = document.createElement("button");
-		clearButton.style.marginLeft = "1em";
-		clearButton.innerHTML = "Clear";
-		//create delete button, add style, and then hide it for later use
-		var deleteButton = document.createElement("button");
-		deleteButton.style.marginLeft = "6em";
-		deleteButton.style.display = "none";
-		deleteButton.style.backgroundColor = "Red";
-		deleteButton.innerHTML = "DELETE";
-		//create select button and style it
-		var selectButton = document.createElement("button");
-		selectButton.style.marginLeft = "1em";
-		selectButton.innerHTML = "Select";
-		//create save button and style it
-		var saveButton = document.createElement("button");
-		saveButton.style.marginLeft = "1em";
-		saveButton.innerHTML = "Save";
-		//add all 4 buttons to the comboBox DIV
-		comboBoxDiv.appendChild(clearButton);
-		comboBoxDiv.appendChild(selectButton);
-		comboBoxDiv.appendChild(saveButton);
-		comboBoxDiv.appendChild(deleteButton);
-		//create our text area and style it, then hide it
-		var quickShoutText = document.createElement("textarea");
-		quickShoutText.style.height = "50%";
-		quickShoutText.style.margin = "1em";
-		quickShoutText.style.width = "97%";
-		quickShoutText.id = "mp_quickShoutText";
-		quickShoutText.style.display = "none";
-		
-		//executes when clicking select button
-		selectButton.addEventListener(
-			'click',
-			async () => {
-				//if there is something inside of the quickshout area
-				if(quickShoutText.value){
-					//put the text in the main site reply field and focus on it
-					replyBox.value = quickShoutText.value;
-					replyBox.focus();
-				}
-			},
-			false
-		);
-		
-		//create a quickShout delete button
-		deleteButton.addEventListener(
-			'click',
-			async () => {
-				//if this is not the last quickShout
-				if (Object.keys(jsonList).length>1) {
-					//delete the entry from the JSON and update the GM variable with new json list
-					delete jsonList[comboBoxInput.value.replace(" ","ಠ")];
-					GM_setValue("mp_quickShout", JSON.stringify(jsonList));
-					//re-style the save button for new unsaved status
-					saveButton.style.backgroundColor = "Green";
-					saveButton.style.color = ""	
-					//hide delete button now that its not a saved entry
-					deleteButton.style.display = "none";
-					//delete the options from datalist to reset with newly created jsonList
-					comboBoxList.innerHTML = "";
-					//for each item in new jsonList
-					Object.keys(jsonList).forEach(key => {
-						//new option element to add to list
-						var comboBoxOption = document.createElement("option");
-						//add the current key value to the element
-						comboBoxOption.value = key.replace("ಠ"," ");
-						//add element to the list
-						comboBoxList.appendChild(comboBoxOption);
-					})
-				//if the last item in the jsonlist
-				} else {
-					//delete item from jsonList
-					delete jsonList[comboBoxInput.value.replace(" ","ಠ")];
-					//delete entire variable so its not empty GM variable
-					GM_deleteValue("mp_quickShout");
-					//re-style the save button for new unsaved status
-					saveButton.style.backgroundColor = "Green";
-					saveButton.style.color = ""	
-					//hide delete button now that its not a saved entry
-					deleteButton.style.display = "none";
-				}
-			//create input event on input to force some updates and dispatch it
-				const event = new Event('input');
-				comboBoxInput.dispatchEvent(event);
-			},
-			false
-		);
-		
-		//create event on save button to save quickshout
-		saveButton.addEventListener(
-			'click',
-			async () => {
-				//if there is data in the key and value GUI fields, proceed
-				if(quickShoutText.value && comboBoxInput.value){
-					//was having issue with eval processing the .replace data so made a variable to intake it
-					var replacedText = comboBoxInput.value.replace(" ","ಠ");
-					//fun way to dynamically create statements - this takes whatever is in list field to create a key with that text and the value from the textarea
-					eval(`jsonList.` + replacedText + `= "`+ quickShoutText.value + `";`);
-					//overwrite or create the GM variable with new jsonList
-					GM_setValue("mp_quickShout", JSON.stringify(jsonList));
-					//re-style save button to green now that its saved as-is
-					saveButton.style.backgroundColor = "Green";
-					saveButton.style.color = ""		
-					//show delete button now that its a saved entry
-					deleteButton.style.display = "";
-					//delete existing datalist elements to rebuild with new jsonlist
-					comboBoxList.innerHTML = "";
-					//for each key in the jsonlist
-					Object.keys(jsonList).forEach(key => {
-						//create new option element
-						var comboBoxOption = document.createElement("option");
-						//add key name to the option
-						comboBoxOption.value = key.replace("ಠ"," ");
-						//TODO: this may or may not be necessary, but was having issues with the unique symbol still randomly showing up after saves
-						comboBoxOption.value = comboBoxOption.value.replace("ಠ"," ");
-						//add to the list
-						comboBoxList.appendChild(comboBoxOption);
-					})
-				}
-			},
-			false
-		);
-		
-		//add event for clear button to reset the datalist
-		clearButton.addEventListener(
-			'click',
-			async () => {
-				//clear the input field and textarea field
-				comboBoxInput.value = "";
-				quickShoutText.value = "";
-				//create input event on input to force some updates and dispatch it
-				const event = new Event('input');
-				comboBoxInput.dispatchEvent(event);
-			},
-			false
-		);
-		
-		//Next two input functions are meat and potatoes of the logic for user functionality
-		
-		//whenever something is typed or changed whithin the input field
-		comboBoxInput.addEventListener(
-			'input',
-			async () => {
-			//if input is blank
-			if (!comboBoxInput.value){
-				//if the textarea is also blank minimize real estate
-				if(!quickShoutText.value){
-					//hide the text area
-					quickShoutText.style.display = "none";
-					//shrink the footer
-					shoutFoot!.style.height = "2.5em";
-					//re-style the save button to default
-					saveButton.style.backgroundColor = "";
-					saveButton.style.color = "";
-				//if something is still in the textarea we need to indicate that unsaved and unnamed data is there
-				} else {
-					//style for unsaved and unnamed is organge save button
-					saveButton.style.backgroundColor = "Orange";
-					saveButton.style.color = "Black";
-				}
-				//either way, hide the delete button
-				deleteButton.style.display = "none";
-			}
-			//if the input field has any text in it
-			else {
-				//show the text area for input
-				quickShoutText.style.display = "";
-				//expand the footer to accomodate all feature aspects
-				shoutFoot!.style.height = "11em";
-				//if what is in the input field is a saved entry key
-				if(jsonList[comboBoxInput.value.replace(" ","ಠ")]){
-					//this can be a sucky line of code because it can wipe out unsaved data, but i cannot think of better way
-					//replace the text area contents with what the value is in the matched pair
-					quickShoutText.value = jsonList[comboBoxInput.value.replace(" ","ಠ")];
-					//show the delete button since this is now exact match to saved entry
-					deleteButton.style.display = "";
-					//restyle save button to show its a saved combo
-					saveButton.style.backgroundColor = "Green";
-					saveButton.style.color = "";
-				//if this is not a registered key name
-				} else {
-					//restyle the save button to be an unsaved entry
-					saveButton.style.backgroundColor = "Orange";
-					saveButton.style.color = "Black";
-					//hide the delete button since this cannot be saved
-					deleteButton.style.display = "none";
-				}
-			}
-			},
-			false
-		);
-		
-		//whenever something is typed or deleted out of textarea
-		quickShoutText.addEventListener(
-			'input',
-			async () => {
-			//if the input field is blank
-			if (!comboBoxInput.value){
-				//restyle save button for unsaved and unnamed
-				saveButton.style.backgroundColor = "Orange";
-				saveButton.style.color = "Black";
-				//hide delete button
-				deleteButton.style.display = "none";
-			}
-			//if input field has text in it
-			else {
-				//if the key is a match but the data section is not, then its an edit and they may or may not want to save the edit
-				if(jsonList[comboBoxInput.value.replace(" ","ಠ")] && quickShoutText.value != jsonList[comboBoxInput.value.replace(" ","ಠ")]){
-					//restyle save button as yellow for editted
-					saveButton.style.backgroundColor = "Yellow";
-					saveButton.style.color = "Black";
-					deleteButton.style.display = "";
-				//if the key is a match and the data is a match then we have a 100% saved entry and can put everything back to saved
-				} else if (jsonList[comboBoxInput.value.replace(" ","ಠ")] && quickShoutText.value == jsonList[comboBoxInput.value.replace(" ","ಠ")]) {
-					//restyle save button to green for saved
-					saveButton.style.backgroundColor = "Green";
-					saveButton.style.color = "";
-					deleteButton.style.display = "";
-				//if the key is not found in the saved list, orange for unsaved and unnamed
-				} else if (!jsonList[comboBoxInput.value.replace(" ","ಠ")]) {
-					saveButton.style.backgroundColor = "Orange";
-					saveButton.style.color = "Black";
-					deleteButton.style.display = "none";
-				}
-			}
-			},
-			false
-		);
-		//add the combobox and text area elements to the footer
-		shoutFoot.appendChild(comboBoxDiv);
-		shoutFoot.appendChild(quickShoutText);
-		
+        //get the main shoutbox input field
+        const replyBox = <HTMLInputElement>document.getElementById('shbox_text');
+        //empty JSON was giving me issues, so decided to just make an intro for when the GM variable is empty
+        let jsonList = JSON.parse(
+            `{ "Intro":"Welcome to QuickShout MAM+er! Here you can create preset Shout messages for quick responses and knowledge sharing. 'Clear' clears the entry to start selection process over. 'Select' takes whatever QuickShout is in the TextArea and puts in your Shout response area. 'Save' will store the Selection Name and Text Area Combo for future use as a QuickShout, and has color indicators. Green = saved as-is. Yellow = QuickShout Name exists and is saved, but content does not match what is stored. Orange = no entry matching that name, not saved. 'Delete' will permanently remove that entry from your stored QuickShouts (button only shows when exists in storage). For new entries have your QuickShout Name typed in BEFORE you craft your text or risk it being overwritten by something that exists as you type it. Thanks for using MAM+!" }`
+        );
+        //get Shoutbox DIV
+        const shoutBox = document.getElementById('fpShout');
+        //get the footer where we will insert our feature
+        const shoutFoot = <HTMLElement>shoutBox!.querySelector('.blockFoot');
+        //give it an ID and set the size
+        shoutFoot!.setAttribute('id', 'mp_blockFoot');
+        shoutFoot!.style.height = '2.5em';
+        //create a new dive to hold our comboBox and buttons and set the style for formatting
+        const comboBoxDiv = document.createElement('div');
+        comboBoxDiv.style.float = 'left';
+        comboBoxDiv.style.marginLeft = '1em';
+        comboBoxDiv.style.marginBottom = '.5em';
+        comboBoxDiv.style.marginTop = '.5em';
+        //create the label text element and add the text and attributes for ID
+        const comboBoxLabel = document.createElement('label');
+        comboBoxLabel.setAttribute('for', 'quickShoutData');
+        comboBoxLabel.innerText = 'Choose a QuickShout';
+        comboBoxLabel.setAttribute('id', 'mp_comboBoxLabel');
+        //create the input field to link to datalist and format style
+        const comboBoxInput = document.createElement('input');
+        comboBoxInput.style.marginLeft = '.5em';
+        comboBoxInput.setAttribute('list', 'mp_comboBoxList');
+        comboBoxInput.setAttribute('id', 'mp_comboBoxInput');
+        //create a datalist to store our quickshouts
+        const comboBoxList = document.createElement('datalist');
+        comboBoxList.setAttribute('id', 'mp_comboBoxList');
+        //if the GM variable exists
+        if (GM_getValue('mp_quickShout')) {
+            //overwrite jsonList variable with parsed data
+            jsonList = JSON.parse(GM_getValue('mp_quickShout'));
+            //for each key item
+            Object.keys(jsonList).forEach((key) => {
+                //create a new Option element and add our data for display to user
+                const comboBoxOption = document.createElement('option');
+                comboBoxOption.value = key.replace('ಠ', ' ');
+                comboBoxList.appendChild(comboBoxOption);
+            });
+            //if no GM variable
+        } else {
+            //create variable with out Intro data
+            GM_setValue('mp_quickShout', JSON.stringify(jsonList));
+            //for each key item
+            // TODO: probably can get rid of the forEach and just do single execution since we know this is Intro only
+            Object.keys(jsonList).forEach((key) => {
+                const comboBoxOption = document.createElement('option');
+                comboBoxOption.value = key.replace('ಠ', ' ');
+                comboBoxList.appendChild(comboBoxOption);
+            });
+        }
+
+        //append the above elements to our DIV for the combo box
+        comboBoxDiv.appendChild(comboBoxLabel);
+        comboBoxDiv.appendChild(comboBoxInput);
+        comboBoxDiv.appendChild(comboBoxList);
+        //create the clear button and add style
+        const clearButton = document.createElement('button');
+        clearButton.style.marginLeft = '1em';
+        clearButton.innerHTML = 'Clear';
+        //create delete button, add style, and then hide it for later use
+        const deleteButton = document.createElement('button');
+        deleteButton.style.marginLeft = '6em';
+        deleteButton.style.display = 'none';
+        deleteButton.style.backgroundColor = 'Red';
+        deleteButton.innerHTML = 'DELETE';
+        //create select button and style it
+        const selectButton = document.createElement('button');
+        selectButton.style.marginLeft = '1em';
+        selectButton.innerHTML = 'Select';
+        //create save button and style it
+        const saveButton = document.createElement('button');
+        saveButton.style.marginLeft = '1em';
+        saveButton.innerHTML = 'Save';
+        //add all 4 buttons to the comboBox DIV
+        comboBoxDiv.appendChild(clearButton);
+        comboBoxDiv.appendChild(selectButton);
+        comboBoxDiv.appendChild(saveButton);
+        comboBoxDiv.appendChild(deleteButton);
+        //create our text area and style it, then hide it
+        const quickShoutText = document.createElement('textarea');
+        quickShoutText.style.height = '50%';
+        quickShoutText.style.margin = '1em';
+        quickShoutText.style.width = '97%';
+        quickShoutText.id = 'mp_quickShoutText';
+        quickShoutText.style.display = 'none';
+
+        //executes when clicking select button
+        selectButton.addEventListener(
+            'click',
+            async () => {
+                //if there is something inside of the quickshout area
+                if (quickShoutText.value) {
+                    //put the text in the main site reply field and focus on it
+                    replyBox.value = quickShoutText.value;
+                    replyBox.focus();
+                }
+            },
+            false
+        );
+
+        //create a quickShout delete button
+        deleteButton.addEventListener(
+            'click',
+            async () => {
+                //if this is not the last quickShout
+                if (Object.keys(jsonList).length > 1) {
+                    //delete the entry from the JSON and update the GM variable with new json list
+                    delete jsonList[comboBoxInput.value.replace(' ', 'ಠ')];
+                    GM_setValue('mp_quickShout', JSON.stringify(jsonList));
+                    //re-style the save button for new unsaved status
+                    saveButton.style.backgroundColor = 'Green';
+                    saveButton.style.color = '';
+                    //hide delete button now that its not a saved entry
+                    deleteButton.style.display = 'none';
+                    //delete the options from datalist to reset with newly created jsonList
+                    comboBoxList.innerHTML = '';
+                    //for each item in new jsonList
+                    Object.keys(jsonList).forEach((key) => {
+                        //new option element to add to list
+                        const comboBoxOption = document.createElement('option');
+                        //add the current key value to the element
+                        comboBoxOption.value = key.replace('ಠ', ' ');
+                        //add element to the list
+                        comboBoxList.appendChild(comboBoxOption);
+                    });
+                    //if the last item in the jsonlist
+                } else {
+                    //delete item from jsonList
+                    delete jsonList[comboBoxInput.value.replace(' ', 'ಠ')];
+                    //delete entire variable so its not empty GM variable
+                    GM_deleteValue('mp_quickShout');
+                    //re-style the save button for new unsaved status
+                    saveButton.style.backgroundColor = 'Green';
+                    saveButton.style.color = '';
+                    //hide delete button now that its not a saved entry
+                    deleteButton.style.display = 'none';
+                }
+                //create input event on input to force some updates and dispatch it
+                const event = new Event('input');
+                comboBoxInput.dispatchEvent(event);
+            },
+            false
+        );
+
+        //create event on save button to save quickshout
+        saveButton.addEventListener(
+            'click',
+            async () => {
+                //if there is data in the key and value GUI fields, proceed
+                if (quickShoutText.value && comboBoxInput.value) {
+                    //was having issue with eval processing the .replace data so made a variable to intake it
+                    const replacedText = comboBoxInput.value.replace(' ', 'ಠ');
+                    //fun way to dynamically create statements - this takes whatever is in list field to create a key with that text and the value from the textarea
+                    eval(
+                        `jsonList.` + replacedText + `= "` + quickShoutText.value + `";`
+                    );
+                    //overwrite or create the GM variable with new jsonList
+                    GM_setValue('mp_quickShout', JSON.stringify(jsonList));
+                    //re-style save button to green now that its saved as-is
+                    saveButton.style.backgroundColor = 'Green';
+                    saveButton.style.color = '';
+                    //show delete button now that its a saved entry
+                    deleteButton.style.display = '';
+                    //delete existing datalist elements to rebuild with new jsonlist
+                    comboBoxList.innerHTML = '';
+                    //for each key in the jsonlist
+                    Object.keys(jsonList).forEach((key) => {
+                        //create new option element
+                        const comboBoxOption = document.createElement('option');
+                        //add key name to the option
+                        comboBoxOption.value = key.replace('ಠ', ' ');
+                        //TODO: this may or may not be necessary, but was having issues with the unique symbol still randomly showing up after saves
+                        comboBoxOption.value = comboBoxOption.value.replace('ಠ', ' ');
+                        //add to the list
+                        comboBoxList.appendChild(comboBoxOption);
+                    });
+                }
+            },
+            false
+        );
+
+        //add event for clear button to reset the datalist
+        clearButton.addEventListener(
+            'click',
+            async () => {
+                //clear the input field and textarea field
+                comboBoxInput.value = '';
+                quickShoutText.value = '';
+                //create input event on input to force some updates and dispatch it
+                const event = new Event('input');
+                comboBoxInput.dispatchEvent(event);
+            },
+            false
+        );
+
+        //Next two input functions are meat and potatoes of the logic for user functionality
+
+        //whenever something is typed or changed whithin the input field
+        comboBoxInput.addEventListener(
+            'input',
+            async () => {
+                //if input is blank
+                if (!comboBoxInput.value) {
+                    //if the textarea is also blank minimize real estate
+                    if (!quickShoutText.value) {
+                        //hide the text area
+                        quickShoutText.style.display = 'none';
+                        //shrink the footer
+                        shoutFoot!.style.height = '2.5em';
+                        //re-style the save button to default
+                        saveButton.style.backgroundColor = '';
+                        saveButton.style.color = '';
+                        //if something is still in the textarea we need to indicate that unsaved and unnamed data is there
+                    } else {
+                        //style for unsaved and unnamed is organge save button
+                        saveButton.style.backgroundColor = 'Orange';
+                        saveButton.style.color = 'Black';
+                    }
+                    //either way, hide the delete button
+                    deleteButton.style.display = 'none';
+                }
+                //if the input field has any text in it
+                else {
+                    //show the text area for input
+                    quickShoutText.style.display = '';
+                    //expand the footer to accomodate all feature aspects
+                    shoutFoot!.style.height = '11em';
+                    //if what is in the input field is a saved entry key
+                    if (jsonList[comboBoxInput.value.replace(' ', 'ಠ')]) {
+                        //this can be a sucky line of code because it can wipe out unsaved data, but i cannot think of better way
+                        //replace the text area contents with what the value is in the matched pair
+                        quickShoutText.value =
+                            jsonList[comboBoxInput.value.replace(' ', 'ಠ')];
+                        //show the delete button since this is now exact match to saved entry
+                        deleteButton.style.display = '';
+                        //restyle save button to show its a saved combo
+                        saveButton.style.backgroundColor = 'Green';
+                        saveButton.style.color = '';
+                        //if this is not a registered key name
+                    } else {
+                        //restyle the save button to be an unsaved entry
+                        saveButton.style.backgroundColor = 'Orange';
+                        saveButton.style.color = 'Black';
+                        //hide the delete button since this cannot be saved
+                        deleteButton.style.display = 'none';
+                    }
+                }
+            },
+            false
+        );
+
+        //whenever something is typed or deleted out of textarea
+        quickShoutText.addEventListener(
+            'input',
+            async () => {
+                //if the input field is blank
+                if (!comboBoxInput.value) {
+                    //restyle save button for unsaved and unnamed
+                    saveButton.style.backgroundColor = 'Orange';
+                    saveButton.style.color = 'Black';
+                    //hide delete button
+                    deleteButton.style.display = 'none';
+                }
+                //if input field has text in it
+                else if (
+                    jsonList[comboBoxInput.value.replace(' ', 'ಠ')] &&
+                    quickShoutText.value !==
+                        jsonList[comboBoxInput.value.replace(' ', 'ಠ')]
+                ) {
+                    //restyle save button as yellow for editted
+                    saveButton.style.backgroundColor = 'Yellow';
+                    saveButton.style.color = 'Black';
+                    deleteButton.style.display = '';
+                    //if the key is a match and the data is a match then we have a 100% saved entry and can put everything back to saved
+                } else if (
+                    jsonList[comboBoxInput.value.replace(' ', 'ಠ')] &&
+                    quickShoutText.value ===
+                        jsonList[comboBoxInput.value.replace(' ', 'ಠ')]
+                ) {
+                    //restyle save button to green for saved
+                    saveButton.style.backgroundColor = 'Green';
+                    saveButton.style.color = '';
+                    deleteButton.style.display = '';
+                    //if the key is not found in the saved list, orange for unsaved and unnamed
+                } else if (!jsonList[comboBoxInput.value.replace(' ', 'ಠ')]) {
+                    saveButton.style.backgroundColor = 'Orange';
+                    saveButton.style.color = 'Black';
+                    deleteButton.style.display = 'none';
+                }
+            },
+            false
+        );
+        //add the combobox and text area elements to the footer
+        shoutFoot.appendChild(comboBoxDiv);
+        shoutFoot.appendChild(quickShoutText);
     }
 
     get settings(): CheckboxSetting {
