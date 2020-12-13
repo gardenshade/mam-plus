@@ -1,6 +1,6 @@
 {
     "name": "mam-plus",
-    "version": "4.2.21",
+    "version": "4.2.22",
     "description": "Tweaks and features for MAM",
     "author": "GardenShade",
     "repository": {
@@ -14,9 +14,8 @@
         "watch": "npx gulp watch",
         "build": "npx gulp build",
         "release": "npx gulp release",
-        "clean": "npx gulp clean",
         "version": "npm run release && git add .",
-        "postversion": "git push && git push --tags && npm run clean"
+        "postversion": "git push && git push --tags"
     },
     "devDependencies": {
         "@types/greasemonkey": "3.0.0",

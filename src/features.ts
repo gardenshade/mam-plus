@@ -45,6 +45,7 @@ class InitFeatures {
         new RatioProtectL1();
         new RatioProtectL2();
         new RatioProtectL3();
+        new RatioProtectMin();
 
         // Initialize Shoutbox functions
         new PriorityUsers();
@@ -53,6 +54,7 @@ class InitFeatures {
         new ReplySimple();
         new ReplyQuote();
         new GiftButton();
+        new QuickShout();
 
         // Initialize Vault functions
         new SimpleVault();

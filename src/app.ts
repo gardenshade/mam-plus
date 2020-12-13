@@ -29,11 +29,9 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added "Thank" button to forum posts. @ooglyboogly',
-            '🆕: Added the ability to see your gift history with another user.',
-            '♻️: Gifts from SB will now include the text of the message they originated from.',
-            '🐞: Fixed an issue where Ratio Protect text might display in exponential notation or not display at all. @yyyzzz999',
-            '🐞: Fixed an issue where the Ratio Protect thresholds were unnecessarily running on the Browse page.',
+            '🆕: Added Quick Shout to the shoutbox, enabling storage of pre-written messages for fast sending. @ooglyboogly',
+            '🆕: Added custom Minimum Ratio setting to Ratio Protect. ',
+            '♻️: Display M+ version on Settings page.',
         ] as string[],
         BUG_LIST: [] as string[],
     };
