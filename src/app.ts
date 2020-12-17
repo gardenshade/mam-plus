@@ -29,9 +29,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added Quick Shout to the shoutbox, enabling storage of pre-written messages for fast sending. @ooglyboogly',
-            '🆕: Added custom Minimum Ratio setting to Ratio Protect. ',
-            '♻️: Display M+ version on Settings page.',
+            '🆕: The "Get A Seedbox" button can now be hidden.',
+            '🐞: Fixed not being able to make QuickShout titles longer than 2 words.',
         ] as string[],
         BUG_LIST: [] as string[],
     };

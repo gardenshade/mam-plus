@@ -227,3 +227,32 @@ class BlurredHeader implements Feature {
         return this._settings;
     }
 }
+
+class HideSeedbox implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'hideSeedbox',
+        scope: SettingGroup.Global,
+        desc: 'Remove the "Get A Seedbox" menu item',
+    };
+    // An element that must exist in order for the feature to run
+    private _tar: string = '#menu';
+    // The code that runs when the feature is created on `features.ts`.
+    constructor() {
+        // Add 1+ valid page type. Exclude for global
+        Util.startFeature(this._settings, this._tar, []).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        const seedboxBtn: HTMLLIElement | null = document.querySelector(
+            '#menu .sbDonCrypto'
+        );
+        if (seedboxBtn) seedboxBtn.style.display = 'none';
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
