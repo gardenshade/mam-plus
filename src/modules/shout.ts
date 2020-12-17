@@ -662,7 +662,7 @@ class QuickShout implements Feature {
             Object.keys(jsonList).forEach((key) => {
                 //create a new Option element and add our data for display to user
                 const comboBoxOption = document.createElement('option');
-                comboBoxOption.value = key.replace('ಠ', ' ');
+                comboBoxOption.value = key.replace(/ಠ/g, ' ');
                 comboBoxList.appendChild(comboBoxOption);
             });
             //if no GM variable
@@ -673,7 +673,7 @@ class QuickShout implements Feature {
             // TODO: probably can get rid of the forEach and just do single execution since we know this is Intro only
             Object.keys(jsonList).forEach((key) => {
                 const comboBoxOption = document.createElement('option');
-                comboBoxOption.value = key.replace('ಠ', ' ');
+                comboBoxOption.value = key.replace(/ಠ/g, ' ');
                 comboBoxList.appendChild(comboBoxOption);
             });
         }
@@ -734,7 +734,7 @@ class QuickShout implements Feature {
                 //if this is not the last quickShout
                 if (Object.keys(jsonList).length > 1) {
                     //delete the entry from the JSON and update the GM variable with new json list
-                    delete jsonList[comboBoxInput.value.replace(' ', 'ಠ')];
+                    delete jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')];
                     GM_setValue('mp_quickShout', JSON.stringify(jsonList));
                     //re-style the save button for new unsaved status
                     saveButton.style.backgroundColor = 'Green';
@@ -748,14 +748,14 @@ class QuickShout implements Feature {
                         //new option element to add to list
                         const comboBoxOption = document.createElement('option');
                         //add the current key value to the element
-                        comboBoxOption.value = key.replace('ಠ', ' ');
+                        comboBoxOption.value = key.replace(/ಠ/g, ' ');
                         //add element to the list
                         comboBoxList.appendChild(comboBoxOption);
                     });
                     //if the last item in the jsonlist
                 } else {
                     //delete item from jsonList
-                    delete jsonList[comboBoxInput.value.replace(' ', 'ಠ')];
+                    delete jsonList[comboBoxInput.value.replace(/ಠ/g, 'ಠ')];
                     //delete entire variable so its not empty GM variable
                     GM_deleteValue('mp_quickShout');
                     //re-style the save button for new unsaved status
@@ -778,7 +778,7 @@ class QuickShout implements Feature {
                 //if there is data in the key and value GUI fields, proceed
                 if (quickShoutText.value && comboBoxInput.value) {
                     //was having issue with eval processing the .replace data so made a variable to intake it
-                    const replacedText = comboBoxInput.value.replace(' ', 'ಠ');
+                    const replacedText = comboBoxInput.value.replace(/ /g, 'ಠ');
                     //fun way to dynamically create statements - this takes whatever is in list field to create a key with that text and the value from the textarea
                     eval(
                         `jsonList.` + replacedText + `= "` + quickShoutText.value + `";`
@@ -797,9 +797,9 @@ class QuickShout implements Feature {
                         //create new option element
                         const comboBoxOption = document.createElement('option');
                         //add key name to the option
-                        comboBoxOption.value = key.replace('ಠ', ' ');
+                        comboBoxOption.value = key.replace(/ಠ/g, ' ');
                         //TODO: this may or may not be necessary, but was having issues with the unique symbol still randomly showing up after saves
-                        comboBoxOption.value = comboBoxOption.value.replace('ಠ', ' ');
+                        comboBoxOption.value = comboBoxOption.value.replace(/ಠ/g, ' ');
                         //add to the list
                         comboBoxList.appendChild(comboBoxOption);
                     });
@@ -855,11 +855,11 @@ class QuickShout implements Feature {
                     //expand the footer to accomodate all feature aspects
                     shoutFoot!.style.height = '11em';
                     //if what is in the input field is a saved entry key
-                    if (jsonList[comboBoxInput.value.replace(' ', 'ಠ')]) {
+                    if (jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]) {
                         //this can be a sucky line of code because it can wipe out unsaved data, but i cannot think of better way
                         //replace the text area contents with what the value is in the matched pair
                         quickShoutText.value =
-                            jsonList[comboBoxInput.value.replace(' ', 'ಠ')];
+                            jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')];
                         //show the delete button since this is now exact match to saved entry
                         deleteButton.style.display = '';
                         //restyle save button to show its a saved combo
@@ -892,9 +892,9 @@ class QuickShout implements Feature {
                 }
                 //if input field has text in it
                 else if (
-                    jsonList[comboBoxInput.value.replace(' ', 'ಠ')] &&
+                    jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')] &&
                     quickShoutText.value !==
-                        jsonList[comboBoxInput.value.replace(' ', 'ಠ')]
+                        jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]
                 ) {
                     //restyle save button as yellow for editted
                     saveButton.style.backgroundColor = 'Yellow';
@@ -902,16 +902,16 @@ class QuickShout implements Feature {
                     deleteButton.style.display = '';
                     //if the key is a match and the data is a match then we have a 100% saved entry and can put everything back to saved
                 } else if (
-                    jsonList[comboBoxInput.value.replace(' ', 'ಠ')] &&
+                    jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')] &&
                     quickShoutText.value ===
-                        jsonList[comboBoxInput.value.replace(' ', 'ಠ')]
+                        jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]
                 ) {
                     //restyle save button to green for saved
                     saveButton.style.backgroundColor = 'Green';
                     saveButton.style.color = '';
                     deleteButton.style.display = '';
                     //if the key is not found in the saved list, orange for unsaved and unnamed
-                } else if (!jsonList[comboBoxInput.value.replace(' ', 'ಠ')]) {
+                } else if (!jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]) {
                     saveButton.style.backgroundColor = 'Orange';
                     saveButton.style.color = 'Black';
                     deleteButton.style.display = 'none';
