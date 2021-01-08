@@ -29,8 +29,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: The "Get A Seedbox" button can now be hidden.',
-            '🐞: Fixed not being able to make QuickShout titles longer than 2 words.',
+            '♻️: Currently Reading no longer lists all authors; the first 3 are used.',
+            '♻️: Currently Reading now generates links to authors',
         ] as string[],
         BUG_LIST: [] as string[],
     };

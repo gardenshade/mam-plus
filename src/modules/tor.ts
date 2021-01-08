@@ -340,21 +340,43 @@ class CurrentlyReading implements Feature {
         Util.clipboardifyBtn(btn, blurb);
     }
 
-    // Build a BB Code text snippet using the book info, then return it
+    /**
+     * * Build a BB Code text snippet using the book info, then return it
+     * @param id The string ID of the book
+     * @param title The string title of the book
+     * @param authors A node list of author links
+     */
     private _generateSnippet(
         id: string,
         title: string,
         authors: NodeListOf<HTMLAnchorElement>
     ): string {
-        let authorText = '';
-        authors.forEach((authorElem) => {
-            authorText += `[i]${authorElem.textContent}[/i], `;
-        });
-        // Return the string, but remove unneeded punctuation
-        return `[url=/t/${id}]${title}[/url] by ${authorText.slice(0, -2)}`;
+        /**
+         * * Add Author Link
+         * @param authorElem A link containing author information
+         */
+        const addAuthorLink = (authorElem: HTMLAnchorElement) => {
+            return `[url=${authorElem.href.replace('https://www.myanonamouse.net', '')}]${
+                authorElem.textContent
+            }[/url]`;
+        };
+
+        // Convert the NodeList into an Array which is easier to work with
+        let authorArray: string[] = [];
+        authors.forEach((authorElem) => authorArray.push(addAuthorLink(authorElem)));
+        // Drop extra items
+        if (authorArray.length > 3) {
+            authorArray = [...authorArray.slice(0, 3), 'etc.'];
+        }
+
+        return `[url=/t/${id}]${title}[/url] by [i]${authorArray.join(', ')}[/i]`;
     }
 
-    // Build a button on the tor details page
+    /**
+     * * Build a button on the tor details page
+     * @param tar Area where the button will be added into
+     * @param content Content that will be added into the textarea
+     */
     private _buildButton(tar: HTMLDivElement, content: string): HTMLDivElement {
         // Build text display
         tar.innerHTML = `<textarea rows="1" cols="80" style='margin-right:5px'>${content}</textarea>`;
