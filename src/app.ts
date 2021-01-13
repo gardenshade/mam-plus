@@ -31,6 +31,7 @@ namespace MP {
         UPDATE_LIST: [
             '♻️: Currently Reading no longer lists all authors; the first 3 are used.',
             '♻️: Currently Reading now generates links to authors',
+            '🐞: Large ratio numbers should be correctly shortened by the Shorten Vault & Ratio Text feature',
         ] as string[],
         BUG_LIST: [] as string[],
     };

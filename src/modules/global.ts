@@ -93,9 +93,12 @@ class MiniVaultInfo implements Feature {
 
         // Shorten the ratio text
         // TODO: move this to its own setting?
-        ratioText.innerHTML = `${parseFloat(ratioText.innerText).toFixed(
-            2
-        )} <img src="/pic/updownBig.png" alt="ratio">`;
+        /* This chained monstrosity does the following:
+        - Extract the number (with float) from the element
+        - Fix the float to 2 decimal places (which converts it back into a string)
+        - Convert the string back into a number so that we can convert it with`toLocaleString` to get commas back */
+        const num = Number(Util.extractFloat(ratioText)[0].toFixed(2)).toLocaleString();
+        ratioText.innerHTML = `${num} <img src="/pic/updownBig.png" alt="ratio">`;
 
         // Turn the numeric portion of the vault link into a number
         let newText: number = parseInt(
