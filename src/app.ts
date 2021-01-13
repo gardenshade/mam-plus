@@ -30,8 +30,9 @@ namespace MP {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
             '♻️: Currently Reading no longer lists all authors; the first 3 are used.',
-            '♻️: Currently Reading now generates links to authors',
-            '🐞: Large ratio numbers should be correctly shortened by the Shorten Vault & Ratio Text feature',
+            '♻️: Currently Reading now generates links to authors.',
+            '🐞: Large ratio numbers should be correctly shortened by the Shorten Vault & Ratio Text feature.',
+            '🐞: Hopefully fixed bug that might cause uneccessary resource use or blocked features if an expected page element was missing.',
         ] as string[],
         BUG_LIST: [] as string[],
     };

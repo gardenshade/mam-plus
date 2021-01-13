@@ -11,25 +11,34 @@ class Check {
      * @param {string} selector - The DOM string that will be used to select an element
      * @return {Promise<HTMLElement>} Promise of an element that was selected
      */
-    public static async elemLoad(selector: string): Promise<HTMLElement> {
-        // Select the actual element
-        const elem: HTMLElement | null = document.querySelector(selector);
+    public static async elemLoad(selector: string): Promise<HTMLElement | false> {
         if (MP.DEBUG) {
-            console.log(
-                `%c Looking for ${selector}: ${elem}`,
-                'background: #222; color: #555'
-            );
+            console.log(`%c Looking for ${selector}`, 'background: #222; color: #555');
         }
+        let _counter = 0;
+        const _counterLimit = 100;
+        const logic = async (selector: string): Promise<HTMLElement | false> => {
+            // Select the actual element
+            const elem: HTMLElement | null = document.querySelector(selector);
 
-        if (elem === undefined) {
-            throw `${selector} is undefined!`;
-        }
-        if (elem === null) {
-            await Util.afTimer();
-            return await this.elemLoad(selector);
-        } else {
-            return elem;
-        }
+            if (elem === undefined) {
+                throw `${selector} is undefined!`;
+            }
+            if (elem === null && _counter < _counterLimit) {
+                await Util.afTimer();
+                _counter++;
+                return await logic(selector);
+            } else if (elem === null && _counter >= _counterLimit) {
+                _counter = 0;
+                return false;
+            } else if (elem) {
+                return elem;
+            } else {
+                return false;
+            }
+        };
+
+        return logic(selector);
     }
 
     /**
@@ -118,13 +127,7 @@ class Check {
      * @return {Promise<boolean>} Optionally, a boolean if the current page matches the `pageQuery`
      */
     public static page(pageQuery?: ValidPage): Promise<string | boolean> {
-        if (MP.DEBUG) {
-            console.group('Check.page()');
-        }
         const storedPage = GM_getValue('mp_currentPage');
-        if (MP.DEBUG) {
-            console.log(`Stored Page: ${storedPage}`);
-        }
 
         return new Promise((resolve) => {
             // Check.page() has been run and a value was stored

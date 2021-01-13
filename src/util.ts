@@ -67,8 +67,20 @@ class Util {
 
         // Function to return true when the element is loaded
         async function run() {
-            await Check.elemLoad(elem);
-            return true;
+            const timer: Promise<false> = new Promise((resolve) =>
+                setTimeout(resolve, 1500, false)
+            );
+            const checkElem = Check.elemLoad(elem);
+            return Promise.race([timer, checkElem]).then((val) => {
+                if (val) {
+                    return true;
+                } else {
+                    console.warn(
+                        `startFeature(${settings.title}) unable to initiate! Could not find element: ${elem}`
+                    );
+                    return false;
+                }
+            });
         }
 
         // Is the setting enabled?
