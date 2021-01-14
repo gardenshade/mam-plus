@@ -35,6 +35,7 @@ class InitFeatures {
         new RandomBook();
 
         // Initialize Request Page functions
+        new GoodreadsButtonReq();
         new ToggleHiddenRequesters();
         new PlaintextRequest();
 

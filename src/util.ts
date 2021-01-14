@@ -580,4 +580,21 @@ class Util {
         });
         return seriesList;
     };
+
+    public static rowsToObj = (
+        rowList: NodeListOf<Element>,
+        titleClass = '.torDetLeft',
+        dataClass = 'torDetRight'
+    ) => {
+        const rows: any[] = [];
+
+        rowList.forEach((row) => {
+            const title: HTMLDivElement | null = row.querySelector(titleClass);
+            const data: HTMLDivElement | null = row.querySelector(dataClass);
+
+            rows.push({ title: title, data: data });
+        });
+
+        return rows.reduce((prev, cur) => (prev[cur.key] = cur.value));
+    };
 }

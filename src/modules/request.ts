@@ -328,3 +328,44 @@ class PlaintextRequest implements Feature {
         this._setOpenState(val);
     }
 }
+
+class GoodreadsButtonReq implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'goodreadsButtonReq',
+        scope: SettingGroup.Requests,
+        desc: 'Enable MAM-to-Goodreads buttons for requests',
+    };
+    private _tar: string = '#fillTorrent';
+    private _share = new Shared();
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['requests']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        console.log('🔥🔥🔥🔥🔥🔥');
+
+        /* const authorData: NodeListOf<
+            HTMLAnchorElement
+        > | null = document.querySelectorAll('#torDetMainCon .torAuthors a');
+        const bookData: HTMLSpanElement | null = document.querySelector(
+            '#torDetMainCon .TorrentTitle'
+        );
+        const seriesData: NodeListOf<
+            HTMLAnchorElement
+        > | null = document.querySelectorAll('#Series a');
+        const target: HTMLDivElement | null = document.querySelector(this._tar);
+        let seriesP: Promise<string[]>, authorP: Promise<string[]>;
+        let authors = ''; */
+        const reqRows = Util.rowsToObj(document.querySelectorAll('torDetMainCon div'));
+        console.log(reqRows);
+
+        this._share.goodreadsButtons();
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
