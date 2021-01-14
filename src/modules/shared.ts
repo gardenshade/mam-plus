@@ -61,4 +61,10 @@ class Shared {
             });
         });
     };
+
+    public goodreadsButtons = () => {
+        console.log('[M+] Adding the MAM-to-Goodreads buttons...');
+
+        console.log(`[M+] Added the MAM-to-Goodreads buttons!`);
+    };
 }
