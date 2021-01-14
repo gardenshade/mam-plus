@@ -100,8 +100,9 @@ class GoodreadsButton implements Feature {
         seriesP.then((ser) => {
             if (ser.length > 0) {
                 ser.forEach((item) => {
+                    const buttonTitle = ser.length > 1 ? `Series: ${item}` : 'Series';
                     const url = Util.goodreads.buildSearchURL('series', item);
-                    Util.createLinkButton(buttonTar, url, `Series: ${item}`, 4);
+                    Util.createLinkButton(buttonTar, url, buttonTitle, 4);
                 });
             } else {
                 console.warn('No series data detected!');

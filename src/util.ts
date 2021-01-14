@@ -539,7 +539,13 @@ class Util {
      * @param data The element containing the title text
      * @param auth A string of authors
      */
-    public static getBookTitle = async (data: HTMLSpanElement, auth: string = '') => {
+    public static getBookTitle = async (
+        data: HTMLSpanElement | null,
+        auth: string = ''
+    ) => {
+        if (data === null) {
+            throw new Error('getBookTitle() failed; element was null!');
+        }
         let extracted = data.innerText;
         // Shorten title and check it for brackets & author names
         extracted = Util.trimString(Util.bracketRemover(extracted), 50);
@@ -548,9 +554,12 @@ class Util {
     };
 
     public static getBookAuthors = async (
-        data: NodeListOf<HTMLAnchorElement>,
+        data: NodeListOf<HTMLAnchorElement> | null,
         num: number = 3
     ) => {
+        if (data === null) {
+            throw new Error('getBookAuthors() failed; element was null!');
+        }
         const authList: string[] = [];
         data.forEach((author) => {
             if (num > 0) {
@@ -561,7 +570,10 @@ class Util {
         return authList;
     };
 
-    public static getBookSeries = async (data: NodeListOf<HTMLAnchorElement>) => {
+    public static getBookSeries = async (data: NodeListOf<HTMLAnchorElement> | null) => {
+        if (data === null) {
+            throw new Error('getBookSeries() failed; element was null!');
+        }
         const seriesList: string[] = [];
         data.forEach((series) => {
             seriesList.push(series.innerText);
