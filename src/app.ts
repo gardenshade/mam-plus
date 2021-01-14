@@ -33,6 +33,7 @@ namespace MP {
             '♻️: Currently Reading now generates links to authors.',
             '🐞: Large ratio numbers should be correctly shortened by the Shorten Vault & Ratio Text feature.',
             '🐞: Hopefully fixed bug that might cause uneccessary resource use or blocked features if an expected page element was missing.',
+            '🐞: Fixed an issue where shoutbox features might fail to load initially',
         ] as string[],
         BUG_LIST: [] as string[],
     };
