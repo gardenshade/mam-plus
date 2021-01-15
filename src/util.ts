@@ -563,16 +563,18 @@ class Util {
         num: number = 3
     ) => {
         if (data === null) {
-            throw new Error('getBookAuthors() failed; element was null!');
+            console.warn('getBookAuthors() failed; element was null!');
+            return [];
+        } else {
+            const authList: string[] = [];
+            data.forEach((author) => {
+                if (num > 0) {
+                    authList.push(Util.goodreads.smartAuth(author.innerText));
+                    num--;
+                }
+            });
+            return authList;
         }
-        const authList: string[] = [];
-        data.forEach((author) => {
-            if (num > 0) {
-                authList.push(Util.goodreads.smartAuth(author.innerText));
-                num--;
-            }
-        });
-        return authList;
     };
 
     /**
@@ -581,13 +583,15 @@ class Util {
      */
     public static getBookSeries = async (data: NodeListOf<HTMLAnchorElement> | null) => {
         if (data === null) {
-            throw new Error('getBookSeries() failed; element was null!');
+            console.warn('getBookSeries() failed; element was null!');
+            return [];
+        } else {
+            const seriesList: string[] = [];
+            data.forEach((series) => {
+                seriesList.push(series.innerText);
+            });
+            return seriesList;
         }
-        const seriesList: string[] = [];
-        data.forEach((series) => {
-            seriesList.push(series.innerText);
-        });
-        return seriesList;
     };
 
     /**

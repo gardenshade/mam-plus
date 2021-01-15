@@ -346,21 +346,19 @@ class GoodreadsButtonReq implements Feature {
         });
     }
     private async _init() {
+        // Convert row structure into searchable object
         const reqRows = Util.rowsToObj(document.querySelectorAll('#torDetMainCon > div'));
+        // Select the data points
         const bookData: HTMLSpanElement | null = reqRows['Title:'].querySelector('span');
         const authorData: NodeListOf<HTMLAnchorElement> | null = reqRows[
             'Author(s):'
         ].querySelectorAll('a');
-        const seriesData: NodeListOf<HTMLAnchorElement> | null = reqRows[
-            'Series:'
-        ].querySelectorAll('a');
-        const target = reqRows['Release Date'].parentNode;
-        let seriesP: Promise<string[]>, authorP: Promise<string[]>;
-        const authors = '';
-
-        console.log(bookData, authorData, seriesData, target);
-
-        this._share.goodreadsButtons();
+        const seriesData: NodeListOf<HTMLAnchorElement> | null = reqRows['Series:']
+            ? reqRows['Series:'].querySelectorAll('a')
+            : null;
+        const target: HTMLDivElement | null = reqRows['Release Date'];
+        // Generate buttons
+        this._share.goodreadsButtons(bookData, authorData, seriesData, target);
     }
     get settings(): CheckboxSetting {
         return this._settings;
