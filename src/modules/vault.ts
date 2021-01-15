@@ -13,13 +13,11 @@ class SimpleVault implements Feature {
     private _tar: string = '#mainBody';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['vault pot', 'vault donate']).then(
-            (t) => {
-                if (t) {
-                    this._init();
-                }
+        Util.startFeature(this._settings, this._tar, ['vault']).then((t) => {
+            if (t) {
+                this._init();
             }
-        );
+        });
     }
 
     private async _init() {

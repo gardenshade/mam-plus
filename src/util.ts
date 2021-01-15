@@ -553,6 +553,11 @@ class Util {
         return extracted;
     };
 
+    /**
+     * #### Return GR-formatted authors as an array limited to `num`
+     * @param data The element containing the author links
+     * @param num The number of authors to return. Default 3
+     */
     public static getBookAuthors = async (
         data: NodeListOf<HTMLAnchorElement> | null,
         num: number = 3
@@ -570,6 +575,10 @@ class Util {
         return authList;
     };
 
+    /**
+     * #### Return series as an array
+     * @param data The element containing the series links
+     */
     public static getBookSeries = async (data: NodeListOf<HTMLAnchorElement> | null) => {
         if (data === null) {
             throw new Error('getBookSeries() failed; element was null!');
@@ -581,20 +590,36 @@ class Util {
         return seriesList;
     };
 
+    /**
+     * #### Return a table-like array of rows as an object.
+     * Store the returned object and access using the row title, ex. `stored['Title:']`
+     * @param rowList An array of table-like rows
+     * @param titleClass The class used by the title cells. Default `.torDetLeft`
+     * @param dataClass The class used by the data cells. Default `.torDetRight`
+     */
     public static rowsToObj = (
         rowList: NodeListOf<Element>,
         titleClass = '.torDetLeft',
-        dataClass = 'torDetRight'
+        dataClass = '.torDetRight'
     ) => {
+        if (rowList.length < 1) {
+            throw new Error(`Util.rowsToObj( ${rowList} ): Row list was empty!`);
+        }
         const rows: any[] = [];
 
         rowList.forEach((row) => {
             const title: HTMLDivElement | null = row.querySelector(titleClass);
             const data: HTMLDivElement | null = row.querySelector(dataClass);
-
-            rows.push({ title: title, data: data });
+            if (title) {
+                rows.push({
+                    key: title.textContent,
+                    value: data,
+                });
+            } else {
+                console.warn('Row title was empty!');
+            }
         });
 
-        return rows.reduce((prev, cur) => (prev[cur.key] = cur.value));
+        return rows.reduce((obj, item) => ((obj[item.key] = item.value), obj), {});
     };
 }

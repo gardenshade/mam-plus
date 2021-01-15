@@ -160,6 +160,7 @@ class Check {
                     index: () => 'home',
                     shoutbox: () => 'shoutbox',
                     preferences: () => 'settings',
+                    millionaires: () => 'vault',
                     t: () => 'torrent',
                     u: () => 'user',
                     f: () => {
@@ -169,10 +170,6 @@ class Check {
                         if (page[1] === 'browse') return 'browse';
                         else if (page[1] === 'requests2') return 'request';
                         else if (page[1] === 'viewRequest') return 'request details';
-                    },
-                    millionaires: () => {
-                        if (page[1] === 'pot') return 'vault pot';
-                        else if (page[1] === 'donate') return 'vault donate';
                     },
                 };
 

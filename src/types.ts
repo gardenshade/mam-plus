@@ -9,8 +9,7 @@ type ValidPage =
     | 'request details'
     | 'torrent'
     | 'shoutbox'
-    | 'vault pot'
-    | 'vault donate'
+    | 'vault'
     | 'user'
     | 'forum thread'
     | 'settings';
@@ -53,6 +52,11 @@ interface StringObject {
 interface BookDataObject extends StringObject {
     ['extracted']: string;
     ['desc']: string;
+}
+
+interface DivRowObject {
+    ['title']: string;
+    ['data']: HTMLDivElement;
 }
 
 interface SettingGlobObject {

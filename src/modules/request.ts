@@ -346,22 +346,19 @@ class GoodreadsButtonReq implements Feature {
         });
     }
     private async _init() {
-        console.log('🔥🔥🔥🔥🔥🔥');
-
-        /* const authorData: NodeListOf<
-            HTMLAnchorElement
-        > | null = document.querySelectorAll('#torDetMainCon .torAuthors a');
-        const bookData: HTMLSpanElement | null = document.querySelector(
-            '#torDetMainCon .TorrentTitle'
-        );
-        const seriesData: NodeListOf<
-            HTMLAnchorElement
-        > | null = document.querySelectorAll('#Series a');
-        const target: HTMLDivElement | null = document.querySelector(this._tar);
+        const reqRows = Util.rowsToObj(document.querySelectorAll('#torDetMainCon > div'));
+        const bookData: HTMLSpanElement | null = reqRows['Title:'].querySelector('span');
+        const authorData: NodeListOf<HTMLAnchorElement> | null = reqRows[
+            'Author(s):'
+        ].querySelectorAll('a');
+        const seriesData: NodeListOf<HTMLAnchorElement> | null = reqRows[
+            'Series:'
+        ].querySelectorAll('a');
+        const target = reqRows['Release Date'].parentNode;
         let seriesP: Promise<string[]>, authorP: Promise<string[]>;
-        let authors = ''; */
-        const reqRows = Util.rowsToObj(document.querySelectorAll('torDetMainCon div'));
-        console.log(reqRows);
+        const authors = '';
+
+        console.log(bookData, authorData, seriesData, target);
 
         this._share.goodreadsButtons();
     }

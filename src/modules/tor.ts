@@ -48,6 +48,7 @@ class GoodreadsButton implements Feature {
         desc: 'Enable the MAM-to-Goodreads buttons',
     };
     private _tar: string = '#submitInfo';
+    private _share = new Shared();
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
@@ -64,8 +65,6 @@ class GoodreadsButton implements Feature {
     }
 
     private async _init() {
-        console.log('[M+] Adding the MAM-to-Goodreads buttons...');
-
         const authorData: NodeListOf<
             HTMLAnchorElement
         > | null = document.querySelectorAll('#torDetMainCon .torAuthors a');
@@ -142,8 +141,6 @@ class GoodreadsButton implements Feature {
                     console.warn('No title data detected!');
                 }
             });
-
-        console.log(`[M+] Added the MAM-to-Goodreads buttons!`);
     }
 
     get settings(): CheckboxSetting {
