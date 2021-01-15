@@ -440,4 +440,190 @@ class Util {
             return timestamp;
         }
     }
+
+    /**
+     * #### Check a string to see if it's divided with a dash, returning the first half if it doesn't contain a specified string
+     * @param original The original string being checked
+     * @param contained A string that might be contained in the original
+     */
+    public static checkDashes(original: string, contained: string): string {
+        if (MP.DEBUG) {
+            console.log(
+                `checkDashes( ${original}, ${contained} ): Count ${original.indexOf(
+                    ' - '
+                )}`
+            );
+        }
+
+        // Dashes are present
+        if (original.indexOf(' - ') !== -1) {
+            if (MP.DEBUG) {
+                console.log(`String contains a dash`);
+            }
+            const split: string[] = original.split(' - ');
+            if (split[0] === contained) {
+                if (MP.DEBUG) {
+                    console.log(
+                        `> String before dash is "${contained}"; using string behind dash`
+                    );
+                }
+                return split[1];
+            } else {
+                return split[0];
+            }
+        } else {
+            return original;
+        }
+    }
+
+    /**
+     * ## Utilities specific to Goodreads
+     */
+    public static goodreads = {
+        /**
+         * * Removes spaces in author names that use adjacent intitials.
+         * @param auth The author(s)
+         * @example "H G Wells" -> "HG Wells"
+         */
+        smartAuth: (auth: string): string => {
+            let outp: string = '';
+            const arr: string[] = Util.stringToArray(auth);
+            arr.forEach((key, val) => {
+                // Current key is an initial
+                if (key.length < 2) {
+                    // If next key is an initial, don't add a space
+                    const nextLeng: number = arr[val + 1].length;
+                    if (nextLeng < 2) {
+                        outp += key;
+                    } else {
+                        outp += `${key} `;
+                    }
+                } else {
+                    outp += `${key} `;
+                }
+            });
+            // Trim trailing space
+            return outp.trim();
+        },
+        /**
+         * * Turns a string into a Goodreads search URL
+         * @param type The type of URL to make
+         * @param inp The extracted data to URI encode
+         */
+        buildSearchURL: (type: BookData | 'on', inp: string): string => {
+            if (MP.DEBUG) {
+                console.log(`goodreads.buildGrSearchURL( ${type}, ${inp} )`);
+            }
+
+            let grType: string = type;
+            const cases: any = {
+                book: () => {
+                    grType = 'title';
+                },
+                series: () => {
+                    grType = 'on';
+                    inp += ', #';
+                },
+            };
+            if (cases[type]) {
+                cases[type]();
+            }
+            return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(
+                inp.replace('%', '')
+            ).replace("'", '%27')}&search_type=books&search%5Bfield%5D=${grType}`;
+        },
+    };
+
+    /**
+     * #### Return a cleaned book title from an element
+     * @param data The element containing the title text
+     * @param auth A string of authors
+     */
+    public static getBookTitle = async (
+        data: HTMLSpanElement | null,
+        auth: string = ''
+    ) => {
+        if (data === null) {
+            throw new Error('getBookTitle() failed; element was null!');
+        }
+        let extracted = data.innerText;
+        // Shorten title and check it for brackets & author names
+        extracted = Util.trimString(Util.bracketRemover(extracted), 50);
+        extracted = Util.checkDashes(extracted, auth);
+        return extracted;
+    };
+
+    /**
+     * #### Return GR-formatted authors as an array limited to `num`
+     * @param data The element containing the author links
+     * @param num The number of authors to return. Default 3
+     */
+    public static getBookAuthors = async (
+        data: NodeListOf<HTMLAnchorElement> | null,
+        num: number = 3
+    ) => {
+        if (data === null) {
+            console.warn('getBookAuthors() failed; element was null!');
+            return [];
+        } else {
+            const authList: string[] = [];
+            data.forEach((author) => {
+                if (num > 0) {
+                    authList.push(Util.goodreads.smartAuth(author.innerText));
+                    num--;
+                }
+            });
+            return authList;
+        }
+    };
+
+    /**
+     * #### Return series as an array
+     * @param data The element containing the series links
+     */
+    public static getBookSeries = async (data: NodeListOf<HTMLAnchorElement> | null) => {
+        if (data === null) {
+            console.warn('getBookSeries() failed; element was null!');
+            return [];
+        } else {
+            const seriesList: string[] = [];
+            data.forEach((series) => {
+                seriesList.push(series.innerText);
+            });
+            return seriesList;
+        }
+    };
+
+    /**
+     * #### Return a table-like array of rows as an object.
+     * Store the returned object and access using the row title, ex. `stored['Title:']`
+     * @param rowList An array of table-like rows
+     * @param titleClass The class used by the title cells. Default `.torDetLeft`
+     * @param dataClass The class used by the data cells. Default `.torDetRight`
+     */
+    public static rowsToObj = (
+        rowList: NodeListOf<Element>,
+        titleClass = '.torDetLeft',
+        dataClass = '.torDetRight'
+    ) => {
+        if (rowList.length < 1) {
+            throw new Error(`Util.rowsToObj( ${rowList} ): Row list was empty!`);
+        }
+        const rows: any[] = [];
+
+        rowList.forEach((row) => {
+            const title: HTMLDivElement | null = row.querySelector(titleClass);
+            const data: HTMLDivElement | null = row.querySelector(dataClass);
+            if (title) {
+                rows.push({
+                    key: title.textContent,
+                    value: data,
+                });
+            } else {
+                console.warn('Row title was empty!');
+            }
+        });
+
+        return rows.reduce((obj, item) => ((obj[item.key] = item.value), obj), {});
+    };
 }

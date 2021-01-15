@@ -29,13 +29,17 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
+            '🆕: Added Goodreads Buttons to request pages.',
             '♻️: Currently Reading no longer lists all authors; the first 3 are used.',
             '♻️: Currently Reading now generates links to authors.',
+            '♻️: Goodreads Buttons for books with multiple series now generate a button for each series.',
             '🐞: Large ratio numbers should be correctly shortened by the Shorten Vault & Ratio Text feature.',
             '🐞: Hopefully fixed bug that might cause uneccessary resource use or blocked features if an expected page element was missing.',
-            '🐞: Fixed an issue where shoutbox features might fail to load initially',
+            '🐞: Fixed an issue where shoutbox features might fail to load initially.',
         ] as string[],
-        BUG_LIST: [] as string[],
+        BUG_LIST: [
+            'Please be on the lookout for bugs related to Goodreads Buttons, as the code was drastically changed, thanks!',
+        ] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
     export const VERSION: string = Check.newVer;

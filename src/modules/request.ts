@@ -17,7 +17,7 @@ class ToggleHiddenRequesters implements Feature {
     private _hide = true;
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['requests']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
             if (t) {
                 this._init();
             }
@@ -127,7 +127,7 @@ class PlaintextRequest implements Feature {
     private _plainText: string = '';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['requests']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
             if (t) {
                 this._init();
             }
@@ -326,5 +326,41 @@ class PlaintextRequest implements Feature {
 
     set isOpen(val: 'true' | 'false' | undefined) {
         this._setOpenState(val);
+    }
+}
+
+class GoodreadsButtonReq implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'goodreadsButtonReq',
+        scope: SettingGroup.Requests,
+        desc: 'Enable MAM-to-Goodreads buttons for requests',
+    };
+    private _tar: string = '#fillTorrent';
+    private _share = new Shared();
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['request details']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        // Convert row structure into searchable object
+        const reqRows = Util.rowsToObj(document.querySelectorAll('#torDetMainCon > div'));
+        // Select the data points
+        const bookData: HTMLSpanElement | null = reqRows['Title:'].querySelector('span');
+        const authorData: NodeListOf<HTMLAnchorElement> | null = reqRows[
+            'Author(s):'
+        ].querySelectorAll('a');
+        const seriesData: NodeListOf<HTMLAnchorElement> | null = reqRows['Series:']
+            ? reqRows['Series:'].querySelectorAll('a')
+            : null;
+        const target: HTMLDivElement | null = reqRows['Release Date'];
+        // Generate buttons
+        this._share.goodreadsButtons(bookData, authorData, seriesData, target);
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
     }
 }
