@@ -1,4 +1,5 @@
 const Gulp = require('gulp');
+const pump = require('pump');
 const { series, parallel } = require('gulp');
 const Ts = require('gulp-typescript');
 const Sass = require('gulp-sass');
@@ -71,6 +72,10 @@ const buildTime = () => {
     return `${month} ${day}`;
 };
 
+const errorCB = (err) => {
+    if (err) console.error('Pipe Finished >>>', err);
+};
+
 /** Task to set the working Env to release */
 const releaseEnv = () => {
     return new Promise((resolve) => {
@@ -82,18 +87,19 @@ const releaseEnv = () => {
 /** Task to minify the userscript */
 const minify = () => {
     const loc = basePathEnv();
-    return Gulp.src(`${loc.dest}/${loc.name}`).pipe(Min()).pipe(Gulp.dest(loc.dest));
+    return pump(Gulp.src(`${loc.dest}/${loc.name}`), Min(), Gulp.dest(loc.dest), (err) =>
+        errorCB(err)
+    );
 };
 
 /** Task to insert a userscript header from a file, with package.json info */
 const insertHead = () => {
     const loc = basePathEnv();
-    return (
-        Gulp.src(`${loc.dest}/${loc.name}`)
-            // Insert userscript header
-            .pipe(Header(Fs.readFileSync('metadata.txt', 'utf8'), { pkg: pkg }))
-            // Output the file
-            .pipe(Gulp.dest(loc.dest))
+    return pump(
+        Gulp.src(`${loc.dest}/${loc.name}`),
+        Header(Fs.readFileSync('metadata.txt', 'utf8'), { pkg: pkg }),
+        Gulp.dest(loc.dest),
+        (err) => errorCB(err)
     );
 };
 
@@ -102,62 +108,61 @@ const procTS_dev = () => {
     const loc = basePathEnv();
     tsSettings.outFile = loc.name;
     const timestamp = buildTime();
-    return (
-        Gulp.src(globs.app, { base: 'src' })
-            .pipe(Srcmap.init())
-            // Inject information
-            .pipe(Inject.replace('##meta_timestamp##', timestamp))
-            // Compile typescript
-            .pipe(Ts(tsSettings))
-            // Write sourcemap
-            .pipe(Srcmap.write())
-            // Output the file
-            .pipe(Gulp.dest(loc.dest))
+    return pump(
+        Gulp.src(globs.app, { base: 'src' }),
+        // Start sourcemaps
+        Srcmap.init(),
+        // Inject information
+        Inject.replace('##meta_timestamp##', timestamp),
+        // Compile typescript
+        Ts(tsSettings),
+        // Write sourcemap
+        Srcmap.write(),
+        Gulp.dest(loc.dest),
+        (err) => errorCB(err)
     );
 };
 
 /** Task to convert the .ts files into a .user.js file */
-const procTS_build = () => {
+const procTS_release = () => {
     const loc = basePathEnv();
     tsSettings.outFile = loc.name;
     const timestamp = buildTime();
-    return (
-        Gulp.src(globs.app)
-            // Inject information
-            .pipe(Inject.replace('##meta_timestamp##', timestamp))
-            // Compile typescript
-            .pipe(Ts(tsSettings))
-            // Output the file
-            .pipe(Gulp.dest(loc.dest))
+    return pump(
+        Gulp.src(globs.app),
+        Inject.replace('##meta_timestamp##', timestamp),
+        Ts(tsSettings),
+        Gulp.dest(loc.dest),
+        (err) => errorCB(err)
     );
 };
 
 /** Task to convert .scss files into .css files */
 const sass_dev = () => {
     const loc = basePathEnv();
-    return new Promise((resolve) => {
-        Gulp.src(globs.style)
-            .pipe(Srcmap.init())
-            .pipe(Sass().on('error', Sass.logError))
-            .pipe(Srcmap.write())
-            .pipe(Gulp.dest(loc.dest));
-        resolve();
-    });
+    //* This returned a `new Promise` prior to switching to `pump()`
+    return pump(
+        Gulp.src(globs.style),
+        Srcmap.init(),
+        Sass().on('error', Sass.logError),
+        Srcmap.write(),
+        Gulp.dest(loc.dest),
+        (err) => errorCB(err)
+    );
 };
 
 /** Task to convert .scss files into .min.css files */
-const sass_build = () => {
+const sass_release = () => {
     const loc = basePathEnv();
-    return new Promise((resolve) => {
-        Gulp.src(globs.style)
-            .pipe(
-                Sass({
-                    outputStyle: 'compressed',
-                }).on('error', Sass.logError)
-            )
-            .pipe(Gulp.dest(loc.dest));
-        resolve();
-    });
+    //* This returned a `new Promise` prior to switching to `pump()`
+    return pump(
+        Gulp.src(globs.style),
+        Sass({
+            outputStyle: 'compressed',
+        }).on('error', Sass.logError),
+        Gulp.dest(loc.dest),
+        (err) => errorCB(err)
+    );
 };
 
 /** NPM build task. Use for one-off development */
@@ -172,6 +177,6 @@ exports.watch = () => {
 /** NPM release task. Use for publishing the compiled script */
 exports.release = series(
     releaseEnv,
-    parallel(sass_build, series(procTS_build, minify)),
+    parallel(sass_release, series(procTS_release, minify)),
     insertHead
 );

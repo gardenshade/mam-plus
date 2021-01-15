@@ -1,14 +1,21 @@
 # MAM+
 
-The MAM+ userscript, now using Typescript and Gulp 4.
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/gardenshade/mam-plus?label=version)
+
+No it's not some elite club. It's just a simple set of features, tweaks, and occasional bug fixes that modifies (and hopefully enhances) your MAM experience. Very occasionally it might break your MAM experience, but we try to keep those incidents to a minimum... Nearly every feature can be enabled or disabled separately, and only one is enabled by default, meaning you can stick with a near-Vanilla experience if you so desire.
+
+Don't know what MAM is? This script won't be very useful to you then.
 
 ## Installation
 
-As long as you have a userscript browser extension installed, you can simply __[CLICK HERE](https://github.com/gardenshade/mam-plus/raw/master/release/mam-plus.user.js)__ to install the script. Popular browser extensions include:
-- [Tampermonkey](https://tampermonkey.net/): Recommended for Firefox v57+
-- [Violentmonkey](https://violentmonkey.github.io/get-it/): Recommended for Chrome
+[![Install Button](https://img.shields.io/badge/Install-Click%20Here-green?style=for-the-badge&logo=DocuSign)](https://github.com/gardenshade/mam-plus/raw/master/release/mam-plus.user.js)
 
-MAM+ only officially supports the most recent versions of Chrome & Firefox, but other modern browsers with userscript support should theoretically work.
+You need to have a userscript browser extension installed in order to use MAM+. Popular browser extensions include:
+
+-   [Tampermonkey](https://tampermonkey.net/): Recommended for Firefox v57+
+-   [Violentmonkey](https://violentmonkey.github.io/get-it/): Recommended for Chrome
+
+MAM+ only officially supports the most recent versions of Chrome & Firefox, but other modern browsers with userscript support should theoretically work. That said, you'll probably have lots of issues if you use Safari, Firefox offshoots (Waterfox, Basilisk, etc.), or older Edge versions.
 
 ## Modification & Contribution
 
@@ -16,19 +23,21 @@ In case you want to modify the script and/or contribute to it, follow the below 
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/en/download/)
-- Google Chrome with [Violentmonkey](https://violentmonkey.github.io/get-it/)
-- tslint (not currently included because vscode has baked-in linting)
+-   [Node.js](https://nodejs.org/en/download/)
+-   Google Chrome with [Violentmonkey](https://violentmonkey.github.io/get-it/)
+-   tslint (not currently included because vscode has baked-in linting)
 
 ### Instructions
 
 #### First-time setup
-- Make sure the prerequisites are installed on your system
-- Clone this project to your computer
-- Open a terminal window in your project folder, and run `npm install`
-- On the Chrome extensions page (found at chrome://extensions), ensure that the Violentmonkey extension has access to file URLs
+
+-   Make sure the prerequisites are installed on your system
+-   Clone this project to your computer
+-   Open a terminal window in your project folder, and run `npm install`
+-   On the Chrome extensions page (found at chrome://extensions), ensure that the Violentmonkey extension has access to file URLs
 
 #### Workflow
+
 This is a Typescript project, but vanilla JavaScript is valid Typescript, so don't let a lack of knowledge of TS keep you from contributing.
 
 To start developing, simply run `npm run build`. Assuming everything works, this will transpile the Typescript files into a single JavaScript file (in the `build/` dir) with a userscript header and inline sourcemaps. Additionally, the userscript will have `_dev` appended to its name, to differentiate between the developmental version and the release version.

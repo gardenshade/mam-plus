@@ -5,12 +5,13 @@
 type ValidPage =
     | 'home'
     | 'browse'
-    | 'requests'
+    | 'request'
+    | 'request details'
     | 'torrent'
     | 'shoutbox'
     | 'vault'
     | 'user'
-    | 'forum'
+    | 'forum thread'
     | 'settings';
 
 type BookData = 'book' | 'author' | 'series';
@@ -51,6 +52,11 @@ interface StringObject {
 interface BookDataObject extends StringObject {
     ['extracted']: string;
     ['desc']: string;
+}
+
+interface DivRowObject {
+    ['title']: string;
+    ['data']: HTMLDivElement;
 }
 
 interface SettingGlobObject {

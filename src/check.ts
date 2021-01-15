@@ -11,25 +11,34 @@ class Check {
      * @param {string} selector - The DOM string that will be used to select an element
      * @return {Promise<HTMLElement>} Promise of an element that was selected
      */
-    public static async elemLoad(selector: string): Promise<HTMLElement> {
-        // Select the actual element
-        const elem: HTMLElement | null = document.querySelector(selector);
+    public static async elemLoad(selector: string): Promise<HTMLElement | false> {
         if (MP.DEBUG) {
-            console.log(
-                `%c Looking for ${selector}: ${elem}`,
-                'background: #222; color: #555'
-            );
+            console.log(`%c Looking for ${selector}`, 'background: #222; color: #555');
         }
+        let _counter = 0;
+        const _counterLimit = 100;
+        const logic = async (selector: string): Promise<HTMLElement | false> => {
+            // Select the actual element
+            const elem: HTMLElement | null = document.querySelector(selector);
 
-        if (elem === undefined) {
-            throw `${selector} is undefined!`;
-        }
-        if (elem === null) {
-            await Util.afTimer();
-            return await this.elemLoad(selector);
-        } else {
-            return elem;
-        }
+            if (elem === undefined) {
+                throw `${selector} is undefined!`;
+            }
+            if (elem === null && _counter < _counterLimit) {
+                await Util.afTimer();
+                _counter++;
+                return await logic(selector);
+            } else if (elem === null && _counter >= _counterLimit) {
+                _counter = 0;
+                return false;
+            } else if (elem) {
+                return elem;
+            } else {
+                return false;
+            }
+        };
+
+        return logic(selector);
     }
 
     /**
@@ -118,13 +127,8 @@ class Check {
      * @return {Promise<boolean>} Optionally, a boolean if the current page matches the `pageQuery`
      */
     public static page(pageQuery?: ValidPage): Promise<string | boolean> {
-        if (MP.DEBUG) {
-            console.group('Check.page()');
-        }
         const storedPage = GM_getValue('mp_currentPage');
-        if (MP.DEBUG) {
-            console.log(`Stored Page: ${storedPage}`);
-        }
+        let currentPage: ValidPage | undefined = undefined;
 
         return new Promise((resolve) => {
             // Check.page() has been run and a value was stored
@@ -140,40 +144,43 @@ class Check {
                 }
                 // Check.page() has not previous run
             } else {
-                // Grab the URL and slice out the good bits
-                const path: string = window.location.pathname;
-                const pageStr: string = path.split('/')[1];
-                const subPage: string | undefined = path.split('/')[2];
-                let currentPage: string;
-                // Create an object literal of sorts to use as a "switch"
-                const cases: StringObject = {
-                    '': 'home',
-                    'index.php': 'home',
-                    shoutbox: 'shoutbox',
-                    t: 'torrent',
-                    preferences: 'settings',
-                    u: 'user',
-                    'f/t': 'forum',
-                    tor: subPage,
-                    millionaires: 'vault',
-                };
-                /* TODO: set `cases` to any to allow proper Object switch */
-                if (MP.DEBUG) {
-                    console.log(`Page @ ${pageStr}\nSubpage @ ${subPage}`);
-                }
-                if (cases[pageStr] || cases[pageStr + '/' + subPage]) {
-                    if (cases[pageStr] === subPage) {
-                        currentPage = subPage.split('.')[0].replace(/[0-9]/g, '');
-                    } else if (cases[pageStr + '/' + subPage]) {
-                        currentPage = cases[pageStr + '/' + subPage];
-                        console.log('Forum Case');
-                    } else {
-                        currentPage = cases[pageStr];
-                    }
-                    if (MP.DEBUG) {
-                        console.log(`Currently on ${currentPage} page`);
-                    }
+                // Get the current page
+                let path: string = window.location.pathname;
+                path = path.indexOf('.php') ? path.split('.php')[0] : path;
+                const page = path.split('/');
+                page.shift();
 
+                if (MP.DEBUG) {
+                    console.log(`Page URL @ ${page.join(' -> ')}`);
+                }
+
+                // Create an object literal of sorts to use as a "switch"
+                const cases: { [key: string]: () => ValidPage | undefined } = {
+                    '': () => 'home',
+                    index: () => 'home',
+                    shoutbox: () => 'shoutbox',
+                    preferences: () => 'settings',
+                    millionaires: () => 'vault',
+                    t: () => 'torrent',
+                    u: () => 'user',
+                    f: () => {
+                        if (page[1] === 't') return 'forum thread';
+                    },
+                    tor: () => {
+                        if (page[1] === 'browse') return 'browse';
+                        else if (page[1] === 'requests2') return 'request';
+                        else if (page[1] === 'viewRequest') return 'request details';
+                    },
+                };
+
+                // Check to see if we have a case that matches the current page
+                if (cases[page[0]]) {
+                    currentPage = cases[page[0]]();
+                } else {
+                    console.warn(`Page "${page}" is not a valid M+ page. Path: ${path}`);
+                }
+
+                if (currentPage !== undefined) {
                     // Save the current page to be accessed later
                     GM_setValue('mp_currentPage', currentPage);
 
@@ -186,8 +193,6 @@ class Check {
                     } else {
                         resolve(false);
                     }
-                } else if (MP.DEBUG) {
-                    console.warn(`pageStr case returns '${cases[pageStr]}'`);
                 }
             }
             if (MP.DEBUG) {

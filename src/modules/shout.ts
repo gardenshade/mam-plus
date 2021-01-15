@@ -21,8 +21,14 @@ class ProcessShouts {
                 mutList.forEach((mutRec) => {
                     // Get the changed nodes
                     mutRec.addedNodes.forEach((node: Node) => {
-                        //if the node is added by MAM+ for gift button, ignore
-                        if (/^mp_/.test(Util.nodeToElem(node).getAttribute('id')!)) {
+                        const nodeData = Util.nodeToElem(node);
+
+                        // If the node is added by MAM+ for gift button, ignore
+                        // Also ignore if the node is a date break
+                        if (
+                            /^mp_/.test(nodeData.getAttribute('id')!) ||
+                            nodeData.classList.contains('dateBreak')
+                        ) {
                             return;
                         }
                         // If we're looking for specific users...
@@ -114,8 +120,14 @@ class ProcessShouts {
                 mutList.forEach((mutRec) => {
                     // Get the changed nodes
                     mutRec.addedNodes.forEach((node) => {
-                        //if the node is added by MAM+ for gift button, ignore
-                        if (/^mp_/.test(Util.nodeToElem(node).getAttribute('id')!)) {
+                        const nodeData = Util.nodeToElem(node);
+
+                        // If the node is added by MAM+ for gift button, ignore
+                        // Also ignore if the node is a date break
+                        if (
+                            /^mp_/.test(nodeData.getAttribute('id')!) ||
+                            nodeData.classList.contains('dateBreak')
+                        ) {
                             return;
                         }
 
@@ -229,7 +241,9 @@ class ProcessShouts {
         tar: string,
         get: 'href' | 'text'
     ): string {
-        if (shout !== null) {
+        const nodeData = Util.nodeToElem(shout).classList.contains('dateBreak');
+
+        if (shout !== null && !nodeData) {
             const shoutElem: HTMLElement | null = Util.nodeToElem(shout).querySelector(
                 tar
             );
