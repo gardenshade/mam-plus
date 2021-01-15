@@ -5,12 +5,14 @@
 type ValidPage =
     | 'home'
     | 'browse'
-    | 'requests'
+    | 'request'
+    | 'request details'
     | 'torrent'
     | 'shoutbox'
-    | 'vault'
+    | 'vault pot'
+    | 'vault donate'
     | 'user'
-    | 'forum'
+    | 'forum thread'
     | 'settings';
 
 type BookData = 'book' | 'author' | 'series';

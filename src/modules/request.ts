@@ -17,7 +17,7 @@ class ToggleHiddenRequesters implements Feature {
     private _hide = true;
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['requests']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
             if (t) {
                 this._init();
             }
@@ -127,7 +127,7 @@ class PlaintextRequest implements Feature {
     private _plainText: string = '';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['requests']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
             if (t) {
                 this._init();
             }
@@ -339,7 +339,7 @@ class GoodreadsButtonReq implements Feature {
     private _tar: string = '#fillTorrent';
     private _share = new Shared();
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['requests']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['request details']).then((t) => {
             if (t) {
                 this._init();
             }

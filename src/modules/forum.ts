@@ -14,7 +14,7 @@ class ForumFLGift implements Feature {
     private _tar: string = '.forumLink';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['forum']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['forum thread']).then((t) => {
             if (t) {
                 this._init();
             }
