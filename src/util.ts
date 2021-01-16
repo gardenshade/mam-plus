@@ -68,7 +68,7 @@ class Util {
         // Function to return true when the element is loaded
         async function run() {
             const timer: Promise<false> = new Promise((resolve) =>
-                setTimeout(resolve, 1500, false)
+                setTimeout(resolve, 2000, false)
             );
             const checkElem = Check.elemLoad(elem);
             return Promise.race([timer, checkElem]).then((val) => {
@@ -76,7 +76,7 @@ class Util {
                     return true;
                 } else {
                     console.warn(
-                        `startFeature(${settings.title}) unable to initiate! Could not find element: ${elem}`
+                        `startFeature(${settings.title}) Unable to initiate! Could not find element: ${elem}`
                     );
                     return false;
                 }
