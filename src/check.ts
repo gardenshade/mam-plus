@@ -163,6 +163,7 @@ class Check {
                     millionaires: () => 'vault',
                     t: () => 'torrent',
                     u: () => 'user',
+                    upload: () => 'upload',
                     f: () => {
                         if (page[1] === 't') return 'forum thread';
                     },
