@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mam-plus
 // @namespace    https://github.com/GardenShade
-// @version      4.4.0
+// @version      4.3.1
 // @description  Tweaks and features for MAM
 // @author       GardenShade
 // @run-at       document-start
