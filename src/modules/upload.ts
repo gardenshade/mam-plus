@@ -19,7 +19,7 @@ class SearchForDuplicates implements Feature {
     private _tar: string = '#uploadForm input[type="submit"]';
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, []).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['upload']).then((t) => {
             if (t) {
                 this._init();
             }
