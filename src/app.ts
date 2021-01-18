@@ -9,6 +9,7 @@
 /// <reference path="./modules/browse.ts" />
 /// <reference path="./modules/request.ts" />
 /// <reference path="./modules/vault.ts" />
+/// <reference path="./modules/upload.ts" />
 /// <reference path="./modules/user.ts" />
 /// <reference path="features.ts" />
 /// <reference path="settings.ts" />
