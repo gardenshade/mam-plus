@@ -170,6 +170,7 @@ class Check {
                         if (page[1] === 'browse') return 'browse';
                         else if (page[1] === 'requests2') return 'request';
                         else if (page[1] === 'viewRequest') return 'request details';
+                        else if (page[1] === 'upload') return 'upload';
                     },
                 };
 

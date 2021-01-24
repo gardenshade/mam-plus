@@ -9,6 +9,7 @@ type ValidPage =
     | 'request details'
     | 'torrent'
     | 'shoutbox'
+    | 'upload'
     | 'vault'
     | 'user'
     | 'forum thread'
@@ -25,6 +26,7 @@ enum SettingGroup {
     'Shoutbox',
     'Vault',
     'User Pages',
+    'Upload Page',
     'Forum',
     'Other',
 }
