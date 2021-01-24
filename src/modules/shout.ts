@@ -717,7 +717,7 @@ class QuickShout implements Feature {
         //create select button and style it
         const selectButton = document.createElement('button');
         selectButton.style.marginLeft = '1em';
-        selectButton.innerHTML = 'Select';
+        selectButton.innerHTML = '\u2191 Select';
         //create save button and style it
         const saveButton = document.createElement('button');
         saveButton.style.marginLeft = '1em';
@@ -803,7 +803,11 @@ class QuickShout implements Feature {
                     const replacedText = comboBoxInput.value.replace(/ /g, 'ಠ');
                     //fun way to dynamically create statements - this takes whatever is in list field to create a key with that text and the value from the textarea
                     eval(
-                        `jsonList.` + replacedText + `= "` + quickShoutText.value + `";`
+                        `jsonList.` +
+                            replacedText +
+                            `= "` +
+                            encodeURIComponent(quickShoutText.value) +
+                            `";`
                     );
                     //overwrite or create the GM variable with new jsonList
                     GM_setValue('mp_quickShout', JSON.stringify(jsonList));
@@ -823,6 +827,8 @@ class QuickShout implements Feature {
                         //TODO: this may or may not be necessary, but was having issues with the unique symbol still randomly showing up after saves
                         comboBoxOption.value = comboBoxOption.value.replace(/ಠ/g, ' ');
                         //add to the list
+                        // console.log(comboBoxOption);
+
                         comboBoxList.appendChild(comboBoxOption);
                     });
                 }
@@ -872,16 +878,16 @@ class QuickShout implements Feature {
                 }
                 //if the input field has any text in it
                 else {
+                    const inputVal = comboBoxInput.value.replace(/ /g, 'ಠ');
                     //show the text area for input
                     quickShoutText.style.display = '';
                     //expand the footer to accomodate all feature aspects
                     shoutFoot!.style.height = '11em';
                     //if what is in the input field is a saved entry key
-                    if (jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]) {
+                    if (jsonList[inputVal]) {
                         //this can be a sucky line of code because it can wipe out unsaved data, but i cannot think of better way
                         //replace the text area contents with what the value is in the matched pair
-                        quickShoutText.value =
-                            jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')];
+                        quickShoutText.value = jsonList[inputVal];
                         //show the delete button since this is now exact match to saved entry
                         deleteButton.style.display = '';
                         //restyle save button to show its a saved combo
