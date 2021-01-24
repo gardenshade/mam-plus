@@ -29,7 +29,10 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
-        UPDATE_LIST: ['🆕: Added search buttons to upload page. @ Mori'] as string[],
+        UPDATE_LIST: [
+            '🆕: Added search buttons to upload page. @ Mori',
+            '♻️: Updated Quick Reply features to remain visually identical to official shoutbox replies.',
+        ] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';

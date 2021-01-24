@@ -75,6 +75,9 @@ class ProcessShouts {
     public static watchShoutboxReply(tar: string, buttons?: number): void {
         if (MP.DEBUG) console.log('watchShoutboxReply(', tar, buttons, ')');
 
+        const _getUID = (node: Node): string =>
+            this.extractFromShout(node, 'a[href^="/u/"]', 'href');
+
         const _getRawColor = (elem: HTMLSpanElement): string | null => {
             if (elem.style.backgroundColor) {
                 return elem.style.backgroundColor;
@@ -102,12 +105,10 @@ class ProcessShouts {
                 throw new Error(`Element is null!\n${elem}`);
             }
         };
-        const _makeNameTag = (name: string, hex: string | null): string => {
-            if (!hex) {
-                return `@[i]${name}[/i]`;
-            } else {
-                return `@[color=${hex}][i]${name}[/i][/color]`;
-            }
+        const _makeNameTag = (name: string, hex: string | null, uid: string): string => {
+            uid = uid.match(/\d+/g)!.join(''); // Get the UID, but only the digits
+            hex = hex ? `;${hex}` : ''; // If there is a hex value, prepend `;`
+            return `@[ulink=${uid}${hex}]${name}[/ulink]`;
         };
 
         // Get the reply box
@@ -143,6 +144,11 @@ class ProcessShouts {
                             'a > span',
                             'text'
                         );
+                        const userID: string = this.extractFromShout(
+                            node,
+                            'a[href^="/u/"]',
+                            'href'
+                        );
                         //create a span element to be body of button added to page - button uses relative node context at click time to do calculations
                         const replyButton: HTMLSpanElement = document.createElement(
                             'span'
@@ -159,12 +165,13 @@ class ProcessShouts {
                                     if (replyBox.value === '') {
                                         replyBox.value = `${_makeNameTag(
                                             userName,
-                                            nameColor
+                                            nameColor,
+                                            userID
                                         )}: `;
                                     } else {
                                         replyBox.value = `${
                                             replyBox.value
-                                        } ${_makeNameTag(userName, nameColor)} `;
+                                        } ${_makeNameTag(userName, nameColor, userID)} `;
                                     }
                                     replyBox.focus();
                                 });
@@ -181,7 +188,8 @@ class ProcessShouts {
                                     // Add quote to reply box
                                     replyBox.value = `${_makeNameTag(
                                         userName,
-                                        nameColor
+                                        nameColor,
+                                        userID
                                     )}: \u201c[i]${text}[/i]\u201d `;
                                     replyBox.focus();
                                 });
