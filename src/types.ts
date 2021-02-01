@@ -9,9 +9,9 @@ type ValidPage =
     | 'request details'
     | 'torrent'
     | 'shoutbox'
-    | 'upload'
     | 'vault'
     | 'user'
+    | 'upload'
     | 'forum thread'
     | 'settings';
 
