@@ -30,8 +30,7 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added search buttons to upload page. @ Mori',
-            '♻️: Updated Quick Reply features to remain visually identical to official shoutbox replies.',
+            '🐞: QuickShout messages can now contain symbols (like quotes) without breaking.',
         ] as string[],
         BUG_LIST: [] as string[],
     };
