@@ -887,7 +887,9 @@ class QuickShout implements Feature {
                     if (jsonList[inputVal]) {
                         //this can be a sucky line of code because it can wipe out unsaved data, but i cannot think of better way
                         //replace the text area contents with what the value is in the matched pair
-                        quickShoutText.value = jsonList[inputVal];
+                        // quickShoutText.value = jsonList[JSON.parse(inputVal)];
+                        quickShoutText.value = decodeURIComponent(jsonList[inputVal]);
+
                         //show the delete button since this is now exact match to saved entry
                         deleteButton.style.display = '';
                         //restyle save button to show its a saved combo
@@ -910,6 +912,8 @@ class QuickShout implements Feature {
         quickShoutText.addEventListener(
             'input',
             async () => {
+                const inputVal = comboBoxInput.value.replace(/ /g, 'ಠ');
+
                 //if the input field is blank
                 if (!comboBoxInput.value) {
                     //restyle save button for unsaved and unnamed
@@ -920,9 +924,8 @@ class QuickShout implements Feature {
                 }
                 //if input field has text in it
                 else if (
-                    jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')] &&
-                    quickShoutText.value !==
-                        jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]
+                    jsonList[inputVal] &&
+                    quickShoutText.value !== decodeURIComponent(jsonList[inputVal])
                 ) {
                     //restyle save button as yellow for editted
                     saveButton.style.backgroundColor = 'Yellow';
@@ -930,16 +933,15 @@ class QuickShout implements Feature {
                     deleteButton.style.display = '';
                     //if the key is a match and the data is a match then we have a 100% saved entry and can put everything back to saved
                 } else if (
-                    jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')] &&
-                    quickShoutText.value ===
-                        jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]
+                    jsonList[inputVal] &&
+                    quickShoutText.value === decodeURIComponent(jsonList[inputVal])
                 ) {
                     //restyle save button to green for saved
                     saveButton.style.backgroundColor = 'Green';
                     saveButton.style.color = '';
                     deleteButton.style.display = '';
                     //if the key is not found in the saved list, orange for unsaved and unnamed
-                } else if (!jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')]) {
+                } else if (!jsonList[inputVal]) {
                     saveButton.style.backgroundColor = 'Orange';
                     saveButton.style.color = 'Black';
                     deleteButton.style.display = 'none';
