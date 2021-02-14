@@ -32,6 +32,7 @@ namespace MP {
         UPDATE_LIST: [
             '♻️: Fixed search on Upload page when release had multiple files. @ Mori',
             '🐞: QuickShout messages can now contain symbols (like quotes) without breaking.',
+            '🐞: QuickQuoting a message that @\'d another user will now display the user\'s name instead of "@[Link]"',
         ] as string[],
         BUG_LIST: [] as string[],
     };

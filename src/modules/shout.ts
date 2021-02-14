@@ -213,9 +213,20 @@ class ProcessShouts {
         ).length;
         // Get the text of all child nodes
         shout.childNodes.forEach((child) => {
-            // Links aren't clickable anyway so get rid of them
-            if (child.nodeName === 'A') {
-                textArr.push('[Link]');
+            /* If the child is a node with children (ex. not plain text) check to see if
+            the child is a link. If the link does NOT start with `/u/` (indicating a user)
+            then change the link to the string `[Link]`.
+            In all other cases, return the child text content. */
+            if (child.childNodes.length > 0) {
+                const childElem = Util.nodeToElem(child);
+
+                if (!childElem.hasAttribute('href')) {
+                    textArr.push(child.textContent!);
+                } else if (childElem.getAttribute('href')!.indexOf('/u/') < 0) {
+                    textArr.push('[Link]');
+                } else {
+                    textArr.push(child.textContent!);
+                }
             } else {
                 textArr.push(child.textContent!);
             }
