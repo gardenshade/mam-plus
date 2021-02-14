@@ -67,5 +67,8 @@ class InitFeatures {
 
         // Initialize Forum Page functions
         new ForumFLGift();
+
+        // Initialize Upload Page functions
+        new SearchForDuplicates();
     }
 }

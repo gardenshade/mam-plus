@@ -26,9 +26,7 @@ class SearchForDuplicates implements Feature {
         });
     }
     private async _init() {
-        const parentElement: HTMLElement | null = document.querySelector(
-            '#uploadForm tbody'
-        );
+        const parentElement: HTMLElement | null = document.querySelector('#mainBody');
 
         if (parentElement) {
             this._generateSearch({
@@ -87,12 +85,14 @@ class SearchForDuplicates implements Feature {
             style: 'text-decoration: none; cursor: pointer;',
             title,
         });
-        searchElement.innerText = ' 🔍';
+        searchElement.textContent = ' 🔍';
 
         const linkBase = `/tor/browse.php?tor%5BsearchType%5D=all&tor%5BsearchIn%5D=torrents&tor%5Bcat%5D%5B%5D=0&tor%5BbrowseFlagsHideVsShow%5D=0&tor%5BsortType%5D=dateDesc&tor%5BsrchIn%5D%5B${type}%5D=true&tor%5Btext%5D=`;
 
         parentElement
-            .querySelector(`tr:nth-child(${rowPosition}) > td:nth-child(1)`)
+            .querySelector(
+                `#uploadForm > tbody > tr:nth-child(${rowPosition}) > td:nth-child(1)`
+            )
             ?.insertAdjacentElement('beforeend', searchElement);
 
         searchElement.addEventListener('click', (event) => {

@@ -9,6 +9,7 @@
 /// <reference path="./modules/browse.ts" />
 /// <reference path="./modules/request.ts" />
 /// <reference path="./modules/vault.ts" />
+/// <reference path="./modules/upload.ts" />
 /// <reference path="./modules/user.ts" />
 /// <reference path="features.ts" />
 /// <reference path="settings.ts" />
@@ -29,8 +30,9 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added search buttons to upload page. @ Mori',
-            '♻️: Updated Quick Reply features to remain visually identical to official shoutbox replies.',
+            '♻️: Fixed search on Upload page when release had multiple files. @ Mori',
+            '🐞: QuickShout messages can now contain symbols (like quotes) without breaking.',
+            '🐞: QuickQuoting a message that @\'d another user will now display the user\'s name instead of "@[Link]"',
         ] as string[],
         BUG_LIST: [] as string[],
     };
