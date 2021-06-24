@@ -528,7 +528,7 @@ class Util {
             if (cases[type]) {
                 cases[type]();
             }
-            return `http://www.dereferer.org/?https://www.goodreads.com/search?q=${encodeURIComponent(
+            return `https://r.mrd.ninja/https://www.goodreads.com/search?q=${encodeURIComponent(
                 inp.replace('%', '')
             ).replace("'", '%27')}&search_type=books&search%5Bfield%5D=${grType}`;
         },
