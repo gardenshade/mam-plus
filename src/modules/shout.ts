@@ -184,14 +184,23 @@ class ProcessShouts {
                                 .querySelector('button')!
                                 .addEventListener('click', () => {
                                     const text = this.quoteShout(node, 65);
-
-                                    // Add quote to reply box
-                                    replyBox.value = `${_makeNameTag(
-                                        userName,
-                                        nameColor,
-                                        userID
-                                    )}: \u201c[i]${text}[/i]\u201d `;
-                                    replyBox.focus();
+                                    if (text !== '') {
+                                        // Add quote to reply box
+                                        replyBox.value = `${_makeNameTag(
+                                            userName,
+                                            nameColor,
+                                            userID
+                                        )}: \u201c[i]${text}[/i]\u201d `;
+                                        replyBox.focus();
+                                    } else {
+                                        // Just reply
+                                        replyBox.value = `${_makeNameTag(
+                                            userName,
+                                            nameColor,
+                                            userID
+                                        )}: `;
+                                        replyBox.focus();
+                                    }
                                 });
                         }
                         //give span an ID for potential use later

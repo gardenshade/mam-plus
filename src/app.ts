@@ -30,9 +30,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '♻️: Fixed search on Upload page when release had multiple files. @ Mori',
-            '🐞: QuickShout messages can now contain symbols (like quotes) without breaking.',
-            '🐞: QuickQuoting a message that @\'d another user will now display the user\'s name instead of "@[Link]"',
+            `🐞: Changed to MAM's mrd.ninja dereferal service, so external links work again`,
+            `🐞: Quoting a shout that doesn't contain text (ex. a single smiley) doesn't create a broken quote response`,
         ] as string[],
         BUG_LIST: [] as string[],
     };
