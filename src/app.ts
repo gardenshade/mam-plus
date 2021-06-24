@@ -30,7 +30,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🐞: Changed to MAMs mrd.ninja dereferal service, so external links work again',
+            `🐞: Changed to MAM's mrd.ninja dereferal service, so external links work again`,
+            `🐞: Quoting a shout that doesn't contain text (ex. a single smiley) doesn't create a broken quote response`,
         ] as string[],
         BUG_LIST: [] as string[],
     };
