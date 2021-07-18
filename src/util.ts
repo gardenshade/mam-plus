@@ -626,4 +626,22 @@ class Util {
 
         return rows.reduce((obj, item) => ((obj[item.key] = item.value), obj), {});
     };
+
+    /**
+     * #### Convert bytes into a human-readable string
+     * Created by yyyzzz999
+     * @param bytes Bytes to be formatted
+     * @param b ?
+     * @returns String in the format of ex. `123 MB`
+     */
+    public static formatBytes = (bytes: number, b = 2) => {
+        if (bytes === 0) return '0 Bytes';
+        const c = 0 > b ? 0 : b;
+        const index = Math.floor(Math.log(bytes) / Math.log(1024));
+        return (
+            parseFloat((bytes / Math.pow(1024, index)).toFixed(c)) +
+            ' ' +
+            ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][index]
+        );
+    };
 }
