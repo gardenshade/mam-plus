@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mam-plus
 // @namespace    https://github.com/GardenShade
-// @version      4.3.6
+// @version      4.3.7
 // @description  Tweaks and features for MAM
 // @author       GardenShade
 // @run-at       document-start
@@ -9,7 +9,7 @@
 // @include      https://*.myanonamouse.net/*
 // @icon         https://i.imgur.com/dX44pSv.png
 // @require      https://unpkg.com/axios/dist/axios.min.js
-// @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=4.3.6
+// @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=4.3.7
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues
