@@ -272,6 +272,35 @@ class HideSeedbox implements Feature {
             '#menu .sbDonCrypto'
         );
         if (seedboxBtn) seedboxBtn.style.display = 'none';
+        console.log('[M+] Hid the Seedbox button!');
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * # Fixed navigation & search
+ */
+
+class FixedNav implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'fixedNav',
+        scope: SettingGroup.Global,
+        desc: 'Fix the navigation/search to the top of the page.',
+    };
+    private _tar: string = 'body';
+    constructor() {
+        Util.startFeature(this._settings, this._tar, []).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        document.querySelector('body')!.classList.add('mp_fixed_nav');
+        console.log('[M+] Pinned the nav/search to the top!');
     }
     get settings(): CheckboxSetting {
         return this._settings;
