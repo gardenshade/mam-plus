@@ -8,6 +8,7 @@
 // @include      https://www.myanonamouse.net/*
 // @include      https://*.myanonamouse.net/*
 // @icon         https://i.imgur.com/dX44pSv.png
+// @require      https://unpkg.com/axios/dist/axios.min.js
 // @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=<%= pkg.version %>
 // @grant        GM_setValue
 // @grant        GM_getValue

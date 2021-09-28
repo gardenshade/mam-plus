@@ -33,6 +33,23 @@ enum SettingGroup {
 
 type ShoutboxUserType = 'priority' | 'mute';
 
+type StoreSource =
+    | 1
+    | '2.5'
+    | '4'
+    | '5'
+    | '8'
+    | '20'
+    | '100'
+    | 'points'
+    | 'cheese'
+    | 'max'
+    | 'Max Affordable'
+    | 'seedtime'
+    | 'Sell'
+    | 'ratio'
+    | 'Forum';
+
 interface UserGiftHistory {
     amount: number;
     other_name: string;
