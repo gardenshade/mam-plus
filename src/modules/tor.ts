@@ -197,6 +197,7 @@ class RatioProtect implements Feature {
         desc: `Protect your ratio with warnings &amp; ratio calculations`,
     };
     private _tar: string = '#ratio';
+    private _rcRow: string = 'mp_ratioCostRow';
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
@@ -242,6 +243,38 @@ class RatioProtect implements Feature {
                     dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
                 }
 
+                // Add line under Torrent: detail for Cost data "Cost to Restore Ratio"
+                document
+                    .querySelector('.torDetBottom')!
+                    .insertAdjacentHTML(
+                        'beforebegin',
+                        `<div class="torDetRow" id="Mrp_row"><div class="torDetLeft">Cost to Restore Ratio</div><div class="torDetRight ${this._rcRow}"><span id="mp_foobar"></span></div></div>`
+                    );
+
+                // Calculate & Display cost of download w/o FL
+                // Always show calculations when there is a ratio loss
+                const sizeElem: HTMLSpanElement | null = document.querySelector(
+                    '#size span'
+                );
+                if (sizeElem) {
+                    const size = sizeElem.textContent!.split(/\s+/);
+                    const sizeMap = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                    // Convert human readable size to bytes
+                    const byteSized =
+                        Number(size[0]) * Math.pow(1024, sizeMap.indexOf(size[1]));
+                    const recovery = byteSized * Number(rCur.innerText);
+                    const pointAmnt = Math.floor(
+                        (125 * recovery) / 268435456
+                    ).toLocaleString();
+                    // Update the ratio cost row
+                    document.querySelector(
+                        `.${this._rcRow}`
+                    )!.innerHTML = `<b>${Util.formatBytes(
+                        recovery
+                    )}</b>&nbsp;upload (${pointAmnt} BP).&nbsp;<abbr title='Contributing 2,000 BP to each vault cycle gives you almost one FL wedge per day on average.'>[info]</abbr>`;
+                }
+
+                // Style the download button based on Ratio Protect level settings
                 if (dlBtn && dlLabel) {
                     // This is the "trivial ratio loss" threshold
                     // These changes will always happen if the ratio conditions are met

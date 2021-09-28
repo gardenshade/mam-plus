@@ -21,6 +21,7 @@ class InitFeatures {
         new VaultLink();
         new MiniVaultInfo();
         new BonusPointDelta();
+        new FixedNav();
 
         // Initialize Home Page functions
         new HideNews();

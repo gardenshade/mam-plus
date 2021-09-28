@@ -257,3 +257,34 @@ a[id^='torDeBookmark'] {
         opacity: 0.5;
     }
 }
+
+.mp_fixed_nav {
+    #preNav,
+    #mainmenu {
+        position: sticky;
+        height: 31px;
+        right: 0;
+        z-index: 99999;
+    }
+    #preNav {
+        padding-top: 5px;
+    }
+    #mainmenu {
+        top: 33px;
+        padding-bottom: 2px;
+    }
+}
+.mp_fixed_nav.mp_dark {
+    #preNav,
+    #mainmenu,
+    #userStat {
+        background: rgba(0, 0, 0, 0.9);
+    }
+}
+.mp_fixed_nav.mp_light {
+    #preNav,
+    #mainmenu,
+    #userStat {
+        background: rgba(255, 255, 255, 0.9);
+    }
+}

@@ -1,7 +1,10 @@
 /**
- * GLOBAL FEATURES
+ * # GLOBAL FEATURES
  */
 
+/**
+ * ## Hide the home button or the banner
+ */
 class HideHome implements Feature {
     private _settings: DropdownSetting = {
         scope: SettingGroup.Global,
@@ -41,6 +44,9 @@ class HideHome implements Feature {
     }
 }
 
+/**
+ * ## Bypass the vault info page
+ */
 class VaultLink implements Feature {
     private _settings: CheckboxSetting = {
         scope: SettingGroup.Global,
@@ -70,6 +76,9 @@ class VaultLink implements Feature {
     }
 }
 
+/**
+ * ## Shorten the vault & ratio text
+ */
 class MiniVaultInfo implements Feature {
     private _settings: CheckboxSetting = {
         scope: SettingGroup.Global,
@@ -117,6 +126,9 @@ class MiniVaultInfo implements Feature {
     }
 }
 
+/**
+ * ## Display bonus point delta
+ */
 class BonusPointDelta implements Feature {
     private _settings: CheckboxSetting = {
         scope: SettingGroup.Global,
@@ -191,6 +203,9 @@ class BonusPointDelta implements Feature {
     }
 }
 
+/**
+ * ## Blur the header background
+ */
 class BlurredHeader implements Feature {
     private _settings: CheckboxSetting = {
         scope: SettingGroup.Global,
@@ -231,6 +246,9 @@ class BlurredHeader implements Feature {
     }
 }
 
+/**
+ * ## Hide the seedbox link
+ */
 class HideSeedbox implements Feature {
     private _settings: CheckboxSetting = {
         type: 'checkbox',
@@ -254,6 +272,35 @@ class HideSeedbox implements Feature {
             '#menu .sbDonCrypto'
         );
         if (seedboxBtn) seedboxBtn.style.display = 'none';
+        console.log('[M+] Hid the Seedbox button!');
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * # Fixed navigation & search
+ */
+
+class FixedNav implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'fixedNav',
+        scope: SettingGroup.Global,
+        desc: 'Fix the navigation/search to the top of the page.',
+    };
+    private _tar: string = 'body';
+    constructor() {
+        Util.startFeature(this._settings, this._tar, []).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        document.querySelector('body')!.classList.add('mp_fixed_nav');
+        console.log('[M+] Pinned the nav/search to the top!');
     }
     get settings(): CheckboxSetting {
         return this._settings;

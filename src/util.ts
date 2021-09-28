@@ -338,18 +338,20 @@ class Util {
      * Creates an HTTPRequest for GET JSON, returns the full text of HTTP GET
      * @param url - a string of the URL to submit for GET request
      */
-    public static getJSON(url: string): Promise<string> {
+    public static getJSON(url: string, send?: Document | BodyInit): Promise<string> {
         return new Promise((resolve, reject) => {
             const getHTTP = new XMLHttpRequest();
             //URL to GET results with the amount entered by user plus the username found on the menu selected
             getHTTP.open('GET', url, true);
             getHTTP.setRequestHeader('Content-Type', 'application/json');
+            getHTTP.timeout = 20000;
             getHTTP.onreadystatechange = function () {
                 if (getHTTP.readyState === 4 && getHTTP.status === 200) {
                     resolve(getHTTP.responseText);
                 }
             };
-            getHTTP.send();
+            getHTTP.onerror = () => reject(getHTTP.responseText);
+            // getHTTP.send(send);
         });
     }
 
@@ -625,5 +627,23 @@ class Util {
         });
 
         return rows.reduce((obj, item) => ((obj[item.key] = item.value), obj), {});
+    };
+
+    /**
+     * #### Convert bytes into a human-readable string
+     * Created by yyyzzz999
+     * @param bytes Bytes to be formatted
+     * @param b ?
+     * @returns String in the format of ex. `123 MB`
+     */
+    public static formatBytes = (bytes: number, b = 2) => {
+        if (bytes === 0) return '0 Bytes';
+        const c = 0 > b ? 0 : b;
+        const index = Math.floor(Math.log(bytes) / Math.log(1024));
+        return (
+            parseFloat((bytes / Math.pow(1024, index)).toFixed(c)) +
+            ' ' +
+            ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][index]
+        );
     };
 }

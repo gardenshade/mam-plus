@@ -30,8 +30,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            `🐞: Changed to MAM's mrd.ninja dereferal service, so external links work again`,
-            `🐞: Quoting a shout that doesn't contain text (ex. a single smiley) doesn't create a broken quote response`,
+            `🆕: Updated Ratio Protect to v1.8; this version adds a Cost To Restore Ratio info field.`,
+            `🆕: Added option to pin the navigation/search area to the top of the page. Thanks @boomboxnation!`,
         ] as string[],
         BUG_LIST: [] as string[],
     };
