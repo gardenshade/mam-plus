@@ -32,6 +32,8 @@ namespace MP {
         UPDATE_LIST: [
             `🆕: Updated Ratio Protect to v1.8; this version adds a Cost To Restore Ratio info field.`,
             `🆕: Added option to pin the navigation/search area to the top of the page. Thanks @boomboxnation!`,
+            `🐞: Fixed an issue where all features that got data from MAM failed to work.`,
+            `🐞: Fixed an issue where large ratios resulted in NaN errors in Ratio Protect... again.`,
         ] as string[],
         BUG_LIST: [] as string[],
     };
