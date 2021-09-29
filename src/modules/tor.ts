@@ -228,6 +228,7 @@ class RatioProtect implements Feature {
         // Only run the code if the ratio exists
         if (rNew && rCur) {
             const rDiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
+
             if (MP.DEBUG)
                 console.log(
                     `Current ${Util.extractFloat(rCur)[0]} | New ${
@@ -262,7 +263,7 @@ class RatioProtect implements Feature {
                     // Convert human readable size to bytes
                     const byteSized =
                         Number(size[0]) * Math.pow(1024, sizeMap.indexOf(size[1]));
-                    const recovery = byteSized * Number(rCur.innerText);
+                    const recovery = byteSized * Util.extractFloat(rCur)[0];
                     const pointAmnt = Math.floor(
                         (125 * recovery) / 268435456
                     ).toLocaleString();
