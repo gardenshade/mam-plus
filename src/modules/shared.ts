@@ -211,6 +211,81 @@ class Shared {
                 }
             });
 
-        console.log(`[M+] Added the MAM-to-Goodreads buttons!`);
+        console.log(`[M+] Added the MAM-to-Audible buttons!`);
+    };
+
+    // TODO: Switch to StoryGraph API once it becomes available? Or advanced search
+    public storyGraphButtons = async (
+        bookData: HTMLSpanElement | null,
+        authorData: NodeListOf<HTMLAnchorElement> | null,
+        seriesData: NodeListOf<HTMLAnchorElement> | null,
+        target: HTMLDivElement | null
+    ) => {
+        console.log('[M+] Adding the MAM-to-StoryGraph buttons...');
+        let seriesP: Promise<string[]>, authorP: Promise<string[]>;
+        let authors = '';
+
+        Util.addTorDetailsRow(target, 'Search TheStoryGraph', 'mp_sgRow');
+
+        // Extract the Series and Author
+        await Promise.all([
+            (seriesP = Util.getBookSeries(seriesData)),
+            (authorP = Util.getBookAuthors(authorData)),
+        ]);
+
+        await Check.elemLoad('.mp_sgRow .flex');
+
+        const buttonTar: HTMLSpanElement = <HTMLSpanElement>(
+            document.querySelector('.mp_sgRow .flex')
+        );
+        if (buttonTar === null) {
+            throw new Error('Button row cannot be targeted!');
+        }
+
+        // Build Series buttons
+        seriesP.then((ser) => {
+            if (ser.length > 0) {
+                ser.forEach((item) => {
+                    const buttonTitle = ser.length > 1 ? `Series: ${item}` : 'Series';
+                    const url = `https://app.thestorygraph.com/browse?search_term=${item}`;
+                    Util.createLinkButton(buttonTar, url, buttonTitle, 4);
+                });
+            } else {
+                console.warn('No series data detected!');
+            }
+        });
+
+        // Build Author button
+        authorP
+            .then((auth) => {
+                if (auth.length > 0) {
+                    authors = auth.join(' ');
+                    const url = `https://app.thestorygraph.com/browse?search_term=${authors}`;
+                    Util.createLinkButton(buttonTar, url, 'Author', 3);
+                } else {
+                    console.warn('No author data detected!');
+                }
+            })
+            // Build Title buttons
+            .then(async () => {
+                const title = await Util.getBookTitle(bookData, authors);
+                if (title !== '') {
+                    const url = `https://app.thestorygraph.com/browse?search_term=${title}`;
+                    Util.createLinkButton(buttonTar, url, 'Title', 2);
+                    // If a title and author both exist, make a Title + Author button
+                    if (authors !== '') {
+                        const bothURL = `https://app.thestorygraph.com/browse?search_term=${title} ${authors}`;
+                        Util.createLinkButton(buttonTar, bothURL, 'Title + Author', 1);
+                    } else if (MP.DEBUG) {
+                        console.log(
+                            `Failed to generate Title+Author link!\nTitle: ${title}\nAuthors: ${authors}`
+                        );
+                    }
+                } else {
+                    console.warn('No title data detected!');
+                }
+            });
+
+        console.log(`[M+] Added the MAM-to-StoryGraph buttons!`);
     };
 }
