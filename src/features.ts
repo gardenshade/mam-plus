@@ -42,6 +42,7 @@ class InitFeatures {
 
         // Initialize Torrent Page functions
         new GoodreadsButton();
+        new AudibleButton();
         new CurrentlyReading();
         new TorGiftDefault();
         new RatioProtect();

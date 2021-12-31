@@ -29,9 +29,7 @@ namespace MP {
     export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
-        UPDATE_LIST: [
-            `🐞: Fixed an issue where the sticky navbar would appear on top of the fullscreen shoutbox.`,
-        ] as string[],
+        UPDATE_LIST: [`🆕: Added MAM-to-Audible buttons`] as string[],
         BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
