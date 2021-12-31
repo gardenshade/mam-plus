@@ -55,7 +55,7 @@ class GoodreadsButton implements Feature {
             if (t) {
                 // The feature should only run on book categories
                 const cat = document.querySelector('#fInfo [class^=cat]');
-                if (cat && Check.isBookCat(parseInt(cat.className.substr(3)))) {
+                if (cat && Check.isBookCat(parseInt(cat.className.substring(3)))) {
                     this._init();
                 } else {
                     console.log('[M+] Not a book category; skipping Goodreads buttons');
@@ -78,6 +78,116 @@ class GoodreadsButton implements Feature {
         const target: HTMLDivElement | null = document.querySelector(this._tar);
         // Generate buttons
         this._share.goodreadsButtons(bookData, authorData, seriesData, target);
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * Adds various links to Audible
+ */
+class AudibleButton implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'checkbox',
+        title: 'audibleButton',
+        desc: 'Enable the MAM-to-Audible buttons',
+    };
+    private _tar: string = '#submitInfo';
+    private _share = new Shared();
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
+            if (t) {
+                // The feature should only run on book categories
+                const cat = document.querySelector('#fInfo [class^=cat]');
+                if (cat && Check.isBookCat(parseInt(cat.className.substring(3)))) {
+                    this._init();
+                } else {
+                    console.log('[M+] Not a book category; skipping Audible buttons');
+                }
+            }
+        });
+    }
+
+    private async _init() {
+        // Select the data points
+        const authorData: NodeListOf<
+            HTMLAnchorElement
+        > | null = document.querySelectorAll('#torDetMainCon .torAuthors a');
+        const bookData: HTMLSpanElement | null = document.querySelector(
+            '#torDetMainCon .TorrentTitle'
+        );
+        const seriesData: NodeListOf<
+            HTMLAnchorElement
+        > | null = document.querySelectorAll('#Series a');
+
+        let target: HTMLDivElement | null = document.querySelector(this._tar);
+
+        if (document.querySelector('.mp_sgRow')) {
+            target = <HTMLDivElement>document.querySelector('.mp_sgRow');
+        } else if (document.querySelector('.mp_grRow')) {
+            target = <HTMLDivElement>document.querySelector('.mp_grRow');
+        }
+
+        // Generate buttons
+        this._share.audibleButtons(bookData, authorData, seriesData, target);
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * * Adds various links to StoryGraph
+ */
+class StoryGraphButton implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup['Torrent Page'],
+        type: 'checkbox',
+        title: 'storyGraphButton',
+        desc: 'Enable the MAM-to-StoryGraph buttons',
+    };
+    private _tar: string = '#submitInfo';
+    private _share = new Shared();
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
+            if (t) {
+                // The feature should only run on book categories
+                const cat = document.querySelector('#fInfo [class^=cat]');
+                if (cat && Check.isBookCat(parseInt(cat.className.substring(3)))) {
+                    this._init();
+                } else {
+                    console.log('[M+] Not a book category; skipping StroyGraph buttons');
+                }
+            }
+        });
+    }
+
+    private async _init() {
+        // Select the data points
+        const authorData: NodeListOf<
+            HTMLAnchorElement
+        > | null = document.querySelectorAll('#torDetMainCon .torAuthors a');
+        const bookData: HTMLSpanElement | null = document.querySelector(
+            '#torDetMainCon .TorrentTitle'
+        );
+        const seriesData: NodeListOf<
+            HTMLAnchorElement
+        > | null = document.querySelectorAll('#Series a');
+
+        let target: HTMLDivElement | null = document.querySelector(this._tar);
+
+        if (document.querySelector('.mp_grRow')) {
+            target = <HTMLDivElement>document.querySelector('.mp_grRow');
+        }
+
+        // Generate buttons
+        this._share.storyGraphButtons(bookData, authorData, seriesData, target);
     }
 
     get settings(): CheckboxSetting {

@@ -30,7 +30,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            `🐞: Fixed an issue where the sticky navbar would appear on top of the fullscreen shoutbox.`,
+            `🆕: Added MAM-to-Audible buttons`,
+            `🆕: Added MAM-to-StoryGraph buttons`,
         ] as string[],
         BUG_LIST: [] as string[],
     };
