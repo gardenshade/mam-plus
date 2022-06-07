@@ -644,4 +644,8 @@ class Util {
             ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][index]
         );
     };
+
+    public static derefer = (url: string) => {
+        return `https://r.mrd.ninja/${encodeURI(url)}`;
+    };
 }

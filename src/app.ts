@@ -30,8 +30,7 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            `🆕: Added MAM-to-Audible buttons`,
-            `🆕: Added MAM-to-StoryGraph buttons`,
+            `🐞: Fixed missing dereferral on Settings page. (Thanks, @Tsani!)`,
         ] as string[],
         BUG_LIST: [] as string[],
     };

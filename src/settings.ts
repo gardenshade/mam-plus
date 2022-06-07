@@ -32,7 +32,11 @@ class Settings {
     private static _buildTable(page: SettingGlobObject): Promise<string> {
         if (MP.DEBUG) console.log('_buildTable(', page, ')');
         return new Promise((resolve) => {
-            let outp = `<tbody><tr><td class="row1" colspan="2"><br><strong>MAM+ v${MP.VERSION}</strong> - Here you can enable &amp; disable any feature from the <a href="/f/t/41863">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.<br><br>For a detailed look at the available features, <a href="https://github.com/gardenshade/mam-plus/wiki/Feature-Overview">check the Wiki!</a><br><br></td></tr>`;
+            let outp = `<tbody><tr><td class="row1" colspan="2"><br><strong>MAM+ v${
+                MP.VERSION
+            }</strong> - Here you can enable &amp; disable any feature from the <a href="/f/t/41863">MAM+ userscript</a>! However, these settings are <strong>NOT</strong> stored on MAM; they are stored within the Tampermonkey/Greasemonkey extension in your browser, and must be customized on each of your browsers/devices separately.<br><br>For a detailed look at the available features, <a href="${Util.derefer(
+                'https://github.com/gardenshade/mam-plus/wiki/Feature-Overview'
+            )}">check the Wiki!</a><br><br></td></tr>`;
 
             Object.keys(page).forEach((scope) => {
                 const scopeNum: number = Number(scope);
