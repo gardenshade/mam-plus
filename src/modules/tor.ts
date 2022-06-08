@@ -337,7 +337,7 @@ class RatioProtect implements Feature {
         if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
 
         // Only run the code if the ratio exists
-        if (rNew && rCur) {
+        if (rNew && rCur && !seeding) {
             const rDiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
 
             if (MP.DEBUG)
@@ -349,8 +349,7 @@ class RatioProtect implements Feature {
 
             // Only activate if a ratio change is expected
             if (!isNaN(rDiff) && rDiff > 0.009) {
-                if (!seeding && dlLabel) {
-                    // if NOT already seeding or downloading
+                if (dlLabel) {
                     dlLabel.innerHTML = `Ratio loss ${rDiff.toFixed(2)}`;
                     dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
                 }
@@ -370,7 +369,7 @@ class RatioProtect implements Feature {
                 );
                 if (sizeElem) {
                     const size = sizeElem.textContent!.split(/\s+/);
-                    const sizeMap = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                    const sizeMap = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'];
                     // Convert human readable size to bytes
                     const byteSized =
                         Number(size[0]) * Math.pow(1024, sizeMap.indexOf(size[1]));
@@ -613,6 +612,10 @@ class RatioProtectIcons implements Feature {
         )
             ? document.querySelector('#ratio .torDetInnerBottomSpan').textContent
             : null;
+        // Bookclub status
+        const bookclub: HTMLSpanElement | null = document.querySelector(
+            "div[id='bcfl'] span"
+        );
 
         // Find favicon links and load a simple default.
         const siteFavicons = document.querySelectorAll("link[rel~='icon']") as NodeListOf<
@@ -634,16 +637,33 @@ class RatioProtectIcons implements Feature {
                 this._buildIconLinks(siteFavicons, '0cir');
                 document.title = document.title.replace(
                     ' | My Anonamouse',
-                    ' | not set to expire'
+                    ' | Not set to expire'
                 );
             } else if (vipstat.search('This torrent is freeleech!') > -1) {
                 this._buildIconLinks(siteFavicons, 'mouseclock');
-                document.title = document.title.replace(
-                    ' | My Anonamouse',
-                    " | 'till next Site FL"
-                );
+                // Test if bookclub
+                if (bookclub && bookclub.textContent.search('Bookclub Freeleech') > -1) {
+                    document.title = document.title.replace(
+                        ' | My Anonamouse',
+                        ` | Club expires ${bookclub.textContent.substring(25)}`
+                    );
+                } else {
+                    document.title = document.title.replace(
+                        ' | My Anonamouse',
+                        " | 'till next Site FL"
+                    );
+                }
             }
         }
+
+        // Test if seeding/downloading
+        if (seeding) {
+            this._buildIconLinks(siteFavicons, '13egg');
+            // * Similar icons: 13seed8, 13seed7, 13egg, 13, 13cir, 13WhiteCir
+        } else if (vipstat.search('This torrent is personal freeleech') > -1) {
+            this._buildIconLinks(siteFavicons, '5');
+        }
+
         console.log('[M+] Custom Ratio Protect favicons enabled!');
     }
 
