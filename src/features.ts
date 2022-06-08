@@ -47,6 +47,7 @@ class InitFeatures {
         new CurrentlyReading();
         new TorGiftDefault();
         new RatioProtect();
+        new RatioProtectIcons();
         new RatioProtectL1();
         new RatioProtectL2();
         new RatioProtectL3();

@@ -318,6 +318,7 @@ class RatioProtect implements Feature {
     }
     private async _init() {
         console.log('[M+] Enabling ratio protection...');
+        // TODO: Move this block to shared
         // The download text area
         const dlBtn: HTMLAnchorElement | null = document.querySelector('#tddl');
         // The currently unused label area above the download text
@@ -392,6 +393,7 @@ class RatioProtect implements Feature {
                     if (rDiff > r1) {
                         dlBtn.style.backgroundColor = 'SpringGreen';
                         dlBtn.style.color = 'black';
+                        dlBtn.innerHTML = 'Download?';
                     }
 
                     // This is the "I never want to dl w/o FL" threshold
@@ -407,11 +409,12 @@ class RatioProtect implements Feature {
                         //// dlBtn.style.pointerEvents = 'none';
                         dlBtn.style.cursor = 'no-drop';
                         // maybe hide the button, and add the Ratio Loss warning in its place?
-                        dlBtn.innerHTML = 'FL Recommended';
+                        dlBtn.innerHTML = 'FL Needed';
                         dlLabel.style.fontWeight = 'bold';
                         // This is the "I need to think about using a FL" threshold
                     } else if (rDiff > r2) {
                         dlBtn.style.backgroundColor = 'Orange';
+                        dlBtn.innerHTML = 'Suggest FL';
                     }
                 }
             }
@@ -422,18 +425,22 @@ class RatioProtect implements Feature {
         let l1 = parseFloat(GM_getValue('ratioProtectL1_val'));
         let l2 = parseFloat(GM_getValue('ratioProtectL2_val'));
         let l3 = parseFloat(GM_getValue('ratioProtectL3_val'));
+        const l1_def = 0.5;
+        const l2_def = 1;
+        const l3_def = 2;
 
-        if (isNaN(l3)) l3 = 1;
-        if (isNaN(l2)) l2 = 2 / 3;
-        if (isNaN(l1)) l1 = 1 / 3;
+        // Default values if empty
+        if (isNaN(l3)) l3 = l3_def;
+        if (isNaN(l2)) l2 = l2_def;
+        if (isNaN(l1)) l1 = l1_def;
 
         // If someone put things in a dumb order, ignore smaller numbers
         if (l2 > l3) l2 = l3;
         if (l1 > l2) l1 = l2;
 
         // If custom numbers are smaller than default values, ignore the lower warning
-        if (isNaN(l2)) l2 = l3 < 2 / 3 ? l3 : 2 / 3;
-        if (isNaN(l1)) l1 = l2 < 1 / 3 ? l2 : 1 / 3;
+        if (isNaN(l2)) l2 = l3 < l2_def ? l3 : l2_def;
+        if (isNaN(l1)) l1 = l2 < l1_def ? l2 : l1_def;
 
         return [l1, l2, l3];
     }
@@ -452,8 +459,8 @@ class RatioProtectL1 implements Feature {
         type: 'textbox',
         title: 'ratioProtectL1',
         tag: 'Ratio Warn L1',
-        placeholder: 'default: 0.3',
-        desc: `Set the smallest threshhold to warn of ratio changes. (<em>This is a slight color change</em>).`,
+        placeholder: 'default: 0.5',
+        desc: `Set the smallest threshhold to indicate ratio changes. (<em>This is a slight color change</em>).`,
     };
     private _tar: string = '#download';
 
@@ -466,7 +473,7 @@ class RatioProtectL1 implements Feature {
     }
 
     private _init() {
-        console.log('[M+] Set custom L1 Ratio Protection!');
+        console.log('[M+] Enabled custom Ratio Protection L1!');
     }
 
     get settings(): TextboxSetting {
@@ -483,7 +490,7 @@ class RatioProtectL2 implements Feature {
         type: 'textbox',
         title: 'ratioProtectL2',
         tag: 'Ratio Warn L2',
-        placeholder: 'default: 0.6',
+        placeholder: 'default: 1',
         desc: `Set the median threshhold to warn of ratio changes. (<em>This is a noticeable color change</em>).`,
     };
     private _tar: string = '#download';
@@ -497,7 +504,7 @@ class RatioProtectL2 implements Feature {
     }
 
     private _init() {
-        console.log('[M+] Set custom L2 Ratio Protection!');
+        console.log('[M+] Enabled custom Ratio Protection L2!');
     }
 
     get settings(): TextboxSetting {
@@ -514,8 +521,8 @@ class RatioProtectL3 implements Feature {
         type: 'textbox',
         title: 'ratioProtectL3',
         tag: 'Ratio Warn L3',
-        placeholder: 'default: 1',
-        desc: `Set the highest threshhold to warn of ratio changes. (<em>This disables download without FL use</em>).`,
+        placeholder: 'default: 2',
+        desc: `Set the highest threshhold to prevent ratio changes. (<em>This disables download without FL use</em>).`,
     };
     private _tar: string = '#download';
 
@@ -528,7 +535,7 @@ class RatioProtectL3 implements Feature {
     }
 
     private _init() {
-        console.log('[M+] Set custom L2 Ratio Protection!');
+        console.log('[M+] Enabled custom Ratio Protection L3!');
     }
 
     get settings(): TextboxSetting {
@@ -543,7 +550,7 @@ class RatioProtectMin implements Feature {
         scope: SettingGroup['Torrent Page'],
         tag: 'Minimum Ratio',
         placeholder: 'ex. 100',
-        desc: 'Trigger the maximum warning if your ratio would drop below this number.',
+        desc: 'Trigger Ratio Warn L3 if your ratio would drop below this number.',
     };
     // An element that must exist in order for the feature to run
     private _tar: string = '#download';
@@ -557,9 +564,102 @@ class RatioProtectMin implements Feature {
         });
     }
     private async _init() {
-        console.log('[M+] Added custom minimum ratio!');
+        console.log('[M+] Enabled custom Ratio Protection minimum!');
     }
     get settings(): TextboxSetting {
         return this._settings;
     }
 }
+
+class RatioProtectIcons implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'ratioProtectIcons',
+        scope: SettingGroup['Torrent Page'],
+        desc: 'Enable custom browser favicons based on Ratio Protect conditions?',
+    };
+    // An element that must exist in order for the feature to run
+    private _tar: string = '#download';
+    private _userID: number = 164109;
+    // The code that runs when the feature is created on `features.ts`.
+    constructor() {
+        // Add 1+ valid page type. Exclude for global
+        Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        console.log(
+            `[M+] Enabling custom Ratio Protect favicons from user ${this._userID}...`
+        );
+
+        // The download text area
+        const dlBtn: HTMLAnchorElement | null = document.querySelector('#tddl');
+        // The currently unused label area above the download text
+        const dlLabel: HTMLDivElement | null = document.querySelector(
+            '#download .torDetInnerTop'
+        );
+        // Would become ratio
+        const rNew: HTMLDivElement | null = document.querySelector(this._tar);
+        // Current ratio
+        const rCur: HTMLSpanElement | null = document.querySelector('#tmR');
+        // Seeding or downloading
+        const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
+        // VIP status
+        const vipstat: string | null = document.querySelector(
+            '#ratio .torDetInnerBottomSpan'
+        )
+            ? document.querySelector('#ratio .torDetInnerBottomSpan').textContent
+            : null;
+
+        // Find favicon links and load a simple default.
+        const siteFavicons = document.querySelectorAll("link[rel~='icon']") as NodeListOf<
+            HTMLLinkElement
+        >;
+        if (siteFavicons) this._buildIconLinks(siteFavicons, 'tm_32x32');
+
+        // Test if VIP
+        if (vipstat) {
+            if (MP.DEBUG) console.log(`VIP = ${vipstat}`);
+
+            if (vipstat.search('VIP expires') > -1) {
+                this._buildIconLinks(siteFavicons, 'mouseclock');
+                document.title = document.title.replace(
+                    ' | My Anonamouse',
+                    ` | Expires ${vipstat.substring(26)}`
+                );
+            } else if (vipstat.search('VIP not set to expire') > -1) {
+                this._buildIconLinks(siteFavicons, '0cir');
+                document.title = document.title.replace(
+                    ' | My Anonamouse',
+                    ' | not set to expire'
+                );
+            } else if (vipstat.search('This torrent is freeleech!') > -1) {
+                this._buildIconLinks(siteFavicons, 'mouseclock');
+                document.title = document.title.replace(
+                    ' | My Anonamouse',
+                    " | 'till next Site FL"
+                );
+            }
+        }
+        console.log('[M+] Custom Ratio Protect favicons enabled!');
+    }
+
+    private async _buildIconLinks(elems: NodeListOf<HTMLLinkElement>, filename: string) {
+        elems.forEach((elem) => {
+            elem.href = `https://cdn.myanonamouse.net/imagebucket/${this._userID}/${filename}.png`;
+        });
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+
+    set userID(newID: number) {
+        this._userID = newID;
+    }
+}
+
+// TODO: Add feature to set RatioProtectIcon's `_userID` value. Only necessary once other icon sets exist.

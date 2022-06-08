@@ -641,7 +641,7 @@ class Util {
         return (
             parseFloat((bytes / Math.pow(1024, index)).toFixed(c)) +
             ' ' +
-            ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][index]
+            ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][index]
         );
     };
 
