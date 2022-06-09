@@ -218,6 +218,8 @@ class Util {
         label: string,
         rowClass: string
     ): HTMLDivElement {
+        if (MP.DEBUG) console.log(tar);
+
         if (tar === null || tar.parentElement === null) {
             throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`);
         } else {

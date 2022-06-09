@@ -359,7 +359,7 @@ class RatioProtect implements Feature {
                     .querySelector('.torDetBottom')!
                     .insertAdjacentHTML(
                         'beforebegin',
-                        `<div class="torDetRow" id="Mrp_row"><div class="torDetLeft">Cost to Restore Ratio</div><div class="torDetRight ${this._rcRow}"><span id="mp_foobar"></span></div></div>`
+                        `<div class="torDetRow" id="mp_row"><div class="torDetLeft">Cost to Restore Ratio</div><div class="torDetRight ${this._rcRow}" style="flex-direction:column;align-items:flex-start;"><span id="mp_foobar"></span></div></div>`
                     );
 
                 // Calculate & Display cost of download w/o FL
@@ -377,12 +377,22 @@ class RatioProtect implements Feature {
                     const pointAmnt = Math.floor(
                         (125 * recovery) / 268435456
                     ).toLocaleString();
+                    const dayAmount = Math.floor((5 * recovery) / 2147483648);
+                    const wedgeStoreCost = Util.formatBytes(
+                        (268435456 * 50000) / (Util.extractFloat(rCur)[0] * 125)
+                    );
+                    const wedgeVaultCost = Util.formatBytes(
+                        (268435456 * 200) / (Util.extractFloat(rCur)[0] * 125)
+                    );
+
                     // Update the ratio cost row
                     document.querySelector(
                         `.${this._rcRow}`
-                    )!.innerHTML = `<b>${Util.formatBytes(
+                    )!.innerHTML = `<span><b>${Util.formatBytes(
                         recovery
-                    )}</b>&nbsp;upload (${pointAmnt} BP).&nbsp;<abbr title='Contributing 2,000 BP to each vault cycle gives you almost one FL wedge per day on average.'>[info]</abbr>`;
+                    )}</b>&nbsp;upload (${pointAmnt} BP; or one FL wedge per day for ${dayAmount} days).&nbsp;<abbr title='Contributing 2,000 BP to each vault cycle gives you almost one FL wedge per day on average.' style='text-decoration:none;cursor:help;'>&#128712;</abbr></span>
+                    <span>Wedge store price: <i>${wedgeStoreCost}</i>&nbsp;<abbr title='If you buy wedges from the store, this is how large a torrent must be to break even on the cost (50,000 BP) of a single wedge.' style='text-decoration:none;cursor:help;'>&#128712;</abbr></span>
+                    <span>Wedge vault price: <i>${wedgeVaultCost}</i>&nbsp;<abbr title='If you contribute to the vault, this is how large a torrent must be to break even on the cost (200 BP) of 10 wedges for the maximum contribution of 2,000 BP.' style='text-decoration:none;cursor:help;'>&#128712;</abbr></span>`;
                 }
 
                 // Style the download button based on Ratio Protect level settings
@@ -397,11 +407,13 @@ class RatioProtect implements Feature {
 
                     // This is the "I never want to dl w/o FL" threshold
                     // This also uses the Minimum Ratio, if enabled
+                    // This also prevents going below 2 ratio (PU requirement)
                     // TODO: Replace disable button with buy FL button
 
                     if (
                         rDiff > r3 ||
-                        Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val')
+                        Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val') ||
+                        Util.extractFloat(rNew)[0] < 2
                     ) {
                         dlBtn.style.backgroundColor = 'Red';
                         ////Disable link to prevent download
@@ -578,7 +590,7 @@ class RatioProtectIcons implements Feature {
         desc: 'Enable custom browser favicons based on Ratio Protect conditions?',
     };
     // An element that must exist in order for the feature to run
-    private _tar: string = '#download';
+    private _tar: string = '#ratio';
     private _userID: number = 164109;
     // The code that runs when the feature is created on `features.ts`.
     constructor() {
@@ -594,16 +606,12 @@ class RatioProtectIcons implements Feature {
             `[M+] Enabling custom Ratio Protect favicons from user ${this._userID}...`
         );
 
-        // The download text area
-        const dlBtn: HTMLAnchorElement | null = document.querySelector('#tddl');
-        // The currently unused label area above the download text
-        const dlLabel: HTMLDivElement | null = document.querySelector(
-            '#download .torDetInnerTop'
-        );
         // Would become ratio
         const rNew: HTMLDivElement | null = document.querySelector(this._tar);
         // Current ratio
         const rCur: HTMLSpanElement | null = document.querySelector('#tmR');
+        // Difference between new and old ratio
+        const rDiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
         // Seeding or downloading
         const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
         // VIP status
@@ -662,6 +670,20 @@ class RatioProtectIcons implements Feature {
             // * Similar icons: 13seed8, 13seed7, 13egg, 13, 13cir, 13WhiteCir
         } else if (vipstat.search('This torrent is personal freeleech') > -1) {
             this._buildIconLinks(siteFavicons, '5');
+        }
+
+        console.log(Util.extractFloat(rNew)[0]);
+
+        // Change icon based on Ratio Protect states
+        // FIX: Not working
+        if (
+            rDiff > parseFloat(GM_getValue('ratioProtectL3_val')) ||
+            Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val') ||
+            Util.extractFloat(rNew)[0] < 2
+        ) {
+            this._buildIconLinks(siteFavicons, '12');
+        } else {
+            console.log('NOT TRIGGERED');
         }
 
         console.log('[M+] Custom Ratio Protect favicons enabled!');
