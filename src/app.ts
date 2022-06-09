@@ -30,6 +30,8 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
+            `♻️: Increased timeout delay for M+ features.`,
+            `♻️: Ratio Protect has reached 2.0 feature parity with @yyyzzz999's script.`,
             `🐞: Fixed missing dereferral on Settings page. (Thanks, @Tsani!)`,
         ] as string[],
         BUG_LIST: [] as string[],

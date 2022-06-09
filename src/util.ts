@@ -218,6 +218,8 @@ class Util {
         label: string,
         rowClass: string
     ): HTMLDivElement {
+        if (MP.DEBUG) console.log(tar);
+
         if (tar === null || tar.parentElement === null) {
             throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`);
         } else {
@@ -641,7 +643,7 @@ class Util {
         return (
             parseFloat((bytes / Math.pow(1024, index)).toFixed(c)) +
             ' ' +
-            ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][index]
+            ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][index]
         );
     };
 
