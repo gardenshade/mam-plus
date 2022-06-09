@@ -308,6 +308,7 @@ class RatioProtect implements Feature {
     };
     private _tar: string = '#ratio';
     private _rcRow: string = 'mp_ratioCostRow';
+    private _share = new Shared();
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['torrent']).then((t) => {
@@ -333,7 +334,7 @@ class RatioProtect implements Feature {
         const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
 
         // Get the custom ratio amounts (will return default values otherwise)
-        const [r1, r2, r3] = this._checkCustomSettings();
+        const [r1, r2, r3] = await this._share.getRatioProtectLevels();
         if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
 
         // Only run the code if the ratio exists
@@ -430,30 +431,6 @@ class RatioProtect implements Feature {
                 }
             }
         }
-    }
-
-    private _checkCustomSettings() {
-        let l1 = parseFloat(GM_getValue('ratioProtectL1_val'));
-        let l2 = parseFloat(GM_getValue('ratioProtectL2_val'));
-        let l3 = parseFloat(GM_getValue('ratioProtectL3_val'));
-        const l1_def = 0.5;
-        const l2_def = 1;
-        const l3_def = 2;
-
-        // Default values if empty
-        if (isNaN(l3)) l3 = l3_def;
-        if (isNaN(l2)) l2 = l2_def;
-        if (isNaN(l1)) l1 = l1_def;
-
-        // If someone put things in a dumb order, ignore smaller numbers
-        if (l2 > l3) l2 = l3;
-        if (l1 > l2) l1 = l2;
-
-        // If custom numbers are smaller than default values, ignore the lower warning
-        if (isNaN(l2)) l2 = l3 < l2_def ? l3 : l2_def;
-        if (isNaN(l1)) l1 = l2 < l1_def ? l2 : l1_def;
-
-        return [l1, l2, l3];
     }
 
     get settings(): CheckboxSetting {
@@ -592,6 +569,7 @@ class RatioProtectIcons implements Feature {
     // An element that must exist in order for the feature to run
     private _tar: string = '#ratio';
     private _userID: number = 164109;
+    private _share = new Shared();
     // The code that runs when the feature is created on `features.ts`.
     constructor() {
         // Add 1+ valid page type. Exclude for global
@@ -606,6 +584,8 @@ class RatioProtectIcons implements Feature {
             `[M+] Enabling custom Ratio Protect favicons from user ${this._userID}...`
         );
 
+        // Get the custom ratio amounts (will return default values otherwise)
+        const [r1, r2, r3] = await this._share.getRatioProtectLevels();
         // Would become ratio
         const rNew: HTMLDivElement | null = document.querySelector(this._tar);
         // Current ratio
@@ -672,18 +652,30 @@ class RatioProtectIcons implements Feature {
             this._buildIconLinks(siteFavicons, '5');
         }
 
-        console.log(Util.extractFloat(rNew)[0]);
+        // Test if there will be ratio loss
+        if (rNew && rCur && !seeding) {
+            // Change icon based on Ratio Protect states
+            if (
+                rDiff > r3 ||
+                Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val') ||
+                Util.extractFloat(rNew)[0] < 2
+            ) {
+                this._buildIconLinks(siteFavicons, '12');
+            } else if (rDiff > r2) {
+                this._buildIconLinks(siteFavicons, '3Qmouse');
+                // Also try Orange, OrangeRed, Gold, or 14
+            } else if (rDiff > r1) {
+                this._buildIconLinks(siteFavicons, 'SpringGreen');
+            }
 
-        // Change icon based on Ratio Protect states
-        // FIX: Not working
-        if (
-            rDiff > parseFloat(GM_getValue('ratioProtectL3_val')) ||
-            Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val') ||
-            Util.extractFloat(rNew)[0] < 2
-        ) {
-            this._buildIconLinks(siteFavicons, '12');
-        } else {
-            console.log('NOT TRIGGERED');
+            // Check if future VIP
+            if (vipstat.search('On list for next FL pick') > -1) {
+                this._buildIconLinks(siteFavicons, 'MirrorGreenClock'); // Also try greenclock
+                document.title = document.title.replace(
+                    ' | My Anonamouse',
+                    ' | Next FL pick'
+                );
+            }
         }
 
         console.log('[M+] Custom Ratio Protect favicons enabled!');

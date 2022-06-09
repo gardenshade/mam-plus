@@ -16,7 +16,7 @@ class Check {
             console.log(`%c Looking for ${selector}`, 'background: #222; color: #555');
         }
         let _counter = 0;
-        const _counterLimit = 100;
+        const _counterLimit = 200;
         const logic = async (selector: string): Promise<HTMLElement | false> => {
             // Select the actual element
             const elem: HTMLElement | null = document.querySelector(selector);
