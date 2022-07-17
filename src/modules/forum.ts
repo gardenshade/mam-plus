@@ -22,32 +22,48 @@ class ForumFLGift implements Feature {
     }
     private async _init() {
         console.log('[M+] Enabling Forum Gift Button...');
-        //mainBody is best element with an ID I could find that is a parent to all forum posts
-        const mainBody = <HTMLDivElement>document.querySelector('#mainBody');
-        //make array of forum posts - there is only one cursor classed object per forum post, so this was best to key off of. wish there were more IDs and such used in forums
-        const forumPosts: HTMLAnchorElement[] = Array.prototype.slice.call(
-            mainBody.getElementsByClassName('coltable')
-        );
+
+        await Check.elemLoad('#mainBody .coltable .avatar');
+
+        const forumPosts = document.querySelectorAll('#mainBody .coltable') as NodeListOf<
+            HTMLTableElement
+        >;
+
+        console.log(forumPosts);
+
         //for each post on the page
-        forumPosts.forEach((forumPost) => {
+        forumPosts.forEach(async (post) => {
+            console.log('post', post);
+
+            console.log(post.querySelector('.avatar'));
+
+            await Check.elemLoad(<HTMLElement>post.querySelector('img'));
+
             //work our way down the structure of the HTML to get to our post
-            let bottomRow = forumPost.childNodes[1];
-            bottomRow = bottomRow.childNodes[4];
-            bottomRow = bottomRow.childNodes[3];
+            const bottomRow = post.querySelector('tr:last-of-type a');
+            console.log('bottom', bottomRow);
+
             //get the ID of the forum from the custom MAM attribute
-            let postID = (<HTMLElement>forumPost.previousSibling!).getAttribute('name');
+            let postID = (<HTMLElement>post.previousSibling!).getAttribute('name');
             //mam decided to have a different structure for last forum. wish they just had IDs or something instead of all this jumping around
             if (postID === 'last') {
                 postID = (<HTMLElement>(
-                    forumPost.previousSibling!.previousSibling!
+                    post.previousSibling!.previousSibling!
                 )).getAttribute('name');
             }
+
+            console.log('ID', postID);
+
             //create a new element for our feature
             const giftElement = document.createElement('a');
             //set same class as other objects in area for same pointer and formatting options
-            giftElement.setAttribute('class', 'cursor');
+            Util.setAttr(giftElement, {
+                class: 'cursor',
+                id: `mp_${postID}_text`,
+            });
+            // giftElement.setAttribute('class', 'cursor');
             //give our element an ID for future selection as needed
-            giftElement.setAttribute('id', 'mp_' + postID + '_text');
+            // giftElement.setAttribute('id', 'mp_' + postID + '_text');
             //create new img element to lead our new feature visuals
             const giftIconGif = document.createElement('img');
             //use site freeleech gif icon for our feature
