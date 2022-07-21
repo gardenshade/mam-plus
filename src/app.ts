@@ -34,7 +34,9 @@ namespace MP {
             `♻️: Ratio Protect has reached 2.0 feature parity with @yyyzzz999's script.`,
             `🐞: Fixed missing dereferral on Settings page. (Thanks, @Tsani!)`,
         ] as string[],
-        BUG_LIST: [] as string[],
+        BUG_LIST: [
+            'Some features still not working in Vivaldi. Fix in progress, but difficult.',
+        ] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
     export const VERSION: string = Check.newVer;

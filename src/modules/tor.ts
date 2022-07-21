@@ -332,13 +332,15 @@ class RatioProtect implements Feature {
         const rCur: HTMLSpanElement | null = document.querySelector('#tmR');
         // Seeding or downloading
         const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
+        // User has a ratio
+        const userHasRatio = rCur.textContent.indexOf('Inf') < 0 ? true : false;
 
         // Get the custom ratio amounts (will return default values otherwise)
         const [r1, r2, r3] = await this._share.getRatioProtectLevels();
         if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
 
         // Only run the code if the ratio exists
-        if (rNew && rCur && !seeding) {
+        if (rNew && rCur && !seeding && userHasRatio) {
             const rDiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
 
             if (MP.DEBUG)
@@ -355,13 +357,19 @@ class RatioProtect implements Feature {
                     dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
                 }
 
-                // Add line under Torrent: detail for Cost data "Cost to Restore Ratio"
-                document
-                    .querySelector('.torDetBottom')!
-                    .insertAdjacentHTML(
+                const descBlock = await Check.elemLoad('.torDetBottom');
+
+                if (descBlock) {
+                    // Add line under Torrent: detail for Cost data "Cost to Restore Ratio"
+                    descBlock.insertAdjacentHTML(
                         'beforebegin',
                         `<div class="torDetRow" id="mp_row"><div class="torDetLeft">Cost to Restore Ratio</div><div class="torDetRight ${this._rcRow}" style="flex-direction:column;align-items:flex-start;"><span id="mp_foobar"></span></div></div>`
                     );
+                } else {
+                    throw new Error(`'.torDetRow is ${descBlock}`);
+                }
+
+                console.log('💥', document.querySelector('.torDetBottom'));
 
                 // Calculate & Display cost of download w/o FL
                 // Always show calculations when there is a ratio loss
@@ -606,7 +614,7 @@ class RatioProtectIcons implements Feature {
         );
 
         // Find favicon links and load a simple default.
-        const siteFavicons = document.querySelectorAll("link[rel~='icon']") as NodeListOf<
+        const siteFavicons = document.querySelectorAll("link[rel$='icon']") as NodeListOf<
             HTMLLinkElement
         >;
         if (siteFavicons) this._buildIconLinks(siteFavicons, 'tm_32x32');
