@@ -326,19 +326,24 @@ class RatioProtect implements Feature {
         const dlLabel: HTMLDivElement | null = document.querySelector(
             '#download .torDetInnerTop'
         );
+        // Insertion target for messages
+        const descBlock = await Check.elemLoad('.torDetBottom');
         // Would become ratio
         const rNew: HTMLDivElement | null = document.querySelector(this._tar);
         // Current ratio
         const rCur: HTMLSpanElement | null = document.querySelector('#tmR');
         // Seeding or downloading
         const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
+        // User has a ratio
+        let userHasRatio = rCur.textContent.indexOf('Inf') < 0 ? true : false;
+        userHasRatio = false;
 
         // Get the custom ratio amounts (will return default values otherwise)
         const [r1, r2, r3] = await this._share.getRatioProtectLevels();
         if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
 
         // Only run the code if the ratio exists
-        if (rNew && rCur && !seeding) {
+        if (rNew && rCur && !seeding && userHasRatio) {
             const rDiff = Util.extractFloat(rCur)[0] - Util.extractFloat(rNew)[0];
 
             if (MP.DEBUG)
@@ -355,13 +360,15 @@ class RatioProtect implements Feature {
                     dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
                 }
 
-                // Add line under Torrent: detail for Cost data "Cost to Restore Ratio"
-                document
-                    .querySelector('.torDetBottom')!
-                    .insertAdjacentHTML(
+                if (descBlock) {
+                    // Add line under Torrent: detail for Cost data "Cost to Restore Ratio"
+                    descBlock.insertAdjacentHTML(
                         'beforebegin',
                         `<div class="torDetRow" id="mp_row"><div class="torDetLeft">Cost to Restore Ratio</div><div class="torDetRight ${this._rcRow}" style="flex-direction:column;align-items:flex-start;"><span id="mp_foobar"></span></div></div>`
                     );
+                } else {
+                    throw new Error(`'.torDetRow is ${descBlock}`);
+                }
 
                 // Calculate & Display cost of download w/o FL
                 // Always show calculations when there is a ratio loss
@@ -430,6 +437,12 @@ class RatioProtect implements Feature {
                     }
                 }
             }
+            // If the user does not have a ratio, display a short message
+        } else if (!userHasRatio) {
+            // FIX: Throwing null error for some reason
+            document.querySelector(
+                `.${this._rcRow}`
+            )!.innerHTML = `<span>Ratio points and cost to restore ratio will appear here after your ratio is a real number.</span>`;
         }
     }
 
@@ -606,7 +619,7 @@ class RatioProtectIcons implements Feature {
         );
 
         // Find favicon links and load a simple default.
-        const siteFavicons = document.querySelectorAll("link[rel~='icon']") as NodeListOf<
+        const siteFavicons = document.querySelectorAll("link[rel$='icon']") as NodeListOf<
             HTMLLinkElement
         >;
         if (siteFavicons) this._buildIconLinks(siteFavicons, 'tm_32x32');
@@ -639,6 +652,8 @@ class RatioProtectIcons implements Feature {
                     document.title = document.title.replace(
                         ' | My Anonamouse',
                         " | 'till next Site FL"
+                        // TODO: Calculate when FL ends
+                        // ` | 'till ${this._nextFLDate()}`
                     );
                 }
             }
@@ -680,6 +695,26 @@ class RatioProtectIcons implements Feature {
 
         console.log('[M+] Custom Ratio Protect favicons enabled!');
     }
+
+    // TODO: Function for calculating when FL ends
+    // ? How are we able to determine when the current FL period started?
+    /* private async _nextFLDate() {
+        const d = new Date('Jun 14, 2022 00:00:00 UTC'); // seed date over two weeks ago
+        const now = new Date(); //Place test dates here like Date("Jul 14, 2022 00:00:00 UTC")
+        let mssince = now.getTime() - d.getTime(); //time since FL start seed date
+        let dayssince = mssince / 86400000;
+        let q = Math.floor(dayssince / 14); // FL periods since seed date
+
+        const addDays = (date, days) => {
+            const current = new Date(date);
+            return current.setDate(current.getDate() + days);
+        };
+
+        return d
+            .addDays(q * 14 + 14)
+            .toISOString()
+            .substr(0, 10);
+    } */
 
     private async _buildIconLinks(elems: NodeListOf<HTMLLinkElement>, filename: string) {
         elems.forEach((elem) => {
