@@ -17,6 +17,7 @@ class InitFeatures {
         // Initialize Global functions
         new HideHome();
         new HideSeedbox();
+        new HideDonationBox();
         new BlurredHeader();
         new VaultLink();
         new MiniVaultInfo();

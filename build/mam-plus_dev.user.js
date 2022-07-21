@@ -1269,7 +1269,7 @@ class HideSeedbox {
             desc: 'Remove the "Get A Seedbox" menu item',
         };
         // An element that must exist in order for the feature to run
-        this._tar = '#menu';
+        this._tar = '#menu .sbDonCrypto';
         // Add 1+ valid page type. Exclude for global
         Util.startFeature(this._settings, this._tar, []).then((t) => {
             if (t) {
@@ -1279,10 +1279,45 @@ class HideSeedbox {
     }
     _init() {
         return __awaiter(this, void 0, void 0, function* () {
-            const seedboxBtn = document.querySelector('#menu .sbDonCrypto');
-            if (seedboxBtn)
+            const seedboxBtn = document.querySelector(this._tar);
+            if (seedboxBtn) {
                 seedboxBtn.style.display = 'none';
-            console.log('[M+] Hid the Seedbox button!');
+                console.log('[M+] Hid the Seedbox button!');
+            }
+        });
+    }
+    get settings() {
+        return this._settings;
+    }
+}
+/**
+ * ## Hide the donation link
+ */
+class HideDonationBox {
+    // The code that runs when the feature is created on `features.ts`.
+    constructor() {
+        this._settings = {
+            type: 'checkbox',
+            title: 'hideDonationBox',
+            scope: SettingGroup.Global,
+            desc: 'Remove the Donations menu item',
+        };
+        // An element that must exist in order for the feature to run
+        this._tar = '#menu .mmDonBox';
+        // Add 1+ valid page type. Exclude for global
+        Util.startFeature(this._settings, this._tar, []).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    _init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const donationBoxBtn = document.querySelector(this._tar);
+            if (donationBoxBtn) {
+                donationBoxBtn.style.display = 'none';
+                console.log('[M+] Hid the Donation Box button!');
+            }
         });
     }
     get settings() {
@@ -4585,6 +4620,7 @@ class InitFeatures {
         // Initialize Global functions
         new HideHome();
         new HideSeedbox();
+        new HideDonationBox();
         new BlurredHeader();
         new VaultLink();
         new MiniVaultInfo();
