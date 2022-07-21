@@ -361,6 +361,30 @@ class Util {
             return giftHistory;
         });
     }
+    /**
+     * #### Get the user gift history between the logged in user and everyone
+     */
+    static getAllUserGiftHistory() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rawGiftHistory = yield Util.getJSON(`https://www.myanonamouse.net/json/userBonusHistory.php`);
+            const giftHistory = JSON.parse(rawGiftHistory);
+            // Return the full data
+            return giftHistory;
+        });
+    }
+    /**
+     * #### Gets the logged in user's userid
+     */
+    static getCurrentUserID() {
+        const myInfo = document.querySelector('a.myInfo');
+        if (myInfo) {
+            const userID = this.endOfHref(myInfo);
+            console.log(`[M+] Logged in userID is ${userID}`);
+            return userID;
+        }
+        console.log('No logged in user found.');
+        return '';
+    }
     static prettySiteTime(unixTimestamp, date, time) {
         const timestamp = new Date(unixTimestamp * 1000).toISOString();
         if (date && !time) {
@@ -4469,8 +4493,8 @@ class UserGiftHistory {
             scope: SettingGroup['User Pages'],
             desc: 'Display gift history between you and another user',
         };
-        this._sendSymbol = `<span style='color:orange'>\u27F0</span>`;
-        this._getSymbol = `<span style='color:teal'>\u27F1</span>`;
+        this._sendSymbol = `<span style='color:orange' title='sent'>\u27F0</span>`;
+        this._getSymbol = `<span style='color:teal' title='received'>\u27F1</span>`;
         this._tar = 'tbody';
         Util.startFeature(this._settings, this._tar, ['user']).then((t) => {
             if (t) {
@@ -4501,31 +4525,75 @@ class UserGiftHistory {
             historyContainer.appendChild(historyBox);
             // Get the User ID
             const userID = window.location.pathname.split('/').pop();
+            const currentUserID = Util.getCurrentUserID();
             // TODO: use `cdn.` instead of `www.`; currently causes a 403 error
             if (userID) {
-                // Get the gift history
-                const giftHistory = yield Util.getUserGiftHistory(userID);
-                // Only display a list if there is a history
-                if (giftHistory.length) {
-                    // Determine Point & FL total values
-                    const [pointsIn, pointsOut] = this._sumGifts(giftHistory, 'giftPoints');
-                    const [wedgeIn, wedgeOut] = this._sumGifts(giftHistory, 'giftWedge');
-                    if (MP.DEBUG) {
-                        console.log(`Points In/Out: ${pointsIn}/${pointsOut}`);
-                        console.log(`Wedges In/Out: ${wedgeIn}/${wedgeOut}`);
-                    }
-                    // Generate a message
-                    historyBox.innerHTML = `You have sent ${this._sendSymbol} <strong>${pointsOut} points</strong> &amp; <strong>${wedgeOut} FL wedges</strong> to ${otherUser} and received ${this._getSymbol} <strong>${pointsIn} points</strong> &amp; <strong>${wedgeIn} FL wedges</strong>.<hr>`;
-                    // Add the message to the box
-                    historyBox.appendChild(this._showGifts(giftHistory));
-                    console.log('[M+] User gift history added!');
+                if (userID === currentUserID) {
+                    historyTitle.textContent = 'Recent Gift History';
+                    return this._historyWithAll(historyBox);
                 }
-                else {
-                    console.log('[M+] No user gift history found.');
-                }
+                return this._historyWithUserID(userID, historyBox);
             }
             else {
                 throw new Error(`User ID not found: ${userID}`);
+            }
+        });
+    }
+    /**
+     * #### Fill out history box
+     * @param userID the user to get history from
+     * @param historyBox the box to put it in
+     */
+    _historyWithUserID(userID, historyBox) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Get the gift history
+            const giftHistory = yield Util.getUserGiftHistory(userID);
+            // Only display a list if there is a history
+            if (giftHistory.length) {
+                // Determine Point & FL total values
+                const [pointsIn, pointsOut] = this._sumGifts(giftHistory, 'giftPoints');
+                const [wedgeIn, wedgeOut] = this._sumGifts(giftHistory, 'giftWedge');
+                if (MP.DEBUG) {
+                    console.log(`Points In/Out: ${pointsIn}/${pointsOut}`);
+                    console.log(`Wedges In/Out: ${wedgeIn}/${wedgeOut}`);
+                }
+                const otherUser = giftHistory[0].other_name;
+                // Generate a message
+                historyBox.innerHTML = `You have sent ${this._sendSymbol} <strong>${pointsOut} points</strong> &amp; <strong>${wedgeOut} FL wedges</strong> to ${otherUser} and received ${this._getSymbol} <strong>${pointsIn} points</strong> &amp; <strong>${wedgeIn} FL wedges</strong>.<hr>`;
+                // Add the message to the box
+                historyBox.appendChild(this._showGifts(giftHistory));
+                console.log('[M+] User gift history added!');
+            }
+            else {
+                console.log(`[M+] No user gift history found with ${userID}.`);
+            }
+        });
+    }
+    /**
+     * #### Fill out history box
+     * @param historyBox the box to put it in
+     */
+    _historyWithAll(historyBox) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Get the gift history
+            const giftHistory = yield Util.getAllUserGiftHistory();
+            // Only display a list if there is a history
+            if (giftHistory.length) {
+                // Determine Point & FL total values
+                const [pointsIn, pointsOut] = this._sumGifts(giftHistory, 'giftPoints');
+                const [wedgeIn, wedgeOut] = this._sumGifts(giftHistory, 'giftWedge');
+                if (MP.DEBUG) {
+                    console.log(`Points In/Out: ${pointsIn}/${pointsOut}`);
+                    console.log(`Wedges In/Out: ${wedgeIn}/${wedgeOut}`);
+                }
+                // Generate a message
+                historyBox.innerHTML = `You have sent ${this._sendSymbol} <strong>${pointsOut} points</strong> &amp; <strong>${wedgeOut} FL wedges</strong> and received ${this._getSymbol} <strong>${pointsIn} points</strong> &amp; <strong>${wedgeIn} FL wedges</strong>.<hr>`;
+                // Add the message to the box
+                historyBox.appendChild(this._showGifts(giftHistory));
+                console.log('[M+] User gift history added!');
+            }
+            else {
+                console.log(`[M+] No user gift history found for current user.`);
             }
         });
     }
@@ -4580,18 +4648,21 @@ class UserGiftHistory {
             overflow: 'auto',
         });
         // Loop over history items and add to an array
-        const gifts = history.map((gift) => {
+        const gifts = history.filter(gift => gift.type === 'giftPoints' || gift.type === 'giftWedge').map((gift) => {
             // Add some styling depending on pos/neg numbers
             let fancyGiftAmount = '';
+            let fromTo = '';
             if (gift.amount > 0) {
                 fancyGiftAmount = `${this._getSymbol} ${_wedgeOrPoints(gift)}`;
+                fromTo = 'from';
             }
             else {
                 fancyGiftAmount = `${this._sendSymbol} ${_wedgeOrPoints(gift)}`;
+                fromTo = 'to';
             }
             // Make the date readable
             const date = Util.prettySiteTime(gift.timestamp, true);
-            return `<li class='mp_giftItem'>${date} ${fancyGiftAmount}</li>`;
+            return `<li class='mp_giftItem'>${date} you ${fancyGiftAmount} ${fromTo} <a href='/u/${gift.other_userid}'>${gift.other_name}</a></li>`;
         });
         // Add history items to the list
         historyList.innerHTML = gifts.join('');
