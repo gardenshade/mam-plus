@@ -64,6 +64,7 @@ class InitFeatures {
 
         // Initialize Vault functions
         new SimpleVault();
+        new PotHistory();
 
         // Initialize User Page functions
         new UserGiftDefault();
