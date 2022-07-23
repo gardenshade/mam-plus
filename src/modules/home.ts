@@ -233,7 +233,7 @@ class HideNews implements Feature {
         desc: 'Tidy the homepage and allow News to be hidden',
     };
     private _tar: string = '.mainPageNewsHead';
-    private _valueTitle: string = `${this._settings.title}_val`;
+    private _valueTitle: string = `mp_${this._settings.title}_val`;
     private _icon = '\u274e';
     constructor() {
         Util.startFeature(this._settings, this._tar, ['home']).then((t) => {
