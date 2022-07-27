@@ -58,3 +58,63 @@ class SimpleVault implements Feature {
         return this._settings;
     }
 }
+
+class PotHistory implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Vault,
+        type: 'checkbox',
+        title: 'potHistory',
+        desc: 'Add the list of recent donations to the donation page.',
+    };
+    private _tar: string = '#mainBody';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['vault']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private async _init() {
+        const subPage: string = GM_getValue('mp_currentPage');
+        const form = <HTMLElement>(
+            document.querySelector(this._tar + ' form[method="post"]')
+        );
+
+        if (!form) {
+            return;
+        }
+
+        const potPageResp = await fetch('/millionaires/pot.php');
+        if (!potPageResp.ok) {
+            console.group(
+                `failed to get /millionaires/pot.php: ${potPageResp.status}/${potPageResp.statusText}`
+            );
+            return;
+        }
+        console.group(`Applying Vault (${subPage}) settings...`);
+        const potPageText: string = await potPageResp.text();
+        const parser = new DOMParser();
+        const potPage: Document = parser.parseFromString(potPageText, 'text/html');
+
+        // Clone the important parts and reset the page
+        const donateTbl: HTMLTableElement | null = potPage.querySelector(
+            '#mainTable table:last-of-type'
+        );
+
+        // Add the donate table if it exists
+        if (donateTbl !== null && form !== null) {
+            const newTable: HTMLTableElement = <HTMLTableElement>(
+                donateTbl.cloneNode(true)
+            );
+            form.parentElement?.appendChild(newTable);
+            newTable.classList.add('mp_vaultClone');
+        }
+        console.log('[M+] Added the donation history to the donation page!');
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}

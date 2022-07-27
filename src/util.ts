@@ -432,6 +432,32 @@ class Util {
         return giftHistory;
     }
 
+    /**
+     * #### Get the user gift history between the logged in user and everyone
+     */
+    public static async getAllUserGiftHistory(): Promise<UserGiftHistory[]> {
+        const rawGiftHistory: string = await Util.getJSON(
+            `https://www.myanonamouse.net/json/userBonusHistory.php`
+        );
+        const giftHistory: Array<UserGiftHistory> = JSON.parse(rawGiftHistory);
+        // Return the full data
+        return giftHistory;
+    }
+
+    /**
+     * #### Gets the logged in user's userid
+     */
+    public static getCurrentUserID(): string {
+        const myInfo = <HTMLAnchorElement>document.querySelector('a.myInfo');
+        if (myInfo) {
+            const userID = <string>this.endOfHref(myInfo);
+            console.log(`[M+] Logged in userID is ${userID}`);
+            return userID;
+        }
+        console.log('No logged in user found.');
+        return '';
+    }
+
     public static prettySiteTime(unixTimestamp: number, date?: boolean, time?: boolean) {
         const timestamp = new Date(unixTimestamp * 1000).toISOString();
         if (date && !time) {

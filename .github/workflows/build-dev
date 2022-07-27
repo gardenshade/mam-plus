@@ -1,0 +1,14 @@
+name: build-dev
+
+on:
+  push:
+    branches: [ "develop" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm run build

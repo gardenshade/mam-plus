@@ -257,7 +257,7 @@ class HideSeedbox implements Feature {
         desc: 'Remove the "Get A Seedbox" menu item',
     };
     // An element that must exist in order for the feature to run
-    private _tar: string = '#menu';
+    private _tar: string = '#menu .sbDonCrypto';
     // The code that runs when the feature is created on `features.ts`.
     constructor() {
         // Add 1+ valid page type. Exclude for global
@@ -268,11 +268,44 @@ class HideSeedbox implements Feature {
         });
     }
     private async _init() {
-        const seedboxBtn: HTMLLIElement | null = document.querySelector(
-            '#menu .sbDonCrypto'
-        );
-        if (seedboxBtn) seedboxBtn.style.display = 'none';
-        console.log('[M+] Hid the Seedbox button!');
+        const seedboxBtn: HTMLLIElement | null = document.querySelector(this._tar);
+        if (seedboxBtn) {
+            seedboxBtn.style.display = 'none';
+            console.log('[M+] Hid the Seedbox button!');
+        }
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * ## Hide the donation link
+ */
+class HideDonationBox implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'hideDonationBox',
+        scope: SettingGroup.Global,
+        desc: 'Remove the Donations menu item',
+    };
+    // An element that must exist in order for the feature to run
+    private _tar: string = '#menu .mmDonBox';
+    // The code that runs when the feature is created on `features.ts`.
+    constructor() {
+        // Add 1+ valid page type. Exclude for global
+        Util.startFeature(this._settings, this._tar, []).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+    private async _init() {
+        const donationBoxBtn: HTMLLIElement | null = document.querySelector(this._tar);
+        if (donationBoxBtn) {
+            donationBoxBtn.style.display = 'none';
+            console.log('[M+] Hid the Donation Box button!');
+        }
     }
     get settings(): CheckboxSetting {
         return this._settings;

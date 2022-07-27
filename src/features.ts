@@ -17,6 +17,7 @@ class InitFeatures {
         // Initialize Global functions
         new HideHome();
         new HideSeedbox();
+        new HideDonationBox();
         new BlurredHeader();
         new VaultLink();
         new MiniVaultInfo();
@@ -64,6 +65,7 @@ class InitFeatures {
 
         // Initialize Vault functions
         new SimpleVault();
+        new PotHistory();
 
         // Initialize User Page functions
         new UserGiftDefault();
