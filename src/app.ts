@@ -31,11 +31,13 @@ namespace MP {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
             `♻️: Increased timeout delay for M+ features.`,
-            `♻️: Ratio Protect has reached 2.0 feature parity with @yyyzzz999's script.`,
+            `♻️: Ratio Protect has reached 2.11 feature parity with @yyyzzz999's script.`,
             `🐞: Fixed missing dereferral on Settings page. (Thanks, @Tsani!)`,
         ] as string[],
         BUG_LIST: [
+            'Forum Thanks button is broken.',
             'Some features still not working in Vivaldi. Fix in progress, but difficult.',
+            'Ratio Protect: Still uses "till Next FL" bookmark message instead of calculation.',
         ] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';

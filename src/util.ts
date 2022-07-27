@@ -650,4 +650,8 @@ class Util {
     public static derefer = (url: string) => {
         return `https://r.mrd.ninja/${encodeURI(url)}`;
     };
+
+    public static delay = (ms: number) => {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    };
 }
