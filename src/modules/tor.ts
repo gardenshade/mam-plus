@@ -335,12 +335,22 @@ class RatioProtect implements Feature {
         // Seeding or downloading
         const seeding: HTMLSpanElement | null = document.querySelector('#DLhistory');
         // User has a ratio
-        let userHasRatio = rCur.textContent.indexOf('Inf') < 0 ? true : false;
-        userHasRatio = false;
+        const userHasRatio = rCur.textContent.indexOf('Inf') < 0 ? true : false;
 
         // Get the custom ratio amounts (will return default values otherwise)
         const [r1, r2, r3] = await this._share.getRatioProtectLevels();
         if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
+
+        // Create the box we will display text in
+        if (descBlock) {
+            // Add line under Torrent: detail for Cost data "Cost to Restore Ratio"
+            descBlock.insertAdjacentHTML(
+                'beforebegin',
+                `<div class="torDetRow" id="mp_row"><div class="torDetLeft">Cost to Restore Ratio</div><div class="torDetRight ${this._rcRow}" style="flex-direction:column;align-items:flex-start;"><span id="mp_foobar"></span></div></div>`
+            );
+        } else {
+            throw new Error(`'.torDetRow is ${descBlock}`);
+        }
 
         // Only run the code if the ratio exists
         if (rNew && rCur && !seeding && userHasRatio) {
@@ -358,16 +368,6 @@ class RatioProtect implements Feature {
                 if (dlLabel) {
                     dlLabel.innerHTML = `Ratio loss ${rDiff.toFixed(2)}`;
                     dlLabel.style.fontWeight = 'normal'; //To distinguish from BOLD Titles
-                }
-
-                if (descBlock) {
-                    // Add line under Torrent: detail for Cost data "Cost to Restore Ratio"
-                    descBlock.insertAdjacentHTML(
-                        'beforebegin',
-                        `<div class="torDetRow" id="mp_row"><div class="torDetLeft">Cost to Restore Ratio</div><div class="torDetRight ${this._rcRow}" style="flex-direction:column;align-items:flex-start;"><span id="mp_foobar"></span></div></div>`
-                    );
-                } else {
-                    throw new Error(`'.torDetRow is ${descBlock}`);
                 }
 
                 // Calculate & Display cost of download w/o FL
@@ -405,15 +405,13 @@ class RatioProtect implements Feature {
 
                 // Style the download button based on Ratio Protect level settings
                 if (dlBtn && dlLabel) {
-                    // This is the "trivial ratio loss" threshold
+                    // * This is the "trivial ratio loss" threshold
                     // These changes will always happen if the ratio conditions are met
                     if (rDiff > r1) {
-                        dlBtn.style.backgroundColor = 'SpringGreen';
-                        dlBtn.style.color = 'black';
-                        dlBtn.innerHTML = 'Download?';
+                        this._setButtonState(dlBtn, '1_notify');
                     }
 
-                    // This is the "I never want to dl w/o FL" threshold
+                    // * This is the "I never want to dl w/o FL" threshold
                     // This also uses the Minimum Ratio, if enabled
                     // This also prevents going below 2 ratio (PU requirement)
                     // TODO: Replace disable button with buy FL button
@@ -423,26 +421,44 @@ class RatioProtect implements Feature {
                         Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val') ||
                         Util.extractFloat(rNew)[0] < 2
                     ) {
-                        dlBtn.style.backgroundColor = 'Red';
-                        ////Disable link to prevent download
-                        //// dlBtn.style.pointerEvents = 'none';
-                        dlBtn.style.cursor = 'no-drop';
-                        // maybe hide the button, and add the Ratio Loss warning in its place?
-                        dlBtn.innerHTML = 'FL Needed';
-                        dlLabel.style.fontWeight = 'bold';
-                        // This is the "I need to think about using a FL" threshold
+                        this._setButtonState(dlBtn, '3_alert');
+                        // * This is the "I need to think about using a FL" threshold
                     } else if (rDiff > r2) {
-                        dlBtn.style.backgroundColor = 'Orange';
-                        dlBtn.innerHTML = 'Suggest FL';
+                        this._setButtonState(dlBtn, '2_warn');
                     }
                 }
             }
             // If the user does not have a ratio, display a short message
         } else if (!userHasRatio) {
-            // FIX: Throwing null error for some reason
+            this._setButtonState(dlBtn, '1_notify');
             document.querySelector(
                 `.${this._rcRow}`
             )!.innerHTML = `<span>Ratio points and cost to restore ratio will appear here after your ratio is a real number.</span>`;
+        }
+    }
+
+    private _setButtonState(
+        tar: HTMLAnchorElement,
+        state: '1_notify' | '2_warn' | '3_alert',
+        label?: HTMLDivElement
+    ) {
+        if (state === '1_notify') {
+            tar.style.backgroundColor = 'SpringGreen';
+            tar.style.color = 'black';
+            tar.innerHTML = 'Download?';
+        } else if (state === '2_warn') {
+            tar.style.backgroundColor = 'Orange';
+            tar.innerHTML = 'Suggest FL';
+        } else if (state === '3_alert') {
+            if (!label) {
+                console.warn(`No label provided in _setButtonState()!`);
+            }
+            tar.style.backgroundColor = 'Red';
+            tar.style.cursor = 'no-drop';
+            tar.innerHTML = 'FL Needed';
+            label.style.fontWeight = 'bold';
+        } else {
+            throw new Error(`State "${state}" does not exist.`);
         }
     }
 
