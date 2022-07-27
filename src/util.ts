@@ -448,7 +448,9 @@ class Util {
      * #### Gets the logged in user's userid
      */
     public static getCurrentUserID(): string {
-        const myInfo = <HTMLAnchorElement>document.querySelector('a.myInfo');
+        const myInfo = <HTMLAnchorElement>(
+            document.querySelector('.mmUserStats .avatar a')
+        );
         if (myInfo) {
             const userID = <string>this.endOfHref(myInfo);
             console.log(`[M+] Logged in userID is ${userID}`);

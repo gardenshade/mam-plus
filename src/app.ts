@@ -30,14 +30,19 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
+            `🆕: Add the list of recent vault donations to the vault page. @chad3814`,
+            `🆕: Added the option to remove the Donation menu item. @chad3814`,
             `♻️: Increased timeout delay for M+ features.`,
             `♻️: Ratio Protect has reached 2.11 feature parity with @yyyzzz999's script.`,
-            `🐞: Fixed missing dereferral on Settings page. (Thanks, @Tsani!)`,
+            `🐞: Fixed missing dereferral on Settings page. Reported by @Tsani`,
+            `🐞: Fixed hiding the seedbox button sometimes failing to work. @chad3814`,
+            `🐞: Fixed hidden news articles reappearing after saving M+ settings. @chad3814`,
         ] as string[],
         BUG_LIST: [
             'Forum Thanks button is broken.',
             'Some features still not working in Vivaldi. Fix in progress, but difficult.',
             'Ratio Protect: Still uses "till Next FL" bookmark message instead of calculation.',
+            'User gift history should show a summary of your gifting when viewing your page.',
         ] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';

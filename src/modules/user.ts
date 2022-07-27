@@ -83,7 +83,9 @@ class UserGiftHistory implements Feature {
         historyContainer.appendChild(historyBox);
         // Get the User ID
         const userID = window.location.pathname.split('/').pop();
+
         const currentUserID = Util.getCurrentUserID();
+
         // TODO: use `cdn.` instead of `www.`; currently causes a 403 error
         if (userID) {
             if (userID === currentUserID) {
