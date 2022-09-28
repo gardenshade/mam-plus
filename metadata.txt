@@ -8,6 +8,9 @@
 // @include      https://*.myanonamouse.net/*
 // @exclude      https://*.myanonamouse.net/bitbucket-upload.php
 // @exclude      https://*.myanonamouse.net/store.php
+// @exclude      https://*.myanonamouse.net/messages*
+// @exclude      https://*.myanonamouse.net/userClientDetails.php
+// @exclude      https://cdn.myanonamouse.net/*
 // @icon         https://i.imgur.com/dX44pSv.png
 // @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=<%= pkg.version %>
 // @grant        GM_setValue
