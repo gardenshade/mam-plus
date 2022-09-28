@@ -288,4 +288,28 @@ class Shared {
 
         console.log(`[M+] Added the MAM-to-StoryGraph buttons!`);
     };
+
+    public getRatioProtectLevels = async () => {
+        let l1 = parseFloat(GM_getValue('ratioProtectL1_val'));
+        let l2 = parseFloat(GM_getValue('ratioProtectL2_val'));
+        let l3 = parseFloat(GM_getValue('ratioProtectL3_val'));
+        const l1_def = 0.5;
+        const l2_def = 1;
+        const l3_def = 2;
+
+        // Default values if empty
+        if (isNaN(l3)) l3 = l3_def;
+        if (isNaN(l2)) l2 = l2_def;
+        if (isNaN(l1)) l1 = l1_def;
+
+        // If someone put things in a dumb order, ignore smaller numbers
+        if (l2 > l3) l2 = l3;
+        if (l1 > l2) l1 = l2;
+
+        // If custom numbers are smaller than default values, ignore the lower warning
+        if (isNaN(l2)) l2 = l3 < l2_def ? l3 : l2_def;
+        if (isNaN(l1)) l1 = l2 < l1_def ? l2 : l1_def;
+
+        return [l1, l2, l3];
+    };
 }

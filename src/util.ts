@@ -218,6 +218,8 @@ class Util {
         label: string,
         rowClass: string
     ): HTMLDivElement {
+        if (MP.DEBUG) console.log(tar);
+
         if (tar === null || tar.parentElement === null) {
             throw new Error(`Add Tor Details Row: empty node or parent node @ ${tar}`);
         } else {
@@ -446,7 +448,9 @@ class Util {
      * #### Gets the logged in user's userid
      */
     public static getCurrentUserID(): string {
-        const myInfo = <HTMLAnchorElement>document.querySelector('a.myInfo');
+        const myInfo = <HTMLAnchorElement>(
+            document.querySelector('.mmUserStats .avatar a')
+        );
         if (myInfo) {
             const userID = <string>this.endOfHref(myInfo);
             console.log(`[M+] Logged in userID is ${userID}`);
@@ -667,7 +671,15 @@ class Util {
         return (
             parseFloat((bytes / Math.pow(1024, index)).toFixed(c)) +
             ' ' +
-            ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][index]
+            ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][index]
         );
+    };
+
+    public static derefer = (url: string) => {
+        return `https://r.mrd.ninja/${encodeURI(url)}`;
+    };
+
+    public static delay = (ms: number) => {
+        return new Promise((resolve) => setTimeout(resolve, ms));
     };
 }

@@ -11,15 +11,22 @@ class Check {
      * @param {string} selector - The DOM string that will be used to select an element
      * @return {Promise<HTMLElement>} Promise of an element that was selected
      */
-    public static async elemLoad(selector: string): Promise<HTMLElement | false> {
+    public static async elemLoad(
+        selector: string | HTMLElement
+    ): Promise<HTMLElement | false> {
         if (MP.DEBUG) {
             console.log(`%c Looking for ${selector}`, 'background: #222; color: #555');
         }
         let _counter = 0;
-        const _counterLimit = 100;
-        const logic = async (selector: string): Promise<HTMLElement | false> => {
+        const _counterLimit = 200;
+        const logic = async (
+            selector: string | HTMLElement
+        ): Promise<HTMLElement | false> => {
             // Select the actual element
-            const elem: HTMLElement | null = document.querySelector(selector);
+            const elem: HTMLElement | null =
+                typeof selector === 'string'
+                    ? document.querySelector(selector)
+                    : selector;
 
             if (elem === undefined) {
                 throw `${selector} is undefined!`;

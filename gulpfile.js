@@ -28,7 +28,7 @@ const path = {
 };
 
 const tsSettings = {
-    strict: true,
+    strict: false,
     target: 'es2015',
     rootDir: 'src',
     forceConsistentCasingInFileNames: true,
