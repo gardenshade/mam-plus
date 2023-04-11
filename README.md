@@ -10,10 +10,7 @@ Don't know what MAM is? This script won't be very useful to you then.
 
 [![Install Button](https://img.shields.io/badge/Install-Click%20Here-green?style=for-the-badge&logo=DocuSign)](https://github.com/gardenshade/mam-plus/raw/master/release/mam-plus.user.js)
 
-You need to have a userscript browser extension installed in order to use MAM+. Popular browser extensions include:
-
--   [Tampermonkey](https://tampermonkey.net/): Recommended for Firefox v57+
--   [Violentmonkey](https://violentmonkey.github.io/get-it/): Recommended for Chrome
+You need to have a userscript browser extension (like [Violentmonkey](https://violentmonkey.github.io/get-it/) or similar) installed in order to use MAM+. Greasemonkey is NOT recommended as it no longer follows the Userscript API standards it once set (and that MAM+ currently uses).
 
 MAM+ only officially supports the most recent versions of Chrome & Firefox, but other modern browsers with userscript support should theoretically work. That said, you'll probably have lots of issues if you use Safari, Firefox offshoots (Waterfox, Basilisk, etc.), or older Edge versions.
 
