@@ -39,12 +39,12 @@ class GiftNewest implements Feature {
         });
         //get the default value of gifts set in preferences for user page
         let giftValueSetting: string | undefined = GM_getValue('userGiftDefault_val');
-        //if they did not set a value in preferences, set to 100 or set to max or min
+        //make sure the value falls within the acceptable range
         // TODO: Make the gift value check into a Util
         if (!giftValueSetting) {
             giftValueSetting = '100';
-        } else if (Number(giftValueSetting) > 1000 || isNaN(Number(giftValueSetting))) {
-            giftValueSetting = '1000';
+        } else if (Number(giftValueSetting) > 100 || isNaN(Number(giftValueSetting))) {
+            giftValueSetting = '100';
         } else if (Number(giftValueSetting) < 5) {
             giftValueSetting = '5';
         }
@@ -54,7 +54,7 @@ class GiftNewest implements Feature {
             type: 'text',
             size: '3',
             id: 'mp_giftAmounts',
-            title: 'Value between 5 and 1000',
+            title: 'Value between 5 and 100',
             value: giftValueSetting,
         });
         //insert the text box after the last members name

@@ -179,6 +179,7 @@ class Check {
                         else if (page[1] === 'viewRequest') return 'request details';
                         else if (page[1] === 'upload') return 'upload';
                     },
+                    newUsers: () => 'new users',
                 };
 
                 // Check to see if we have a case that matches the current page
