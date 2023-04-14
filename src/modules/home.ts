@@ -8,21 +8,39 @@ class GiftNewest implements Feature {
         title: 'giftNewest',
         desc: `Add buttons to Gift/Open all newest members`,
     };
-    private _tar: string = '#fpNM';
+    private _tar: string = '#mainTable'; /* TODO: can't find on new users page */
 
     constructor() {
-        Util.startFeature(this._settings, this._tar, ['home']).then((t) => {
+        Util.startFeature(this._settings, this._tar, ['home', 'new users']).then((t) => {
             if (t) {
                 this._init();
             }
         });
     }
 
-    private async _init() {
+    /**
+     * * Decide which page to run on
+     */
+    private _init() {
+        Check.page().then((page:ValidPage) => {
+            if(MP.DEBUG) console.log('User gifting init on',page);
+
+            if(page === 'home'){
+                this._homePageGifting();
+            }else if(page === 'new users'){
+                this._newUsersPageGifting();
+            }
+        })
+    }
+
+    /**
+     * * Function that runs on the Home page
+     */
+    private async _homePageGifting() {
         //ensure gifted list is under 50 member names long
         this._trimGiftList();
         //get the FrontPage NewMembers element containing newest 10 members
-        const fpNM = <HTMLDivElement>document.querySelector(this._tar);
+        const fpNM = <HTMLDivElement>document.querySelector('#fpNM');
         const members: HTMLAnchorElement[] = Array.prototype.slice.call(
             fpNM.getElementsByTagName('a')
         );
@@ -39,12 +57,12 @@ class GiftNewest implements Feature {
         });
         //get the default value of gifts set in preferences for user page
         let giftValueSetting: string | undefined = GM_getValue('userGiftDefault_val');
-        //if they did not set a value in preferences, set to 100 or set to max or min
+        //make sure the value falls within the acceptable range
         // TODO: Make the gift value check into a Util
         if (!giftValueSetting) {
             giftValueSetting = '100';
-        } else if (Number(giftValueSetting) > 1000 || isNaN(Number(giftValueSetting))) {
-            giftValueSetting = '1000';
+        } else if (Number(giftValueSetting) > 100 || isNaN(Number(giftValueSetting))) {
+            giftValueSetting = '100';
         } else if (Number(giftValueSetting) < 5) {
             giftValueSetting = '5';
         }
@@ -54,7 +72,7 @@ class GiftNewest implements Feature {
             type: 'text',
             size: '3',
             id: 'mp_giftAmounts',
-            title: 'Value between 5 and 1000',
+            title: 'Value between 5 and 100',
             value: giftValueSetting,
         });
         //insert the text box after the last members name
@@ -188,6 +206,14 @@ class GiftNewest implements Feature {
             .getElementById('mp_giftAllMsg')!
             .insertAdjacentHTML('beforebegin', '<br>');
         console.log(`[M+] Adding gift new members button to Home page...`);
+    }
+
+    /**
+     * * Function that runs on the New Users page
+     */
+    private async _newUsersPageGifting() {
+        console.log('Coming soon');
+
     }
 
     /**

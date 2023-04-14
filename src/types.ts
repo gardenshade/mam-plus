@@ -13,7 +13,8 @@ type ValidPage =
     | 'user'
     | 'upload'
     | 'forum thread'
-    | 'settings';
+    | 'settings'
+    | 'new users';
 
 type BookData = 'book' | 'author' | 'series';
 

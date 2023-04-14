@@ -2,7 +2,7 @@ const Gulp = require('gulp');
 const pump = require('pump');
 const { series, parallel } = require('gulp');
 const Ts = require('gulp-typescript');
-const Sass = require('gulp-sass');
+const Sass = require('gulp-sass')(require('sass'));
 const Srcmap = require('gulp-sourcemaps');
 const Header = require('gulp-header');
 const Inject = require('gulp-inject-string');
@@ -144,7 +144,7 @@ const sass_dev = () => {
     return pump(
         Gulp.src(globs.style),
         Srcmap.init(),
-        Sass().on('error', Sass.logError),
+        Sass.sync().on('error', Sass.logError),
         Srcmap.write(),
         Gulp.dest(loc.dest),
         (err) => errorCB(err)
@@ -157,7 +157,7 @@ const sass_release = () => {
     //* This returned a `new Promise` prior to switching to `pump()`
     return pump(
         Gulp.src(globs.style),
-        Sass({
+        Sass.sync({
             outputStyle: 'compressed',
         }).on('error', Sass.logError),
         Gulp.dest(loc.dest),
