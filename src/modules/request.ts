@@ -352,7 +352,7 @@ class GoodreadsButtonReq implements Feature {
         const bookData: HTMLSpanElement | null = reqRows['Title:'].querySelector('span');
         const authorData: NodeListOf<HTMLAnchorElement> | null = reqRows[
             'Author(s):'
-        ].querySelectorAll('a');
+            ].querySelectorAll('a');
         const seriesData: NodeListOf<HTMLAnchorElement> | null = reqRows['Series:']
             ? reqRows['Series:'].querySelectorAll('a')
             : null;
@@ -364,3 +364,258 @@ class GoodreadsButtonReq implements Feature {
         return this._settings;
     }
 }
+class SharedLogic {
+    // Shared logic methods here, such as extracting titles or counting results
+
+    extractAuthors(node: HTMLLIElement): string | null {
+        const authList = node.querySelectorAll<HTMLAnchorElement>('.author');
+        if (authList.length === 0) return null;
+
+        // Create an array of author names
+        const authors: string[] = Array.from(authList).map(auth => auth.textContent?.trim()).filter(Boolean);
+
+        // Join authors with ' AND ' and return
+        return authors.length > 0 ? authors.join(' AND ') : null;
+    }
+
+    extractTitle(node: HTMLLIElement): string | null {
+        const rawTitle = node.querySelector<HTMLAnchorElement>('.torTitle');
+        return rawTitle ? rawTitle.textContent?.trim() ?? null : null;
+    }
+
+    async countResults(pageContent: string, type: 'general' | 'fiction' | 'annas_archive'): Promise<number> {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(pageContent, 'text/html');
+
+        if (type === 'general') {
+            const table = doc.querySelector('table.c');
+            if (table) {
+                const rows = table.getElementsByTagName('tr');
+                return rows.length > 1 ? rows.length - 1 : 0;
+            }
+        } else if (type === 'fiction') {
+            const table = doc.querySelector('table.catalog');
+            if (table) {
+                const rows = table.querySelectorAll('tbody tr');
+                return rows.length;
+            }
+        } else if (type === 'annas_archive') {
+            const results = doc.querySelectorAll('.result-item');
+            return results.length;
+        }
+        return 0;
+    }
+
+    createButton(node: HTMLLIElement, count: number, title: string, searchUrl: string): void {
+        const button = document.createElement('button');
+        button.textContent = count > 0 ? count.toString() : '0';
+        button.style.marginLeft = '5px';
+        button.style.cursor = 'pointer';
+        button.addEventListener('click', () => window.open(searchUrl, '_blank'));
+        node.appendChild(button);
+    }
+}
+
+class LibGenGeneralSearch implements Feature{
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'LibGen General Search',
+        scope: SettingGroup.Requests,
+        desc: 'Enable LibGen general search buttons for requests',
+    };
+    private _tar: string = '#ssr';
+    private _sharedLogic = new SharedLogic();
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    async _init() {
+        const requestList = await this.getRequestList();
+        const requestArray = Array.from(requestList);
+        for (const node of requestArray) {
+            const title = this._sharedLogic.extractTitle(node);
+            if (title) {
+                const resultCount = await this.search(title);
+                const searchUrl = `https://libgen.is/search.php?req=${encodeURIComponent(title)}&column=title`;
+                this._sharedLogic.createButton(node, resultCount, title, searchUrl);
+            }
+        }
+    }
+
+    private async search(title: string): Promise<number> {
+        const encodedTitle = encodeURIComponent(title);
+        const searchUrl = `https://libgen.is/search.php?req=${encodedTitle}&column=title`;
+        return new Promise<number>((resolve) => {
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: searchUrl,
+                onload: (response) => {
+                    if (response.status !== 200) {
+                        return resolve(0);
+                    }
+                    this._sharedLogic.countResults(response.responseText, 'general').then(resolve);
+                },
+                onerror: () => resolve(0),
+            });
+        });
+    }
+
+    private async getRequestList(): Promise<NodeListOf<HTMLLIElement>> {
+        const targetSelector = '#torRows .torRow';
+        await Check.elemLoad(targetSelector + ' a');
+        const requestList = document.querySelectorAll<HTMLLIElement>(targetSelector);
+        if (requestList.length === 0) {
+            throw new Error("No request rows found");
+        }
+        return requestList;
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+class LibGenFictionSearch implements Feature{
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'LibGen Fiction Search',
+        scope: SettingGroup.Requests,
+        desc: 'Enable LibGen fiction search buttons for requests',
+    };
+    private _tar: string = '#ssr';
+    private _sharedLogic = new SharedLogic();
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    async _init() {
+        const requestList = await this.getRequestList();
+        const requestArray = Array.from(requestList);
+        for (const node of requestArray) {
+            const title = this._sharedLogic.extractTitle(node);
+            if (title) {
+                const resultCount = await this.search(title);
+                const searchUrl = `https://libgen.is/fiction/?q=${encodeURIComponent(title)}`;
+                this._sharedLogic.createButton(node, resultCount, title, searchUrl);
+            }
+        }
+    }
+
+    private async search(title: string): Promise<number> {
+        const encodedTitle = encodeURIComponent(title);
+        const searchUrl = `https://libgen.is/fiction/?q=${encodedTitle}`;
+        return new Promise<number>((resolve) => {
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: searchUrl,
+                onload: (response) => {
+                    if (response.status !== 200) {
+                        return resolve(0);
+                    }
+                    this._sharedLogic.countResults(response.responseText, 'fiction').then(resolve);
+                },
+                onerror: () => resolve(0),
+            });
+        });
+    }
+
+    private async getRequestList(): Promise<NodeListOf<HTMLLIElement>> {
+        const targetSelector = '#torRows .torRow';
+        await Check.elemLoad(targetSelector + ' a');
+        const requestList = document.querySelectorAll<HTMLLIElement>(targetSelector);
+        if (requestList.length === 0) {
+            throw new Error("No request rows found");
+        }
+        return requestList;
+    }
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+class AnnasArchiveSearch implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'Anna’s Archive Search',
+        scope: SettingGroup.Requests,
+        desc: 'Enable Anna’s Archive search buttons for requests',
+    };
+    private _sharedLogic = new SharedLogic();
+    private _tar: string = '#ssr';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    async _init() {
+        const requestList = await this.getRequestList();
+        const requestArray = Array.from(requestList);
+
+        for (const node of requestArray) {
+            const title = this._sharedLogic.extractTitle(node);
+            const authors = this._sharedLogic.extractAuthors(node); // Extract authors
+
+            if (title) {
+                const resultCount = await this.search(title, authors); // Pass authors to search
+                const searchUrl = this.createSearchUrl(title, authors); // Create search URL with authors
+                this._sharedLogic.createButton(node, resultCount, title, searchUrl);
+            }
+        }
+    }
+
+    private createSearchUrl(title: string, authors: string | null): string {
+        // Construct the search URL for Anna's Archive
+        const encodedTitle = encodeURIComponent(title);
+        const encodedAuthors = authors ? encodeURIComponent(authors) : '';
+        return `https://annas-archive.org/search?q=${encodedTitle}&termtype_1=author&termval_1=${encodedAuthors}`;
+    }
+    private async search(title: string, authors: string | null): Promise<number> {
+        // Instead of performing an HTTP request, just return 0
+        return 0;
+    }
+    /*
+    private async search(title: string, authors: string | null): Promise<number> {
+        const searchUrl = this.createSearchUrl(title, authors); // Use new search URL
+        return new Promise<number>((resolve) => {
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: searchUrl,
+                onload: (response) => {
+                    if (response.status !== 200) {
+                        return resolve(0);
+                    }
+                    this._sharedLogic.countResults(response.responseText, 'annas_archive').then(resolve);
+                },
+                onerror: () => resolve(0),
+            });
+        });
+    }
+*/
+    private async getRequestList(): Promise<NodeListOf<HTMLLIElement>> {
+        const targetSelector = '#torRows .torRow';
+        await Check.elemLoad(targetSelector + ' a');
+        const requestList = document.querySelectorAll<HTMLLIElement>(targetSelector);
+        if (requestList.length === 0) {
+            throw new Error("No request rows found");
+        }
+        return requestList;
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+

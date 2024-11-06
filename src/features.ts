@@ -40,6 +40,10 @@ class InitFeatures {
         new GoodreadsButtonReq();
         new ToggleHiddenRequesters();
         new PlaintextRequest();
+        new LibGenGeneralSearch();
+        new LibGenFictionSearch();
+        new AnnasArchiveSearch();
+
 
         // Initialize Torrent Page functions
         new GoodreadsButton();

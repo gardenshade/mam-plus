@@ -16,4 +16,6 @@
 // @grant        GM_addStyle
 // @grant        GM_info
 // @grant        GM_getResourceText
+// @grant       GM_xmlhttpRequest
+// @grant        GM_addElement
 // ==/UserScript==
