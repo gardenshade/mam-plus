@@ -7,11 +7,13 @@ class ProcessShouts {
      * @param tar The shoutbox element selector
      * @param names (Optional) List of usernames/IDs to filter for
      * @param usertype (Optional) What filter the names are for. Required if `names` is provided
+     * @param mentionName (Optional) A specific username to style when mentioned
      */
     public static watchShoutbox(
         tar: string,
         names?: string[],
-        usertype?: ShoutboxUserType
+        usertype?: ShoutboxUserType,
+        mentionName?: string
     ): void {
         // Observe the shoutbox
         Check.elemObserver(
@@ -31,14 +33,14 @@ class ProcessShouts {
                         ) {
                             return;
                         }
+
                         // If we're looking for specific users...
-                        if (names !== undefined && names.length > 0) {
-                            if (usertype === undefined) {
-                                throw new Error(
-                                    'Usertype must be defined if filtering names!'
-                                );
-                            }
-                            // Extract
+                        if (mentionName && nodeData.textContent?.includes(`@${mentionName}`)) {
+                            this.styleShout(node, 'mention');
+                        }
+
+                        // Only apply name filtering if names and usertype are defined
+                        if (names && names.length > 0 && usertype) {
                             const userID: string = this.extractFromShout(
                                 node,
                                 'a[href^="/u/"]',
@@ -49,12 +51,10 @@ class ProcessShouts {
                                 'a > span',
                                 'text'
                             );
-                            // Filter
+
+                            // Apply styles if any of the names match
                             names.forEach((name) => {
-                                if (
-                                    `/u/${name}` === userID ||
-                                    Util.caselessStringMatch(name, userName)
-                                ) {
+                                if (`/u/${name}` === userID || Util.caselessStringMatch(name, userName)) {
                                     this.styleShout(node, usertype);
                                 }
                             });
@@ -304,15 +304,15 @@ class ProcessShouts {
         const shoutElem: HTMLElement = Util.nodeToElem(shout);
         if (usertype === 'priority') {
             const customStyle: string | undefined = GM_getValue('priorityStyle_val');
-            if (customStyle) {
-                shoutElem.style.background = `hsla(${customStyle})`;
-            } else {
-                shoutElem.style.background = 'hsla(0,0%,50%,0.3)';
-            }
+            shoutElem.style.background = customStyle ? `hsla(${customStyle})` : 'hsla(0,0%,50%,0.3)';
         } else if (usertype === 'mute') {
             shoutElem.classList.add('mp_muted');
+        } else if (usertype === 'mention') {
+            shoutElem.style.backgroundColor = 'rgba(255, 223, 186, 0.6)'; // Light orange highlight
+            shoutElem.style.border = '1px solid rgba(255, 165, 0, 0.9)'; // Darker orange border
         }
     }
+
 }
 
 class PriorityUsers implements Feature {
@@ -579,6 +579,65 @@ class GiftButton implements Feature {
 }
 
 /**
+ * Style mentions of your username
+ */
+class StyleMention implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Shoutbox,
+        type: 'checkbox',
+        title: 'styleMention',
+        desc: `styles mentions of your username`,
+    };
+    private _tar: string = '.sbf div';
+    private _mentionName: string | null = null; // Dynamically set mention name
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private async _init() {
+        // Extract username from DOM before initializing the shoutbox watcher
+        this._mentionName = this._extractUsername();
+        console.log(this._mentionName)
+        if (this._mentionName) {
+            ProcessShouts.watchShoutbox(this._tar, undefined, undefined, this._mentionName);
+        } else {
+            console.warn("Could not find username for mention styling.");
+        }
+    }
+
+    private _extractUsername(): string | null {
+        // Select the anchor element by its id
+        const userMenuElement = document.getElementById("userMenu");
+
+        if (userMenuElement) {
+            // Clone the element to manipulate without affecting the DOM
+            const clone = userMenuElement.cloneNode(true) as HTMLElement;
+
+            // Remove the <img> tag to isolate the username text
+            const img = clone.querySelector("img");
+            if (img) {
+                clone.removeChild(img);
+            }
+
+            // Trim any extra whitespace and return the username
+            return clone.textContent?.trim() || null;
+        }
+
+        console.error("User menu element not found.");
+        return null;
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
  * Allows Reply button to be added to Shout
  */
 class ReplySimple implements Feature {
@@ -824,10 +883,10 @@ class QuickShout implements Feature {
                     //fun way to dynamically create statements - this takes whatever is in list field to create a key with that text and the value from the textarea
                     eval(
                         `jsonList.` +
-                            replacedText +
-                            `= "` +
-                            encodeURIComponent(quickShoutText.value) +
-                            `";`
+                        replacedText +
+                        `= "` +
+                        encodeURIComponent(quickShoutText.value) +
+                        `";`
                     );
                     //overwrite or create the GM variable with new jsonList
                     GM_setValue('mp_quickShout', JSON.stringify(jsonList));
