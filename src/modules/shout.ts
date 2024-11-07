@@ -133,80 +133,51 @@ class ProcessShouts {
                         }
 
                         // Select the name information
-                        const shoutName: HTMLSpanElement | null = Util.nodeToElem(
-                            node
-                        ).querySelector('a[href^="/u/"] span');
-                        // Grab the background color of the name, or text color
+                        const shoutName: HTMLSpanElement | null = nodeData.querySelector(
+                            'a[href^="/u/"] span'
+                        );
+                        const userName: string = this.extractFromShout(node, 'a > span', 'text');
+                        const userID: string = this.extractFromShout(node, 'a[href^="/u/"]', 'href');
+
+                        // If buttons === 3, add UID next to the username
+                        if (buttons === 3 && shoutName && userID) {
+                            const uid = userID.match(/\d+/g)?.join('');
+                            if (uid && !shoutName.textContent!.includes(`[${uid}]`)) {
+                                shoutName.textContent += ` [${uid}]`;
+                            }
+                        }
+
+                        // Fetch color information
                         const nameColor: string | null = _getNameColor(shoutName);
-                        //extract the username from node for use in reply
-                        const userName: string = this.extractFromShout(
-                            node,
-                            'a > span',
-                            'text'
-                        );
-                        const userID: string = this.extractFromShout(
-                            node,
-                            'a[href^="/u/"]',
-                            'href'
-                        );
-                        //create a span element to be body of button added to page - button uses relative node context at click time to do calculations
-                        const replyButton: HTMLSpanElement = document.createElement(
-                            'span'
-                        );
-                        //if this is a ReplySimple request, then create Reply Simple button
-                        if (buttons === 1) {
-                            //create button with onclick action of setting sb text field to username with potential color block with a colon and space to reply, focus cursor in text box
-                            replyButton.innerHTML = '<button>\u293a</button>';
-                            replyButton
-                                .querySelector('button')!
-                                .addEventListener('click', () => {
-                                    // Add the styled name tag to the reply box
-                                    // If nothing was in the reply box, add a colon
+
+                        // Only create reply or quote buttons if buttons === 1 or buttons === 2
+                        if (buttons === 1 || buttons === 2) {
+                            const replyButton: HTMLSpanElement = document.createElement('span');
+                            if (buttons === 1) {
+                                replyButton.innerHTML = '<button>\u293a</button>';
+                                replyButton.querySelector('button')!.addEventListener('click', () => {
                                     if (replyBox.value === '') {
-                                        replyBox.value = `${_makeNameTag(
-                                            userName,
-                                            nameColor,
-                                            userID
-                                        )}: `;
+                                        replyBox.value = `${_makeNameTag(userName, nameColor, userID)}: `;
                                     } else {
-                                        replyBox.value = `${
-                                            replyBox.value
-                                        } ${_makeNameTag(userName, nameColor, userID)} `;
+                                        replyBox.value = `${replyBox.value} ${_makeNameTag(userName, nameColor, userID)} `;
                                     }
                                     replyBox.focus();
                                 });
-                        }
-                        //if this is a replyQuote request, then create reply quote button
-                        else if (buttons === 2) {
-                            //create button with onclick action of getting that line's text, stripping down to 65 char with no word break, then insert into SB text field, focus cursor in text box
-                            replyButton.innerHTML = '<button>\u293d</button>';
-                            replyButton
-                                .querySelector('button')!
-                                .addEventListener('click', () => {
+                            } else if (buttons === 2) {
+                                replyButton.innerHTML = '<button>\u293d</button>';
+                                replyButton.querySelector('button')!.addEventListener('click', () => {
                                     const text = this.quoteShout(node, 65);
                                     if (text !== '') {
-                                        // Add quote to reply box
-                                        replyBox.value = `${_makeNameTag(
-                                            userName,
-                                            nameColor,
-                                            userID
-                                        )}: \u201c[i]${text}[/i]\u201d `;
-                                        replyBox.focus();
+                                        replyBox.value = `${_makeNameTag(userName, nameColor, userID)}: \u201c[i]${text}[/i]\u201d `;
                                     } else {
-                                        // Just reply
-                                        replyBox.value = `${_makeNameTag(
-                                            userName,
-                                            nameColor,
-                                            userID
-                                        )}: `;
-                                        replyBox.focus();
+                                        replyBox.value = `${_makeNameTag(userName, nameColor, userID)}: `;
                                     }
+                                    replyBox.focus();
                                 });
+                            }
+                            replyButton.setAttribute('class', 'mp_replyButton');
+                            node.insertBefore(replyButton, node.childNodes[2]);
                         }
-                        //give span an ID for potential use later
-                        replyButton.setAttribute('class', 'mp_replyButton');
-                        //insert button prior to username or another button
-                        node.insertBefore(replyButton, node.childNodes[2]);
                     });
                 });
             },
@@ -635,6 +606,38 @@ class ReplyQuote implements Feature {
     private async _init() {
         ProcessShouts.watchShoutboxReply(this._tar, this._replyQuote);
         console.log(`[M+] Adding Reply with Quote Button...`);
+    }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
+
+/**
+ * adds UID to Shout
+ */
+class AddUID implements Feature {
+    private _settings: CheckboxSetting = {
+        scope: SettingGroup.Shoutbox,
+        type: 'checkbox',
+        title: 'addUID',
+        //tag: "Reply",
+        desc: `Places the users UID next to the name`,
+    };
+    private _tar: string = '.sbf div';
+    private _replySimple: number = 3;
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private async _init() {
+        ProcessShouts.watchShoutboxReply(this._tar, this._replySimple);
+        console.log(`[M+] Adding UID Button...`);
     }
 
     get settings(): CheckboxSetting {
