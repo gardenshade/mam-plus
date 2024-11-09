@@ -274,7 +274,7 @@ class Notes implements Feature {
             inputField.rows = 4;
             inputField.cols = 100;
             inputField.placeholder = 'Enter your notes here';
-            inputField.value = GM_getValue(`user_notes_${userID}_val`, '');
+            inputField.value = GM_getValue(`mp_user_notes_${userID}`, '');
 
             const saveButton = document.createElement('button');
             saveButton.textContent = 'Save Note';
@@ -290,10 +290,10 @@ class Notes implements Feature {
                 const noteValue = inputField.value.trim();
 
                 if (noteValue === '') {
-                    GM_deleteValue(`user_notes_${userID}_val`);
+                    GM_deleteValue(`mp_user_notes_${userID}`);
                     console.log(`Note for user ${userID} has been cleared.`);
                 } else {
-                    GM_setValue(`user_notes_${userID}_val`, noteValue);
+                    GM_setValue(`mp_user_notes_${userID}`, noteValue);
                     console.log(`Note for user ${userID} saved: ${noteValue}`);
                 }
 
