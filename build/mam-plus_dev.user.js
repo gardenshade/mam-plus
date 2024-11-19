@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         mam-plus_dev
 // @namespace    https://github.com/GardenShade
-// @version      4.3.11
+// @version      4.4.0
 // @description  Tweaks and features for MAM
 // @author       GardenShade
 // @run-at       document-start
 // @include      https://*.myanonamouse.net/*
 // @exclude      https://cdn.myanonamouse.net/*
 // @icon         https://i.imgur.com/dX44pSv.png
-// @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=4.3.11
+// @resource     MP_CSS https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=4.4.0
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues
@@ -5262,7 +5262,7 @@ var MP;
         UPDATE_LIST: [],
         BUG_LIST: [],
     };
-    MP.TIMESTAMP = 'Apr 14';
+    MP.TIMESTAMP = 'Nov 19';
     MP.VERSION = Check.newVer;
     MP.PREV_VER = Check.prevVer;
     MP.ERRORLOG = [];
