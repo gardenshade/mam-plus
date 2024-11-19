@@ -70,6 +70,7 @@ class InitFeatures {
         // Initialize User Page functions
         new UserGiftDefault();
         new UserGiftHistory();
+        new Notes();
 
         // Initialize Forum Page functions
         new ForumFLGift();
