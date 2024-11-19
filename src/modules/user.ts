@@ -233,3 +233,89 @@ class UserGiftHistory implements Feature {
         return this._settings;
     }
 }
+
+class Notes implements Feature {
+    private _settings: CheckboxSetting = {
+        type: 'checkbox',
+        title: 'Notes',
+        scope: SettingGroup['User Pages'],
+        desc: 'Adds a notes textbox',
+    };
+
+    private _tar: string = 'tbody';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar, ['user']).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    private async _init() {
+        // Locate the table with the class "coltable"
+        const table = document.querySelector('.coltable') as HTMLTableElement;
+
+        if (table) {
+            let tbody = table.querySelector('tbody');
+
+            const userID = window.location.pathname.match(/\/u\/(\d+)/)?.[1];
+            if (!userID) {
+                console.error("User ID not found in URL.");
+                return;
+            }
+
+            const newRow = document.createElement('tr');
+            const newCell = document.createElement('td');
+            newCell.setAttribute('colspan', '2');
+            newCell.setAttribute('class', 'row1');
+
+            const inputField = document.createElement('textarea');
+            inputField.rows = 4;
+            inputField.cols = 100;
+            inputField.placeholder = 'Enter your notes here';
+            inputField.value = GM_getValue(`user_notes_${userID}_val`, '');
+
+            const saveButton = document.createElement('button');
+            saveButton.textContent = 'Save Note';
+
+            // Create the "Saved!" message span
+            const savedMessage = document.createElement('span');
+            savedMessage.className = 'mp_savestate'; // Apply the style similar to the example
+            savedMessage.textContent = 'Saved!';
+            savedMessage.style.opacity = '0'; // Start hidden
+
+            // Add a click event listener to save the note and display "Saved!" message
+            saveButton.addEventListener('click', () => {
+                const noteValue = inputField.value.trim();
+
+                if (noteValue === '') {
+                    GM_deleteValue(`user_notes_${userID}_val`);
+                    console.log(`Note for user ${userID} has been cleared.`);
+                } else {
+                    GM_setValue(`user_notes_${userID}_val`, noteValue);
+                    console.log(`Note for user ${userID} saved: ${noteValue}`);
+                }
+
+                // Show the "Saved!" message briefly
+                savedMessage.style.opacity = '1';
+                setTimeout(() => {
+                    savedMessage.style.opacity = '0';
+                }, 2000); // Hide after 2 seconds
+            });
+
+            newCell.appendChild(inputField);
+            newCell.appendChild(saveButton);
+            newCell.appendChild(savedMessage); // Add the "Saved!" message span to the cell
+            newRow.appendChild(newCell);
+            tbody.appendChild(newRow);
+        } else {
+            console.error('Table with class "coltable" not found.');
+        }
+    }
+
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
