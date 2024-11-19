@@ -38,7 +38,7 @@ class GiftNewest implements Feature {
      * * Function that runs on the Home page
      */
     private async _homePageGifting() {
-        //ensure gifted list is under 50 member names long
+        //ensure gifted list is under 500 member names long
         this._trimGiftList();
         //get the FrontPage NewMembers element containing newest 10 members
         const fpNM = <HTMLDivElement>document.querySelector('#fpNM');
@@ -52,7 +52,7 @@ class GiftNewest implements Feature {
             //if the member has been gifted through this feature previously
             if (GM_getValue('mp_lastNewGifted').indexOf(Util.endOfHref(member)) >= 0) {
                 //add checked box to text
-                member.innerText = `${member.innerText} \u2611`;
+                member.innerText = `${member.innerText} ✅`;
                 member.classList.add('mp_gifted');
             }
         });
@@ -213,7 +213,7 @@ class GiftNewest implements Feature {
      * * Function that runs on the New Users page
      */
     private async _newUsersPageGifting() {
-        // Ensure the gifted list is under 50 members
+        // Ensure the gifted list is under 500 members
         this._trimGiftList();
 
         // Select the container holding the newest members
@@ -248,11 +248,13 @@ class GiftNewest implements Feature {
             title: 'Value between 5 and 100',
             value: String(giftValueSetting),
         });
+        let bpText = document.createElement('span');
+        bpText.innerText = 'points ';
 
         // Create "Gift All Checked Users" button
         const giftAllBtn = await Util.createButton(
             'mp_giftAll',
-            'Gift All Checked',
+            'Gift All Selected',
             'button',
             footer,
             'afterend',
@@ -330,10 +332,27 @@ class GiftNewest implements Feature {
         });
 
         // Display available bonus points in the footer
-        let bonusPointsAvail = document.getElementById('tmBP')!.innerText.split('(')[0];
+        let bonusPointsAvail = document.getElementById('tmBP')!.innerText.split(':')[1];
         const messageSpan = document.createElement('span');
         messageSpan.id = 'mp_giftAllMsg';
-        messageSpan.innerText = `Available Points: ${bonusPointsAvail}`;
+        messageSpan.innerText = ` Available Points: ${bonusPointsAvail}`;
+
+        // Add "Deselect All" button
+        const deselectBtn = await Util.createButton(
+            'mp_deselectAll',
+            'Unselect all',
+            'button',
+            footer,
+            'afterend',
+            'mp_btn'
+        );
+        deselectBtn.addEventListener('click', () => {
+            const boxList: NodeListOf<HTMLInputElement> | void = document.querySelectorAll('input[type=checkbox]')
+
+            boxList.forEach((box: HTMLInputElement) => {
+                box.checked = false;
+            });
+        });
 
         // Add "Select 100 Ungifted" button
         const selectUngiftedBtn = await Util.createButton(
@@ -365,7 +384,9 @@ class GiftNewest implements Feature {
 
         // Append all elements to the footer
         footer.appendChild(selectUngiftedBtn);
+        footer.appendChild(deselectBtn);
         footer.appendChild(giftAmounts);
+        footer.appendChild(bpText);
         footer.appendChild(giftAllBtn);
         footer.appendChild(openAllBtn);
         footer.appendChild(messageSpan);
@@ -374,7 +395,7 @@ class GiftNewest implements Feature {
     }
 
     /**
-     * * Trims the gifted list to last 50 names to avoid getting too large over time.
+     * * Trims the gifted list to last 500 names to avoid getting too large over time.
      */
     private _trimGiftList() {
         //if value exists in GM
