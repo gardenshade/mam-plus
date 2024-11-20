@@ -63,6 +63,8 @@ class InitFeatures {
         new GiftButton();
         new QuickShout();
         new AddUID();
+        new AddToLists();
+        new StyleMention();
 
         // Initialize Vault functions
         new SimpleVault();
