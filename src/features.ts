@@ -62,6 +62,7 @@ class InitFeatures {
         new ReplyQuote();
         new GiftButton();
         new QuickShout();
+        new AddUID();
         new AddToLists();
         new StyleMention();
 
