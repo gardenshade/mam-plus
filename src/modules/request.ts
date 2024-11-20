@@ -15,6 +15,7 @@ class ToggleHiddenRequesters implements Feature {
     private _tar: string = '#torRows';
     private _searchList: NodeListOf<HTMLLIElement> | undefined;
     private _hide = true;
+    private _hiddenCount = 0;
 
     constructor() {
         Util.startFeature(this._settings, this._tar, ['request']).then((t) => {
@@ -39,7 +40,7 @@ class ToggleHiddenRequesters implements Feature {
         // Make a new button and insert beside the Search button
         Util.createButton(
             'showHidden',
-            'Show Hidden',
+            `Show Hidden (0)`, // Initial count set to 0
             'div',
             '#requestSearch .torrentSearch',
             'afterend',
@@ -54,16 +55,18 @@ class ToggleHiddenRequesters implements Feature {
                 '#torRows > .mp_hidden'
             );
 
+            this._hiddenCount = hiddenList.length; // Update hidden count
+
             if (this._hide) {
                 this._hide = false;
-                toggleSwitch.innerText = 'Hide Hidden';
+                toggleSwitch.innerText = `Hide Hidden (${this._hiddenCount})`;
                 hiddenList.forEach((item) => {
                     item.style.display = 'list-item';
                     item.style.opacity = '0.5';
                 });
             } else {
                 this._hide = true;
-                toggleSwitch.innerText = 'Show Hidden';
+                toggleSwitch.innerText = `Show Hidden (${this._hiddenCount})`;
                 hiddenList.forEach((item) => {
                     item.style.display = 'none';
                     item.style.opacity = '0';
@@ -94,6 +97,7 @@ class ToggleHiddenRequesters implements Feature {
     }
 
     private _filterResults(list: NodeListOf<HTMLLIElement>) {
+        this._hiddenCount = 0; // Reset hidden count before filtering
         list.forEach((request) => {
             const requester: HTMLAnchorElement | null = request.querySelector(
                 '.torRight a'
@@ -101,8 +105,17 @@ class ToggleHiddenRequesters implements Feature {
             if (requester === null) {
                 request.style.display = 'none';
                 request.classList.add('mp_hidden');
+                this._hiddenCount++; // Increment hidden count
             }
         });
+
+        // Update button text with the initial hidden count
+        const toggleSwitch: HTMLDivElement = <HTMLDivElement>(
+            document.querySelector('#mp_showHidden')
+        );
+        toggleSwitch.innerText = this._hide
+            ? `Show Hidden (${this._hiddenCount})`
+            : `Hide Hidden (${this._hiddenCount})`;
     }
 
     get settings(): CheckboxSetting {
