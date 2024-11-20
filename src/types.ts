@@ -32,7 +32,7 @@ enum SettingGroup {
     'Other',
 }
 
-type ShoutboxUserType = 'priority' | 'mute';
+type ShoutboxUserType = 'priority' | 'mute' | 'mention';
 
 type StoreSource =
     | 1
