@@ -30,9 +30,10 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
+            '🆕: Added Gift All button to the New Users page. Thanks @sherman76400!!!',
+            '🆕: Added a spot to save notes on user pages. Also thanks @sherman76400!',
         ] as string[],
-        BUG_LIST: [
-        ] as string[],
+        BUG_LIST: [] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
     export const VERSION: string = Check.newVer;
