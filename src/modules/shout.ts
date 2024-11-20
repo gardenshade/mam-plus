@@ -1037,3 +1037,172 @@ class QuickShout implements Feature {
         return this._settings;
     }
 }
+
+class AddToLists implements Feature {
+    private _settings: CheckboxSetting = {
+            scope: SettingGroup.Shoutbox,
+            type: 'checkbox',
+            title: 'Add users to lists',
+            desc: `Places add friend, block and Emphasize buttons in Shoutbox dot-menu`,
+        };
+    private _tar: string = '.sbf';
+    private _priorityUsers: string[] = [];
+
+        constructor() {
+            Util.startFeature(this._settings, this._tar, ['shoutbox', 'home']).then((t) => {
+                if (t) {
+                    this._init();
+                }
+            });
+        }
+
+    private async _init() {
+            console.log(`[M+] Initialized Buttons.`);
+            const sbfDiv = <HTMLDivElement>document.getElementById('sbf')!;
+
+            // Add event listener for any click in the sbf div
+            sbfDiv.addEventListener('click', async (e) => {
+                const target = e.target as HTMLElement;
+                const sbMenuElem = target.closest('.sb_menu');
+
+                // Only proceed if the target is the triple dot menu in shoutbox
+                if (!sbMenuElem) return;
+
+                // Get the Menu after it pops up
+                console.log(`[M+] Attempting to Add Custom Buttons...`);
+                const popupMenu: HTMLElement | null = document.getElementById('sbMenuMain');
+                do {
+                    await Util.sleep(5);
+                } while (!popupMenu!.hasChildNodes());
+                //get the user details from the popup menu details
+                const popupUser: HTMLElement = Util.nodeToElem(popupMenu!.childNodes[0]);
+
+                if (!popupMenu || !popupUser) {
+                    console.warn(`[M+] Popup menu or user element not found.`);
+                    return;
+                }
+
+                const userName: string = popupUser.getAttribute('data-uid')!;
+                if (!userName) {
+                    console.warn(`[M+] User ID not found.`);
+                    return;
+                }
+
+                do {
+                    await Util.sleep(5);
+                } while (!popupMenu?.hasChildNodes());
+
+                console.log(`[M+] Popup menu located, adding buttons...`);
+
+                // Clear previous buttons to avoid duplicates
+                popupMenu.querySelectorAll('.custom-button').forEach(button => button.remove());
+
+                // Use the addButtonToSubMenu function to add each button with specific actions
+                this.addButtonToSubMenu(popupMenu, "Add Friend", () => {
+                    const addFriendUrl = `https://www.myanonamouse.net/friends.php?action=add&type=friend&targetid=${userName}`;
+                    window.open(addFriendUrl, '_blank');
+                });
+
+                this.addButtonToSubMenu(popupMenu, "Block", () => {
+                    const blockUrl = `https://www.myanonamouse.net/friends.php?action=add&type=block&targetid=${userName}`;
+                    window.open(blockUrl, '_blank');
+                });
+                /* TODO: Emphasize list is only loaded on page reload, fina a way to reload after list updated
+                * Check if priorityUsers is true or not if not set it to true
+                * */
+                this.addButtonToSubMenu(popupMenu, "Emphasize", () => {
+                    this._add(userName);
+                    this.enablePriorityUsers()
+                    console.log("Emphasize clicked");
+                });
+
+                console.log(`[M+] Custom buttons added successfully.`);
+            });
+        }
+    private enablePriorityUsers() {
+            const key = 'priorityUsers';
+
+            // Retrieve the current value or default to false
+            let currentValue = GM_getValue(key, false);
+
+            // Check if the value is false
+            if (!currentValue) {
+                // Set the value to true
+                GM_setValue(key, true);
+                console.log(`[UserManager] '${key}' was false and has been set to true.`);
+            } else {
+                console.log(`[UserManager] '${key}' is already true.`);
+            }
+        }
+
+        // Function to add a username to _priorityUsers if not already present and save it directly
+    private async _add(userName: string) {
+            // Load the current list from storage, initialize as empty array if not yet created
+            const gmValue: string | undefined = GM_getValue(`priorityUsers_val`);
+
+            // Convert CSV to array if gmValue exists; otherwise, start with an empty array
+            this._priorityUsers = gmValue ? await Util.csvToArray(gmValue) : [];
+
+            // Check if the user is already in _priorityUsers
+            if (!this._priorityUsers.includes(userName)) {
+                // Add the new user to the array
+                this._priorityUsers.push(userName);
+
+                // Convert the updated array to CSV format
+                const updatedCsv = this._priorityUsers.join(',');
+
+                // Save the CSV string back to storage to persist changes
+                GM_setValue(`priorityUsers_val`, updatedCsv);
+                console.log(`User ${userName} added to _priorityUsers and saved.`);
+                this.addMessage(`Added to emphasize list, reload required`);
+            } else {
+                console.log(`User ${userName} is already in the _priorityUsers list.`);
+                this.addMessage(`User already in emphasize list`);
+            }
+        }
+
+        // Simple function to add a message to the shoutbox
+    private addMessage(text: string) {
+            // Locate the main shoutbox div
+            const sbfDiv = document.getElementById('sbf');
+            const sbfDivChild = sbfDiv!.firstChild;
+
+            if (sbfDiv) {
+                // Create a new div for the message
+                const messageDiv = document.createElement('div');
+                messageDiv.setAttribute('id', 'mp_giftStatusElem');
+                sbfDivChild!.appendChild(messageDiv);
+
+                // Create and append a text node with the provided message
+                messageDiv.appendChild(document.createTextNode(text));
+                messageDiv.classList.add('mp_success');
+
+                // Scroll the shoutbox to the bottom to show the new message
+                sbfDiv.scrollTop = sbfDiv.scrollHeight;
+            } else {
+                console.warn('[M+] Shoutbox div not found!');
+            }
+        }
+
+    private addButtonToSubMenu(menu: HTMLElement, label: string, onClick: () => void) {
+            /* TODO: Generalise and move to util, make GiftButton use it. */
+            const buttonContainer = document.createElement('span');
+            buttonContainer.classList.add('custom-button'); // Class for easy debugging and removal if needed
+            const button = document.createElement('button');
+            button.innerText = label;
+
+            // Set up button click event
+            button.addEventListener('click', onClick);
+
+            // Append elements to container
+            buttonContainer.appendChild(button);
+            buttonContainer.appendChild(document.createTextNode(' '));
+
+            // Append buttonContainer to the first child of the menu or fallback to the menu itself
+            (menu.childNodes[0] || menu).appendChild(buttonContainer);
+        }
+
+    get settings(): CheckboxSetting {
+        return this._settings;
+    }
+}
