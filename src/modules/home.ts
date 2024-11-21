@@ -80,13 +80,15 @@ class GiftNewest implements Feature {
         lastMem.insertAdjacentElement('afterend', giftAmounts);
 
         //make the button and insert after the last members name (before the input text)
-        const giftAllBtn = await Util.createButton(
-            'giftAll',
-            'Gift All: ',
-            'button',
-            `.mp_refPoint_${Util.endOfHref(lastMem)}`,
-            'afterend',
-            'mp_btn'
+        const giftAllBtn = await Util.createButtonElement(
+            'giftAll',                    // ID
+            'Gift All: ',                 // Text
+            `.mp_refPoint_${Util.endOfHref(lastMem)}`, // Target element
+            {
+                type: 'button',           // HTML element type
+                relative: 'afterend',     // Position relative to target
+                btnClass: 'mp_btn'        // CSS classes
+            }
         );
         //add a space between button and text
         giftAllBtn.style.marginRight = '5px';
@@ -167,13 +169,15 @@ class GiftNewest implements Feature {
             }
         });
         //add a button to open all ungifted members in new tabs
-        const openAllBtn = await Util.createButton(
-            'openTabs',
-            'Open Ungifted In Tabs',
-            'button',
-            '[id=mp_giftAmounts]',
-            'afterend',
-            'mp_btn'
+        const openAllBtn = await Util.createButtonElement(
+            'openTabs',                  // ID
+            'Open Ungifted In Tabs',     // Text
+            '[id=mp_giftAmounts]',       // Target element
+            {
+                type: 'button',          // HTML element type
+                relative: 'afterend',    // Position relative to target
+                btnClass: 'mp_btn'       // CSS classes
+            }
         );
 
         openAllBtn.setAttribute('title', 'Open new tab for each');
@@ -252,13 +256,15 @@ class GiftNewest implements Feature {
         bpText.innerText = 'points ';
 
         // Create "Gift All Checked Users" button
-        const giftAllBtn = await Util.createButton(
-            'mp_giftAll',
-            'Gift All Selected',
-            'button',
-            footer,
-            'afterend',
-            'mp_btn'
+        const giftAllBtn = await Util.createButtonElement(
+            'mp_giftAll',               // ID
+            'Gift All Selected',         // Text
+            footer,                     // Target element (can be an element or a selector)
+            {
+                type: 'button',         // HTML element type
+                relative: 'afterend',   // Position relative to the target
+                btnClass: 'mp_btn'      // CSS classes
+            }
         );
         giftAllBtn.style.marginRight = '5px';
         giftAllBtn.style.marginTop = '5px';
@@ -312,13 +318,15 @@ class GiftNewest implements Feature {
         });
 
         // Create "Open Ungifted in Tabs" button
-        const openAllBtn = await Util.createButton(
-            'mp_openTabs',
-            'Open Ungifted in Tabs',
-            'button',
-            footer,
-            'afterend',
-            'mp_btn'
+        const openAllBtn = await Util.createButtonElement(
+            'mp_openTabs',              // ID
+            'Open Ungifted in Tabs',    // Text
+            footer,                     // Target element (can be an HTMLElement)
+            {
+                type: 'button',         // HTML element type
+                relative: 'afterend',   // Position relative to the target
+                btnClass: 'mp_btn'      // CSS classes
+            }
         );
         openAllBtn.title = 'Open a new tab for each ungifted member';
         openAllBtn.addEventListener('click', () => {
@@ -338,13 +346,15 @@ class GiftNewest implements Feature {
         messageSpan.innerText = ` Available Points: ${bonusPointsAvail}`;
 
         // Add "Deselect All" button
-        const deselectBtn = await Util.createButton(
-            'mp_deselectAll',
-            'Unselect all',
-            'button',
-            footer,
-            'afterend',
-            'mp_btn'
+        const deselectBtn = await Util.createButtonElement(
+            'mp_deselectAll',          // ID
+            'Unselect all',            // Text
+            footer,                     // Target element (HTMLElement)
+            {
+                type: 'button',         // HTML element type
+                relative: 'afterend',   // Position relative to the target
+                btnClass: 'mp_btn'      // CSS classes
+            }
         );
         deselectBtn.addEventListener('click', () => {
             const boxList: NodeListOf<HTMLInputElement> | void = document.querySelectorAll('input[type=checkbox]')
@@ -355,13 +365,15 @@ class GiftNewest implements Feature {
         });
 
         // Add "Select 100 Ungifted" button
-        const selectUngiftedBtn = await Util.createButton(
-            'mp_selectUngifted',
-            'Select 100 Ungifted',
-            'button',
-            footer,
-            'afterend',
-            'mp_btn'
+        const selectUngiftedBtn = await Util.createButtonElement(
+            'mp_selectUngifted',        // ID
+            'Select 100 Ungifted',      // Text
+            footer,                     // Target element (can be an HTMLElement)
+            {
+                type: 'button',         // HTML element type
+                relative: 'afterend',   // Position relative to the target
+                btnClass: 'mp_btn'      // CSS classes
+            }
         );
         selectUngiftedBtn.title = 'Select the first 100 ungifted users';
         selectUngiftedBtn.addEventListener('click', () => {

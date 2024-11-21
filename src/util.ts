@@ -232,74 +232,6 @@ class Util {
         }
     }
 
-    // TODO: Merge with `Util.createButton`
-    /**
-     * Inserts a link button that is styled like a site button (ex. in tor details)
-     * @param tar The element the button should be added to
-     * @param url The URL the button will send you to
-     * @param text The text on the button
-     * @param order Optional: flex flow ordering
-     */
-    public static createLinkButton(
-        tar: HTMLElement,
-        url: string = 'none',
-        text: string,
-        order: number = 0
-    ): void {
-        // Create the button
-        const button: HTMLAnchorElement = document.createElement('a');
-        // Set up the button
-        button.classList.add('mp_button_clone');
-        if (url !== 'none') {
-            button.setAttribute('href', url);
-            button.setAttribute('target', '_blank');
-        }
-        button.innerText = text;
-        button.style.order = `${order}`;
-        // Inject the button
-        tar.insertBefore(button, tar.firstChild);
-    }
-
-    /**
-     * Inserts a non-linked button
-     * @param id The ID of the button
-     * @param text The text displayed in the button
-     * @param type The HTML element to create. Default: `h1`
-     * @param tar The HTML element the button will be `relative` to
-     * @param relative The position of the button relative to the `tar`. Default: `afterend`
-     * @param btnClass The classname of the element. Default: `mp_btn`
-     */
-    public static createButton(
-        id: string,
-        text: string,
-        type: string = 'h1',
-        tar: string | HTMLElement,
-        relative: 'beforebegin' | 'afterend' = 'afterend',
-        btnClass: string = 'mp_btn'
-    ): Promise<HTMLElement> {
-        return new Promise((resolve, reject) => {
-            // Choose the new button insert location and insert elements
-            // const target: HTMLElement | null = <HTMLElement>document.querySelector(tar);
-            const target: HTMLElement | null =
-                typeof tar === 'string' ? document.querySelector(tar) : tar;
-            const btn: HTMLElement = document.createElement(type);
-
-            if (target === null) {
-                reject(`${tar} is null!`);
-            } else {
-                target.insertAdjacentElement(relative, btn);
-                Util.setAttr(btn, {
-                    id: `mp_${id}`,
-                    class: btnClass,
-                    role: 'button',
-                });
-                // Set initial button text
-                btn.innerHTML = text;
-                resolve(btn);
-            }
-        });
-    }
-
     /**
      * Converts an element into a button that, when clicked, copies text to clipboard
      * @param btn An HTML Element being used as a button
@@ -682,4 +614,73 @@ class Util {
     public static delay = (ms: number) => {
         return new Promise((resolve) => setTimeout(resolve, ms));
     };
+    /**
+     * Inserts a button element with optional link and styling.
+     * @param id The ID of the button (optional for link buttons)
+     * @param text The text displayed in the button
+     * @param tar The element to add the button to or the selector
+     * @param options Additional configuration options
+     *      - url: URL to link to (optional, if not provided, a non-link button will be created)
+     *      - type: The HTML element to create. Default: `h1` for non-link buttons, `a` for link buttons
+     *      - order: flex order (only applies if added as the first child of the target)
+     *      - relative: The position of the button relative to the `tar`. Default: `afterend`
+     *      - btnClass: The classname of the element. Default: `mp_btn`
+     * @returns A Promise resolving to the created button element
+     */
+    public static createButtonElement(
+        id: string = '',
+        text: string,
+        tar: string | HTMLElement,
+        options: {
+            url?: string;
+            type?: string;
+            order?: number;
+            relative?: 'beforebegin' | 'afterend' | 'afterbegin' | 'beforeend';
+            btnClass?: string;
+        } = {}
+    ): Promise<HTMLElement> {
+        return new Promise((resolve, reject) => {
+            // Default option values
+            const {
+                url = '',
+                type = url ? 'a' : 'h1',
+                order = 0,
+                relative = 'afterend',
+                btnClass = 'mp_btn',
+            } = options;
+
+            const target: HTMLElement | null =
+                typeof tar === 'string' ? document.querySelector(tar) : tar;
+
+            if (!target) {
+                reject(`${tar} is null!`);
+                return;
+            }
+
+            // Create the button element (anchor if URL is provided, otherwise generic)
+            const button: HTMLElement = document.createElement(type);
+
+            // Add attributes
+            button.innerHTML = text;
+            if (url) {
+                button.setAttribute('href', url);
+                button.setAttribute('target', '_blank');
+                button.classList.add('mp_button_clone');
+            } else {
+                button.classList.add(btnClass);
+                if (id) button.setAttribute('id', `mp_${id}`);
+                button.setAttribute('role', 'button');
+            }
+
+            // Apply flex order if inserting as the first child of the target
+            if (relative === 'afterbegin' || relative === 'beforeend') {
+                button.style.order = `${order}`;
+                target.insertAdjacentElement(relative, button);
+            } else {
+                target.insertAdjacentElement(relative, button);
+            }
+
+            resolve(button);
+        });
+    }
 }

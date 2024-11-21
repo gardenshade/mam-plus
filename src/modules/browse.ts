@@ -48,13 +48,15 @@ class ToggleSnatched implements Feature {
 
         // Queue building the button and getting the results
         await Promise.all([
-            (toggle = Util.createButton(
-                'snatchedToggle',
-                toggleText,
-                'h1',
-                '#resetNewIcon',
-                'beforebegin',
-                'torFormButton'
+            (toggle = Util.createButtonElement(
+                'snatchedToggle',       // ID
+                toggleText,             // Text
+                '#resetNewIcon',        // Target element
+                {
+                    type: 'h1',         // HTML element type
+                    relative: 'beforebegin', // Position relative to target
+                    btnClass: 'torFormButton' // CSS class
+                }
             )),
             (resultList = this._share.getSearchList()),
         ]);
@@ -224,28 +226,32 @@ class PlaintextSearch implements Feature {
 
         // Queue building the toggle button and getting the results
         await Promise.all([
-            (toggleBtn = Util.createButton(
-                'plainToggle',
-                'Show Plaintext',
-                'div',
-                '#ssr',
-                'beforebegin',
-                'mp_toggle mp_plainBtn'
+            (toggleBtn = Util.createButtonElement(
+                'plainToggle',               // ID
+                'Show Plaintext',            // Text
+                '#ssr',                      // Target element
+                {
+                    type: 'div',             // HTML element type
+                    relative: 'beforebegin', // Position relative to target
+                    btnClass: 'mp_toggle mp_plainBtn' // CSS classes
+                }
             )),
-            (resultList = this._share.getSearchList()),
+        (resultList = this._share.getSearchList()),
         ]);
 
         // Process the results into plaintext
         resultList
             .then(async (res) => {
                 // Build the copy button
-                copyBtn = await Util.createButton(
-                    'plainCopy',
-                    'Copy Plaintext',
-                    'div',
-                    '#mp_plainToggle',
-                    'afterend',
-                    'mp_copy mp_plainBtn'
+                copyBtn = await Util.createButtonElement(
+                    'plainCopy',                  // ID
+                    'Copy Plaintext',             // Text
+                    '#mp_plainToggle',            // Target element
+                    {
+                        type: 'div',              // HTML element type
+                        relative: 'afterend',     // Position relative to target
+                        btnClass: 'mp_copy mp_plainBtn' // CSS classes
+                    }
                 );
                 // Build the plaintext box
                 copyBtn.insertAdjacentHTML(
@@ -597,13 +603,15 @@ class RandomBook implements Feature {
 
         // Queue building the button and getting the results
         await Promise.all([
-            (rando = Util.createButton(
-                'randomBook',
-                randoText,
-                'h1',
-                '#resetNewIcon',
-                'beforebegin',
-                'torFormButton'
+            (rando = Util.createButtonElement(
+                'randomBook',                // ID
+                randoText,                   // Text
+                '#resetNewIcon',             // Target element
+                {
+                    type: 'h1',              // HTML element type
+                    relative: 'beforebegin', // Position relative to the target
+                    btnClass: 'torFormButton' // CSS classes
+                }
             )),
         ]);
 

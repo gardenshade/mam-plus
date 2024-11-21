@@ -38,13 +38,11 @@ class ToggleHiddenRequesters implements Feature {
 
     private _addToggleSwitch() {
         // Make a new button and insert beside the Search button
-        Util.createButton(
-            'showHidden',
-            `Show Hidden (0)`, // Initial count set to 0
-            'div',
-            '#requestSearch .torrentSearch',
-            'afterend',
-            'torFormButton'
+        Util.createButtonElement(
+        'showHidden',
+        'Show Hidden (0)', // Initial count set to 0
+        '#requestSearch .torrentSearch',
+        { type: 'div', relative: 'afterend', btnClass: 'torFormButton' }
         );
         // Select the new button and add a click listener
         const toggleSwitch: HTMLDivElement = <HTMLDivElement>(
@@ -154,28 +152,32 @@ class PlaintextRequest implements Feature {
 
         // Queue building the toggle button and getting the results
         await Promise.all([
-            (toggleBtn = Util.createButton(
-                'plainToggle',
-                'Show Plaintext',
-                'div',
-                '#ssr',
-                'beforebegin',
-                'mp_toggle mp_plainBtn'
+            (toggleBtn = Util.createButtonElement(
+                'plainToggle',              // ID
+                'Show Plaintext',           // Text
+                '#ssr',                     // Target element (selector)
+                {
+                    type: 'div',            // HTML element type
+                    relative: 'beforebegin', // Position relative to target
+                    btnClass: 'mp_toggle mp_plainBtn' // CSS classes
+                }
             )),
-            (resultList = this._getRequestList()),
+        (resultList = this._getRequestList()),
         ]);
 
         // Process the results into plaintext
         resultList
             .then(async (res) => {
                 // Build the copy button
-                copyBtn = await Util.createButton(
-                    'plainCopy',
-                    'Copy Plaintext',
-                    'div',
-                    '#mp_plainToggle',
-                    'afterend',
-                    'mp_copy mp_plainBtn'
+                copyBtn = await Util.createButtonElement(
+                    'plainCopy',                // ID
+                    'Copy Plaintext',           // Text
+                    '#mp_plainToggle',          // Target element (selector)
+                    {
+                        type: 'div',             // HTML element type
+                        relative: 'afterend',    // Position relative to the target
+                        btnClass: 'mp_copy mp_plainBtn' // CSS classes
+                    }
                 );
                 // Build the plaintext box
                 copyBtn.insertAdjacentHTML(

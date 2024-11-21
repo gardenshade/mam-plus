@@ -96,7 +96,12 @@ class Shared {
                 ser.forEach((item) => {
                     const buttonTitle = ser.length > 1 ? `Series: ${item}` : 'Series';
                     const url = Util.goodreads.buildSearchURL('series', item);
-                    Util.createLinkButton(buttonTar, url, buttonTitle, 4);
+                    Util.createButtonElement(
+                        '',
+                        buttonTitle,
+                        buttonTar,
+                        { url: url, order: 4, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                 });
             } else {
                 console.warn('No series data detected!');
@@ -109,7 +114,12 @@ class Shared {
                 if (auth.length > 0) {
                     authors = auth.join(' ');
                     const url = Util.goodreads.buildSearchURL('author', authors);
-                    Util.createLinkButton(buttonTar, url, 'Author', 3);
+                    Util.createButtonElement(
+                        '',
+                        'Author',
+                        buttonTar,
+                        { url: url, order: 3, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                 } else {
                     console.warn('No author data detected!');
                 }
@@ -119,14 +129,24 @@ class Shared {
                 const title = await Util.getBookTitle(bookData, authors);
                 if (title !== '') {
                     const url = Util.goodreads.buildSearchURL('book', title);
-                    Util.createLinkButton(buttonTar, url, 'Title', 2);
+                    Util.createButtonElement(
+                        '',
+                        'Title',
+                        buttonTar,
+                        { url: url, order: 2, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                     // If a title and author both exist, make a Title + Author button
                     if (authors !== '') {
                         const bothURL = Util.goodreads.buildSearchURL(
                             'on',
                             `${title} ${authors}`
                         );
-                        Util.createLinkButton(buttonTar, bothURL, 'Title + Author', 1);
+                        Util.createButtonElement(
+                            '',
+                            'Title + Author',
+                            buttonTar,
+                            { url: bothURL, order: 1, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                        );
                     } else if (MP.DEBUG) {
                         console.log(
                             `Failed to generate Title+Author link!\nTitle: ${title}\nAuthors: ${authors}`
@@ -173,7 +193,12 @@ class Shared {
                 ser.forEach((item) => {
                     const buttonTitle = ser.length > 1 ? `Series: ${item}` : 'Series';
                     const url = `https://www.audible.com/search?keywords=${item}`;
-                    Util.createLinkButton(buttonTar, url, buttonTitle, 4);
+                    Util.createButtonElement(
+                        '',
+                        buttonTitle,
+                        buttonTar,
+                        { url: url, order: 4, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                 });
             } else {
                 console.warn('No series data detected!');
@@ -186,7 +211,12 @@ class Shared {
                 if (auth.length > 0) {
                     authors = auth.join(' ');
                     const url = `https://www.audible.com/search?author_author=${authors}`;
-                    Util.createLinkButton(buttonTar, url, 'Author', 3);
+                    Util.createButtonElement(
+                        '',
+                        'Author',
+                        buttonTar,
+                        { url: url, order: 3, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                 } else {
                     console.warn('No author data detected!');
                 }
@@ -196,11 +226,21 @@ class Shared {
                 const title = await Util.getBookTitle(bookData, authors);
                 if (title !== '') {
                     const url = `https://www.audible.com/search?title=${title}`;
-                    Util.createLinkButton(buttonTar, url, 'Title', 2);
+                    Util.createButtonElement(
+                        '',
+                        'Title',
+                        buttonTar,
+                        { url: url, order: 2, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                     // If a title and author both exist, make a Title + Author button
                     if (authors !== '') {
                         const bothURL = `https://www.audible.com/search?title=${title}&author_author=${authors}`;
-                        Util.createLinkButton(buttonTar, bothURL, 'Title + Author', 1);
+                        Util.createButtonElement(
+                            '',
+                            'Title + Author',
+                            buttonTar,
+                            { url: bothURL, order: 1, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                        );
                     } else if (MP.DEBUG) {
                         console.log(
                             `Failed to generate Title+Author link!\nTitle: ${title}\nAuthors: ${authors}`
@@ -248,7 +288,12 @@ class Shared {
                 ser.forEach((item) => {
                     const buttonTitle = ser.length > 1 ? `Series: ${item}` : 'Series';
                     const url = `https://app.thestorygraph.com/browse?search_term=${item}`;
-                    Util.createLinkButton(buttonTar, url, buttonTitle, 4);
+                    Util.createButtonElement(
+                        '',
+                        buttonTitle,
+                        buttonTar,
+                        { url: url, order: 4, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                 });
             } else {
                 console.warn('No series data detected!');
@@ -261,7 +306,12 @@ class Shared {
                 if (auth.length > 0) {
                     authors = auth.join(' ');
                     const url = `https://app.thestorygraph.com/browse?search_term=${authors}`;
-                    Util.createLinkButton(buttonTar, url, 'Author', 3);
+                    Util.createButtonElement(
+                        '',
+                        'Author',
+                        buttonTar,
+                        { url: url, order: 3, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                 } else {
                     console.warn('No author data detected!');
                 }
@@ -271,11 +321,21 @@ class Shared {
                 const title = await Util.getBookTitle(bookData, authors);
                 if (title !== '') {
                     const url = `https://app.thestorygraph.com/browse?search_term=${title}`;
-                    Util.createLinkButton(buttonTar, url, 'Title', 2);
+                    Util.createButtonElement(
+                        '',
+                        'Title',
+                        buttonTar,
+                        { url: url, order: 2, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                    );
                     // If a title and author both exist, make a Title + Author button
                     if (authors !== '') {
                         const bothURL = `https://app.thestorygraph.com/browse?search_term=${title} ${authors}`;
-                        Util.createLinkButton(buttonTar, bothURL, 'Title + Author', 1);
+                        Util.createButtonElement(
+                            '',
+                            'Title + Author',
+                            buttonTar,
+                            { url: bothURL, order: 1, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+                        );
                     } else if (MP.DEBUG) {
                         console.log(
                             `Failed to generate Title+Author link!\nTitle: ${title}\nAuthors: ${authors}`
