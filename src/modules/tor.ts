@@ -285,7 +285,12 @@ class CurrentlyReading implements Feature {
         // Build text display
         tar.innerHTML = `<textarea rows="1" cols="80" style='margin-right:5px'>${content}</textarea>`;
         // Build button
-        Util.createLinkButton(tar, 'none', 'Copy', 2);
+        Util.createButtonElement(
+            '',
+            'Copy',
+            tar,
+            { url: 'none', order: 2, relative: 'afterbegin', btnClass: 'mp_button_clone' }
+        );
         document.querySelector('.mp_crRow .mp_button_clone')!.classList.add('mp_reading');
         // Return button
         return <HTMLDivElement>document.querySelector('.mp_reading');
