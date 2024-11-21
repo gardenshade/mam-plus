@@ -455,6 +455,7 @@ class HideNews implements Feature {
         this._adjustHeaderSize(this._tar);
         await this._checkForSeen();
         this._addHiderButton();
+        this._removeDisclaimer();
         // this._cleanValues(); // FIX: Not working as intended
 
         console.log('[M+] Cleaned up the home page!');
@@ -553,6 +554,20 @@ class HideNews implements Feature {
 
     _getNewsItems = (): NodeListOf<HTMLDivElement> | null => {
         return document.querySelectorAll('div[class^="mainPageNews"]');
+    };
+
+    _removeDisclaimer = () => {
+        const disclaimerHeading: HTMLHeadingElement | null = Array.from(document.querySelectorAll('h4'))
+            .find(h => h.textContent.trim() === 'Disclaimer');
+
+        if (disclaimerHeading) {
+            const blockConDiv: HTMLDivElement | null = disclaimerHeading.closest('.blockCon');
+
+            if (blockConDiv) {
+                // Do something with blockConDiv, for example, remove it
+                blockConDiv.remove();
+            }
+        }
     };
 
     // This must match the type selected for `this._settings`
