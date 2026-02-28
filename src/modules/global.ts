@@ -106,7 +106,7 @@ class MiniVaultInfo implements Feature {
         - Extract the number (with float) from the element
         - Fix the float to 2 decimal places (which converts it back into a string)
         - Convert the string back into a number so that we can convert it with`toLocaleString` to get commas back */
-        const num = Number(Util.extractFloat(ratioText)[0].toFixed(2)).toLocaleString();
+        const num = Number(Util.extractFloat(ratioText)[0].toFixed(2)).toLocaleString('en-US');
         ratioText.innerHTML = `${num} <img src="/pic/updownBig.png" alt="ratio">`;
 
         // Turn the numeric portion of the vault link into a number
