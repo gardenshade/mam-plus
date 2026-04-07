@@ -1,5 +1,5 @@
 /**
- * ### Adds ability to gift newest 10 members to MAM on Homepage or open their user pages
+ * ### Adds ability to gift newest 30 members to MAM on Homepage or open their user pages
  */
 class GiftNewest implements Feature {
     /* TODO: Refactor code to reduce duplication. */
@@ -40,12 +40,13 @@ class GiftNewest implements Feature {
     private async _homePageGifting() {
         //ensure gifted list is under 500 member names long
         this._trimGiftList();
-        //get the FrontPage NewMembers element containing newest 10 members
-        const fpNM = <HTMLDivElement>document.querySelector('#fpNM');
+        
+        //get the element containing newest 30 members
+        const memberContainer = <HTMLDivElement>document.querySelector('#newestMembers');
         const members: HTMLAnchorElement[] = Array.prototype.slice.call(
-            fpNM.getElementsByTagName('a')
+            memberContainer.getElementsByTagName('a')
         );
-        const lastMem = members[members.length - 1];
+
         members.forEach((member) => {
             //add a class to the existing element for use in reference in creating buttons
             member.setAttribute('class', `mp_refPoint_${Util.endOfHref(member)}`);
@@ -56,10 +57,10 @@ class GiftNewest implements Feature {
                 member.classList.add('mp_gifted');
             }
         });
+
         //get the default value of gifts set in preferences for user page
         let giftValueSetting: string | undefined = GM_getValue('userGiftDefault_val');
         //make sure the value falls within the acceptable range
-        // TODO: Make the gift value check into a Util
         if (!giftValueSetting) {
             giftValueSetting = '100';
         } else if (Number(giftValueSetting) > 100 || isNaN(Number(giftValueSetting))) {
@@ -67,6 +68,17 @@ class GiftNewest implements Feature {
         } else if (Number(giftValueSetting) < 5) {
             giftValueSetting = '5';
         }
+
+        // Hijack the block footer for UI controls
+        const footerWrapper = <HTMLDivElement>document.querySelector('#fpNM .blockFoot');
+        footerWrapper.style.display = 'flex';
+        footerWrapper.style.alignItems = 'center';
+        footerWrapper.style.justifyContent = 'center';
+        footerWrapper.style.gap = '6px';
+        footerWrapper.style.padding = '2px 0';
+        footerWrapper.style.minHeight = '32px';
+        footerWrapper.style.whiteSpace = 'nowrap';
+
         //create the text input for how many points to give
         const giftAmounts: HTMLInputElement = document.createElement('input');
         Util.setAttr(giftAmounts, {
@@ -76,23 +88,26 @@ class GiftNewest implements Feature {
             title: 'Value between 5 and 100',
             value: giftValueSetting,
         });
-        //insert the text box after the last members name
-        lastMem.insertAdjacentElement('afterend', giftAmounts);
+        // Vertical alignment fix for input
+        giftAmounts.style.height = '22px';
+        giftAmounts.style.boxSizing = 'border-box';
+        
+        // append input to footer
+        footerWrapper.appendChild(giftAmounts);
 
-        //make the button and insert after the last members name (before the input text)
-        const giftAllBtn = await Util.createButtonElement(
-            'giftAll',                    // ID
-            'Gift All: ',                 // Text
-            `.mp_refPoint_${Util.endOfHref(lastMem)}`, // Target element
-            {
-                type: 'button',           // HTML element type
-                relative: 'afterend',     // Position relative to target
-                btnClass: 'mp_btn'        // CSS classes
-            }
+        //make the button and insert before the input text
+        const giftAllBtn = await Util.createButton(
+            'giftAll',
+            'Gift All',
+            'button',
+            giftAmounts,
+            'beforebegin',
+            'mp_btn'
         );
-        //add a space between button and text
-        giftAllBtn.style.marginRight = '5px';
-        giftAllBtn.style.marginTop = '5px';
+        // Vertical alignment fix for button
+        giftAllBtn.style.height = '22px';
+        giftAllBtn.style.display = 'inline-flex';
+        giftAllBtn.style.alignItems = 'center';
 
         giftAllBtn.addEventListener(
             'click',
@@ -100,8 +115,7 @@ class GiftNewest implements Feature {
                 let firstCall: boolean = true;
                 for (const member of members) {
                     //update the text to show processing
-                    document.getElementById('mp_giftAllMsg')!.innerText =
-                        'Sending Gifts... Please Wait';
+                    document.getElementById('mp_giftAllMsg')!.innerText = 'Sending...';
                     //if user has not been gifted
                     if (!member.classList.contains('mp_gifted')) {
                         //get the members name for JSON string
@@ -141,17 +155,14 @@ class GiftNewest implements Feature {
 
                 //disable button after send
                 (giftAllBtn as HTMLInputElement).disabled = true;
-                document.getElementById('mp_giftAllMsg')!.innerText =
-                    'Gifts completed to all Checked Users';
+                document.getElementById('mp_giftAllMsg')!.innerText = 'Done!';
             },
             false
         );
 
-        //newline between elements
-        members[members.length - 1].after(document.createElement('br'));
         //listen for changes to the input box and ensure its between 5 and 1000, if not disable button
         document.getElementById('mp_giftAmounts')!.addEventListener('input', () => {
-            const valueToNumber: String = (<HTMLInputElement>(
+            const valueToNumber: string = (<HTMLInputElement>(
                 document.getElementById('mp_giftAmounts')
             ))!.value;
             const giftAll = <HTMLInputElement>document.getElementById('mp_giftAll');
@@ -168,17 +179,20 @@ class GiftNewest implements Feature {
                 giftAll.setAttribute('title', `Gift All ${valueToNumber}`);
             }
         });
+
         //add a button to open all ungifted members in new tabs
-        const openAllBtn = await Util.createButtonElement(
-            'openTabs',                  // ID
-            'Open Ungifted In Tabs',     // Text
-            '[id=mp_giftAmounts]',       // Target element
-            {
-                type: 'button',          // HTML element type
-                relative: 'afterend',    // Position relative to target
-                btnClass: 'mp_btn'       // CSS classes
-            }
+        const openAllBtn = await Util.createButton(
+            'openTabs',
+            'Open Ungifted',
+            'button',
+            giftAmounts,
+            'afterend',
+            'mp_btn'
         );
+        // Vertical alignment fix for button
+        openAllBtn.style.height = '22px';
+        openAllBtn.style.display = 'inline-flex';
+        openAllBtn.style.alignItems = 'center';
 
         openAllBtn.setAttribute('title', 'Open new tab for each');
         openAllBtn.addEventListener(
@@ -192,24 +206,23 @@ class GiftNewest implements Feature {
             },
             false
         );
+
         //get the current amount of bonus points available to spend
         let bonusPointsAvail: string = document.getElementById('tmBP')!.innerText;
-        //get rid of the delta display
-        if (bonusPointsAvail.indexOf('(') >= 0) {
-            bonusPointsAvail = bonusPointsAvail.substring(
-                0,
-                bonusPointsAvail.indexOf('(')
-            );
-        }
-        //recreate the bonus points in new span and insert into fpNM
+        //clean up string for just the points
+        bonusPointsAvail = bonusPointsAvail.includes(':') ? bonusPointsAvail.split(':')[1] : bonusPointsAvail;
+        bonusPointsAvail = bonusPointsAvail.includes('(') ? bonusPointsAvail.split('(')[0] : bonusPointsAvail;
+
+        //recreate the bonus points in new span and insert into footer
         const messageSpan: HTMLElement = document.createElement('span');
         messageSpan.setAttribute('id', 'mp_giftAllMsg');
-        messageSpan.innerText = 'Available ' + bonusPointsAvail;
-        document.getElementById('mp_giftAmounts')!.after(messageSpan);
-        document.getElementById('mp_giftAllMsg')!.after(document.createElement('br'));
-        document
-            .getElementById('mp_giftAllMsg')!
-            .insertAdjacentHTML('beforebegin', '<br>');
+        messageSpan.style.lineHeight = '1';
+        messageSpan.style.display = 'inline-flex';
+        messageSpan.style.alignItems = 'center';
+        messageSpan.innerText = 'BP: ' + bonusPointsAvail.trim();
+        
+        footerWrapper.appendChild(messageSpan);
+        
         console.log(`[M+] Adding gift new members button to Home page...`);
     }
 
@@ -256,15 +269,13 @@ class GiftNewest implements Feature {
         bpText.innerText = 'points ';
 
         // Create "Gift All Checked Users" button
-        const giftAllBtn = await Util.createButtonElement(
-            'mp_giftAll',               // ID
-            'Gift All Selected',         // Text
-            footer,                     // Target element (can be an element or a selector)
-            {
-                type: 'button',         // HTML element type
-                relative: 'afterend',   // Position relative to the target
-                btnClass: 'mp_btn'      // CSS classes
-            }
+        const giftAllBtn = await Util.createButton(
+            'mp_giftAll',
+            'Gift All Selected',
+            'button',
+            footer,
+            'afterend',
+            'mp_btn'
         );
         giftAllBtn.style.marginRight = '5px';
         giftAllBtn.style.marginTop = '5px';
@@ -318,15 +329,13 @@ class GiftNewest implements Feature {
         });
 
         // Create "Open Ungifted in Tabs" button
-        const openAllBtn = await Util.createButtonElement(
-            'mp_openTabs',              // ID
-            'Open Ungifted in Tabs',    // Text
-            footer,                     // Target element (can be an HTMLElement)
-            {
-                type: 'button',         // HTML element type
-                relative: 'afterend',   // Position relative to the target
-                btnClass: 'mp_btn'      // CSS classes
-            }
+        const openAllBtn = await Util.createButton(
+            'mp_openTabs',
+            'Open Ungifted in Tabs',
+            'button',
+            footer,
+            'afterend',
+            'mp_btn'
         );
         openAllBtn.title = 'Open a new tab for each ungifted member';
         openAllBtn.addEventListener('click', () => {
@@ -346,18 +355,16 @@ class GiftNewest implements Feature {
         messageSpan.innerText = ` Available Points: ${bonusPointsAvail}`;
 
         // Add "Deselect All" button
-        const deselectBtn = await Util.createButtonElement(
-            'mp_deselectAll',          // ID
-            'Unselect all',            // Text
-            footer,                     // Target element (HTMLElement)
-            {
-                type: 'button',         // HTML element type
-                relative: 'afterend',   // Position relative to the target
-                btnClass: 'mp_btn'      // CSS classes
-            }
+        const deselectBtn = await Util.createButton(
+            'mp_deselectAll',
+            'Unselect all',
+            'button',
+            footer,
+            'afterend',
+            'mp_btn'
         );
         deselectBtn.addEventListener('click', () => {
-            const boxList: NodeListOf<HTMLInputElement> | void = document.querySelectorAll('input[type=checkbox]')
+            const boxList = document.querySelectorAll('input[type=checkbox]') as NodeListOf<HTMLInputElement>;
 
             boxList.forEach((box: HTMLInputElement) => {
                 box.checked = false;
@@ -365,15 +372,13 @@ class GiftNewest implements Feature {
         });
 
         // Add "Select 100 Ungifted" button
-        const selectUngiftedBtn = await Util.createButtonElement(
-            'mp_selectUngifted',        // ID
-            'Select 100 Ungifted',      // Text
-            footer,                     // Target element (can be an HTMLElement)
-            {
-                type: 'button',         // HTML element type
-                relative: 'afterend',   // Position relative to the target
-                btnClass: 'mp_btn'      // CSS classes
-            }
+        const selectUngiftedBtn = await Util.createButton(
+            'mp_selectUngifted',
+            'Select 100 Ungifted',
+            'button',
+            footer,
+            'afterend',
+            'mp_btn'
         );
         selectUngiftedBtn.title = 'Select the first 100 ungifted users';
         selectUngiftedBtn.addEventListener('click', () => {
@@ -433,156 +438,6 @@ class GiftNewest implements Feature {
         }
     }
 
-    get settings(): CheckboxSetting {
-        return this._settings;
-    }
-}
-
-/**
- * ### Adds ability to hide news items on the page
- */
-class HideNews implements Feature {
-    private _settings: CheckboxSetting = {
-        scope: SettingGroup.Home,
-        title: 'hideNews',
-        type: 'checkbox',
-        desc: 'Tidy the homepage and allow News to be hidden',
-    };
-    private _tar: string = '.mainPageNewsHead';
-    private _valueTitle: string = `mp_${this._settings.title}_val`;
-    private _icon = '\u274e';
-    constructor() {
-        Util.startFeature(this._settings, this._tar, ['home']).then((t) => {
-            if (t) {
-                this._init();
-            }
-        });
-    }
-
-    private async _init() {
-        // NOTE: for development
-        // GM_deleteValue(this._valueTitle);console.warn(`Value of ${this._valueTitle} will be deleted!`);
-
-        this._removeClock();
-        this._adjustHeaderSize(this._tar);
-        await this._checkForSeen();
-        this._addHiderButton();
-        this._removeDisclaimer();
-        // this._cleanValues(); // FIX: Not working as intended
-
-        console.log('[M+] Cleaned up the home page!');
-    }
-
-    _checkForSeen = async (): Promise<void> => {
-        const prevValue: string | undefined = GM_getValue(this._valueTitle);
-        const news = this._getNewsItems();
-        if (MP.DEBUG) console.log(this._valueTitle, ':\n', prevValue);
-
-        if (prevValue && news) {
-            // Use the icon to split out the known hidden messages
-            const hiddenArray = prevValue.split(this._icon);
-            /* If any of the hidden messages match a current message
-                remove the current message from the DOM */
-            hiddenArray.forEach((hidden) => {
-                news.forEach((entry) => {
-                    if (entry.textContent === hidden) {
-                        entry.remove();
-                    }
-                });
-            });
-            // If there are no current messages, hide the header
-            if (!document.querySelector('.mainPageNewsSub')) {
-                this._adjustHeaderSize(this._tar, false);
-            }
-        } else {
-            return;
-        }
-    };
-
-    _removeClock = () => {
-        const clock: HTMLDivElement | null = document.querySelector('#mainBody .fpTime');
-        if (clock) clock.remove();
-    };
-
-    _adjustHeaderSize = (selector: string, visible?: boolean) => {
-        const newsHeader: HTMLHeadingElement | null = document.querySelector(selector);
-        if (newsHeader) {
-            if (visible === false) {
-                newsHeader.style.display = 'none';
-            } else {
-                newsHeader.style.fontSize = '2em';
-            }
-        }
-    };
-
-    _addHiderButton = () => {
-        const news = this._getNewsItems();
-        if (!news) return;
-
-        // Loop over each news entry
-        news.forEach((entry) => {
-            // Create a button
-            const xbutton = document.createElement('div');
-            xbutton.textContent = this._icon;
-            Util.setAttr(xbutton, {
-                style: 'display:inline-block;margin-right:0.7em;cursor:pointer;',
-                class: 'mp_clearBtn',
-            });
-            // Listen for clicks
-            xbutton.addEventListener('click', () => {
-                // When clicked, append the content of the current news post to the
-                // list of remembered news items
-                const previousValue: string | undefined = GM_getValue(this._valueTitle)
-                    ? GM_getValue(this._valueTitle)
-                    : '';
-                if (MP.DEBUG)
-                    console.log(`Hiding... ${previousValue}${entry.textContent}`);
-
-                GM_setValue(this._valueTitle, `${previousValue}${entry.textContent}`);
-                entry.remove();
-                // If there are no more news items, remove the header
-                const updatedNews = this._getNewsItems();
-
-                if (updatedNews && updatedNews.length < 1) {
-                    this._adjustHeaderSize(this._tar, false);
-                }
-            });
-
-            // Add the button as the first child of the entry
-            if (entry.firstChild) entry.firstChild.before(xbutton);
-        });
-    };
-
-    _cleanValues = (num = 3) => {
-        let value: string | undefined = GM_getValue(this._valueTitle);
-        if (MP.DEBUG) console.log(`GM_getValue(${this._valueTitle})`, value);
-        if (value) {
-            // Return the last 3 stored items after splitting them at the icon
-            value = Util.arrayToString(value.split(this._icon).slice(0 - num));
-            // Store the new value
-            GM_setValue(this._valueTitle, value);
-        }
-    };
-
-    _getNewsItems = (): NodeListOf<HTMLDivElement> | null => {
-        return document.querySelectorAll('div[class^="mainPageNews"]');
-    };
-
-    _removeDisclaimer = () => {
-        const disclaimerHeading: HTMLHeadingElement | null = Array.from(document.querySelectorAll('h4'))
-            .find(h => h.textContent.trim() === 'Disclaimer');
-
-        if (disclaimerHeading) {
-            const blockConDiv: HTMLDivElement | null = disclaimerHeading.closest('.blockCon');
-
-            if (blockConDiv) {
-                // Do something with blockConDiv, for example, remove it
-                blockConDiv.remove();
-            }
-        }
-    };
-
-    // This must match the type selected for `this._settings`
     get settings(): CheckboxSetting {
         return this._settings;
     }
