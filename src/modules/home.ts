@@ -38,32 +38,43 @@ class GiftNewest implements Feature {
      * * Function that runs on the Home page
      */
     private async _homePageGifting() {
-        //ensure gifted list is under 500 member names long
         this._trimGiftList();
         
-        //get the element containing newest 30 members
-        const memberContainer = <HTMLDivElement>document.querySelector('#newestMembers');
-        const members: HTMLAnchorElement[] = Array.prototype.slice.call(
-            memberContainer.getElementsByTagName('a')
-        );
+        // Wait for the container to render to avoid the empty array race condition
+        await Check.elemLoad('#newestMembers');
 
-        members.forEach((member) => {
-            //add a class to the existing element for use in reference in creating buttons
-            member.setAttribute('class', `mp_refPoint_${Util.endOfHref(member)}`);
-            //if the member has been gifted through this feature previously
-            if (GM_getValue('mp_lastNewGifted').indexOf(Util.endOfHref(member)) >= 0) {
-                //add checked box to text
-                member.innerText = `${member.innerText} ✅`;
-                member.classList.add('mp_gifted');
-            }
-        });
+        // Helper to sync visual state with persistent history
+        const syncState = () => {
+            const container = document.querySelector('#newestMembers');
+            if (!container) return;
+            
+            const historyStr = GM_getValue('mp_lastNewGifted', '') as string;
+            const history = historyStr.split(',');
+            const members = Array.from(container.getElementsByTagName('a'));
+
+            members.forEach((member) => {
+                const id = Util.endOfHref(member);
+                member.setAttribute('class', `mp_refPoint_${id}`);
+                
+                // Exact match checking and gold color override
+                if (history.includes(id) && !member.classList.contains('mp_gifted')) {
+                    member.classList.add('mp_gifted');
+                    const span = member.querySelector('span');
+                    if (span) span.style.color = 'rgb(187, 170, 119)';
+                }
+            });
+        };
+
+        // Run initial sync
+        syncState();
+        
+        // Watch for MAM's native AJAX refresh button
+        Check.elemObserver('#newestMembers', syncState);
 
         //get the default value of gifts set in preferences for user page
-        let giftValueSetting: string | undefined = GM_getValue('userGiftDefault_val');
+        let giftValueSetting: string = GM_getValue('userGiftDefault_val', '100') as string;
         //make sure the value falls within the acceptable range
-        if (!giftValueSetting) {
-            giftValueSetting = '100';
-        } else if (Number(giftValueSetting) > 100 || isNaN(Number(giftValueSetting))) {
+        if (Number(giftValueSetting) > 100 || isNaN(Number(giftValueSetting))) {
             giftValueSetting = '100';
         } else if (Number(giftValueSetting) < 5) {
             giftValueSetting = '5';
@@ -71,13 +82,7 @@ class GiftNewest implements Feature {
 
         // Hijack the block footer for UI controls
         const footerWrapper = <HTMLDivElement>document.querySelector('#fpNM .blockFoot');
-        footerWrapper.style.display = 'flex';
-        footerWrapper.style.alignItems = 'center';
-        footerWrapper.style.justifyContent = 'center';
-        footerWrapper.style.gap = '6px';
-        footerWrapper.style.padding = '2px 0';
-        footerWrapper.style.minHeight = '32px';
-        footerWrapper.style.whiteSpace = 'nowrap';
+        footerWrapper.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 6px; padding: 2px 0; min-height: 32px; white-space: nowrap;';
 
         //create the text input for how many points to give
         const giftAmounts: HTMLInputElement = document.createElement('input');
@@ -112,50 +117,51 @@ class GiftNewest implements Feature {
         giftAllBtn.addEventListener(
             'click',
             async () => {
+                // DYNAMIC FETCH: Get fresh container in case it was refreshed
+                const container = document.querySelector('#newestMembers');
+                if (!container) return;
+                
+                syncState();
+                const members = Array.from(container.getElementsByTagName('a'));
+                const statusMsg = document.getElementById('mp_giftAllMsg')!;
+                const giftFinalAmount = (<HTMLInputElement>document.getElementById('mp_giftAmounts')).value;
                 let firstCall: boolean = true;
+
                 for (const member of members) {
-                    //update the text to show processing
-                    document.getElementById('mp_giftAllMsg')!.innerText = 'Sending...';
-                    //if user has not been gifted
                     if (!member.classList.contains('mp_gifted')) {
-                        //get the members name for JSON string
-                        const userName = member.innerText;
-                        //get the points amount from the input box
-                        const giftFinalAmount = (<HTMLInputElement>(
-                            document.getElementById('mp_giftAmounts')
-                        ))!.value;
-                        //URL to GET random search results
+                        statusMsg.innerText = 'Sending...';
+                        
+                        const userName = member.innerText.trim();
                         const url = `https://www.myanonamouse.net/json/bonusBuy.php?spendtype=gift&amount=${giftFinalAmount}&giftTo=${userName}`;
-                        //wait 3 seconds between JSON calls
+                        
                         if (firstCall) {
                             firstCall = false;
                         } else {
                             await Util.sleep(3000);
                         }
-                        //request sending points
+                        
                         const jsonResult: string = await Util.getJSON(url);
                         if (MP.DEBUG) console.log('Gift Result', jsonResult);
-                        //if gift was successfully sent
-                        if (JSON.parse(jsonResult).success) {
-                            //check off box
-                            member.innerText = `${member.innerText} \u2611`;
+                        
+                        const res = JSON.parse(jsonResult);
+                        
+                        // "Adopt" if success OR if they are already maxed out for the day
+                        if (res.success || (res.error && res.error.includes('daily cap'))) {
                             member.classList.add('mp_gifted');
-                            //add member to the stored member list
-                            GM_setValue(
-                                'mp_lastNewGifted',
-                                `${Util.endOfHref(member)},${GM_getValue(
-                                    'mp_lastNewGifted'
-                                )}`
-                            );
-                        } else if (!JSON.parse(jsonResult).success) {
-                            console.warn(JSON.parse(jsonResult).error);
+                            const span = member.querySelector('span');
+                            if (span) span.style.color = 'rgb(187, 170, 119)';
+                            
+                            const id = Util.endOfHref(member);
+                            const h = GM_getValue('mp_lastNewGifted', '') as string;
+                            GM_setValue('mp_lastNewGifted', id + (h ? ',' + h : ''));
+                        } else {
+                            console.warn(res.error);
                         }
                     }
                 }
 
-                //disable button after send
                 (giftAllBtn as HTMLInputElement).disabled = true;
-                document.getElementById('mp_giftAllMsg')!.innerText = 'Done!';
+                statusMsg.innerText = 'Done!';
             },
             false
         );
@@ -198,9 +204,13 @@ class GiftNewest implements Feature {
         openAllBtn.addEventListener(
             'click',
             () => {
-                for (const member of members) {
-                    if (!member.classList.contains('mp_gifted')) {
-                        window.open(member.href, '_blank');
+                const container = document.querySelector('#newestMembers');
+                if (container) {
+                    const members = Array.from(container.getElementsByTagName('a'));
+                    for (const member of members) {
+                        if (!member.classList.contains('mp_gifted')) {
+                            window.open(member.href, '_blank');
+                        }
                     }
                 }
             },
@@ -230,33 +240,32 @@ class GiftNewest implements Feature {
      * * Function that runs on the New Users page
      */
     private async _newUsersPageGifting() {
-        // Ensure the gifted list is under 500 members
         this._trimGiftList();
 
-        // Select the container holding the newest members
         const fpNM = document.querySelector('.blockCon') as HTMLDivElement;
         const footer = document.querySelector('.blockFoot') as HTMLDivElement;
         const memberLabels = Array.from(fpNM.querySelectorAll('label'));
 
-        // Loop through each member and check if they were previously gifted
+        // Use includes() for exact matching and add fallback for undefined
+        const historyStr = GM_getValue('mp_lastNewGifted', '') as string;
+        const history = historyStr.split(',');
+
         memberLabels.forEach((label) => {
             const member = label.querySelector('a') as HTMLAnchorElement;
             const checkbox = label.querySelector('input[type="checkbox"]') as HTMLInputElement;
-            const memberRef = `mp_refPoint_${Util.endOfHref(member)}`;
+            const id = Util.endOfHref(member);
+            const memberRef = `mp_refPoint_${id}`;
             member.classList.add(memberRef);
 
-            // If the member has already been gifted, update the display
-            if (GM_getValue('mp_lastNewGifted').includes(Util.endOfHref(member))) {
+            if (history.includes(id)) {
                 member.innerText += ' ✅';
                 member.classList.add('mp_gifted');
             }
         });
 
-        // Retrieve or default the gift value setting
         let giftValueSetting = GM_getValue('userGiftDefault_val') || '100';
         giftValueSetting = Math.min(100, Math.max(5, Number(giftValueSetting))) || 100;
 
-        // Create input box for gift amount
         const giftAmounts = document.createElement('input');
         Util.setAttr(giftAmounts, {
             type: 'text',
@@ -268,7 +277,6 @@ class GiftNewest implements Feature {
         let bpText = document.createElement('span');
         bpText.innerText = 'points ';
 
-        // Create "Gift All Checked Users" button
         const giftAllBtn = await Util.createButton(
             'mp_giftAll',
             'Gift All Selected',
@@ -280,7 +288,6 @@ class GiftNewest implements Feature {
         giftAllBtn.style.marginRight = '5px';
         giftAllBtn.style.marginTop = '5px';
 
-        // Event listener for gifting action
         giftAllBtn.addEventListener('click', async () => {
             document.getElementById('mp_giftAllMsg')!.innerText = 'Sending Gifts... Please Wait';
             let firstCall = true;
@@ -291,7 +298,8 @@ class GiftNewest implements Feature {
                 const checkbox = label.querySelector('input[type="checkbox"]') as HTMLInputElement;
 
                 if (checkbox.checked && !member.classList.contains('mp_gifted')) {
-                    const userName = member.innerText;
+                    // Strip the checkmark if it exists so we just send the name
+                    const userName = member.innerText.replace(' ✅', '').trim();
                     const url = `https://www.myanonamouse.net/json/bonusBuy.php?spendtype=gift&amount=${giftAmount}&giftTo=${userName}`;
 
                     if (!firstCall) await Util.sleep(3000);
@@ -300,12 +308,18 @@ class GiftNewest implements Feature {
                     const jsonResult = await Util.getJSON(url);
                     if (MP.DEBUG) console.log('Gift Result', jsonResult);
 
-                    if (JSON.parse(jsonResult).success) {
+                    const res = JSON.parse(jsonResult);
+
+                    // Apply the "daily cap" adoption fix here as well
+                    if (res.success || (res.error && res.error.includes('daily cap'))) {
                         member.innerText += ' ✅';
                         member.classList.add('mp_gifted');
-                        GM_setValue('mp_lastNewGifted', `${Util.endOfHref(member)},${GM_getValue('mp_lastNewGifted')}`);
+                        
+                        const id = Util.endOfHref(member);
+                        const h = GM_getValue('mp_lastNewGifted', '') as string;
+                        GM_setValue('mp_lastNewGifted', id + (h ? ',' + h : ''));
                     } else {
-                        console.warn(JSON.parse(jsonResult).error);
+                        console.warn(res.error);
                     }
                 }
             }
@@ -314,7 +328,6 @@ class GiftNewest implements Feature {
             document.getElementById('mp_giftAllMsg')!.innerText = 'Gifts completed to all Checked Users';
         });
 
-        // Input validation for gift amount
         giftAmounts.addEventListener('input', () => {
             const giftAllBtn = document.getElementById('mp_giftAll') as HTMLButtonElement;
             const value = Number(giftAmounts.value);
@@ -328,7 +341,6 @@ class GiftNewest implements Feature {
             }
         });
 
-        // Create "Open Ungifted in Tabs" button
         const openAllBtn = await Util.createButton(
             'mp_openTabs',
             'Open Ungifted in Tabs',
@@ -348,13 +360,11 @@ class GiftNewest implements Feature {
             }
         });
 
-        // Display available bonus points in the footer
         let bonusPointsAvail = document.getElementById('tmBP')!.innerText.split(':')[1];
         const messageSpan = document.createElement('span');
         messageSpan.id = 'mp_giftAllMsg';
         messageSpan.innerText = ` Available Points: ${bonusPointsAvail}`;
 
-        // Add "Deselect All" button
         const deselectBtn = await Util.createButton(
             'mp_deselectAll',
             'Unselect all',
@@ -365,13 +375,11 @@ class GiftNewest implements Feature {
         );
         deselectBtn.addEventListener('click', () => {
             const boxList = document.querySelectorAll('input[type=checkbox]') as NodeListOf<HTMLInputElement>;
-
             boxList.forEach((box: HTMLInputElement) => {
                 box.checked = false;
             });
         });
 
-        // Add "Select 100 Ungifted" button
         const selectUngiftedBtn = await Util.createButton(
             'mp_selectUngifted',
             'Select 100 Ungifted',
@@ -387,19 +395,15 @@ class GiftNewest implements Feature {
                 const member = label.querySelector('a') as HTMLAnchorElement;
                 const checkbox = label.querySelector('input[type="checkbox"]') as HTMLInputElement;
 
-                // Check if the member is not gifted and if the checkbox is not yet selected
                 if (!member.classList.contains('mp_gifted') && !checkbox.checked) {
-                    checkbox.checked = true;  // Select the checkbox
+                    checkbox.checked = true;  
                     count++;
-                    // Stop after selecting 100 users
                     if (count >= 100) break;
                 }
             }
             console.log(`[M+] Selected ${count} ungifted users.`);
         });
 
-
-        // Append all elements to the footer
         footer.appendChild(selectUngiftedBtn);
         footer.appendChild(deselectBtn);
         footer.appendChild(giftAmounts);
@@ -415,17 +419,15 @@ class GiftNewest implements Feature {
      * * Trims the gifted list to last 500 names to avoid getting too large over time.
      */
     private _trimGiftList() {
-        //if value exists in GM
-        if (GM_getValue('mp_lastNewGifted')) {
-            //GM value is a comma delim value, split value into array of names
-            const giftNames = GM_getValue('mp_lastNewGifted').split(',');
+        const historyStr = GM_getValue('mp_lastNewGifted') as string;
+        if (historyStr) {
+            const giftNames = historyStr.split(',');
             let newGiftNames: string = '';
             if (giftNames.length > 500) {
                 for (const giftName of giftNames) {
+                    // Update bounds to use includes or strict indexing
                     if (giftNames.indexOf(giftName) <= 499) {
-                        //rebuild a comma delim string out of the first 49 names
                         newGiftNames = newGiftNames + giftName + ',';
-                        //set new string in GM
                         GM_setValue('mp_lastNewGifted', newGiftNames);
                     } else {
                         break;
@@ -433,7 +435,6 @@ class GiftNewest implements Feature {
                 }
             }
         } else {
-            //set value if doesnt exist
             GM_setValue('mp_lastNewGifted', '');
         }
     }
