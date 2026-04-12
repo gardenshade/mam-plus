@@ -31,16 +31,10 @@ namespace MP {
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
-            '🆕: Added ability to emphasize/block users from shoutbox menu. Gracias @sherman76400!',
-            '🆕: Display UIDs in shoutbox. Merci @sherman76400!',
-            '🆕: Style mentions of your username in shoutbox. Danke @sherman76400!',
-            '♻️: Added a counter when items are hidden. Grazzi @sherman76400!',
-            '♻️: Removed Shoutbox Quote/Reply button features as they are now impleMAMted',
-            '♻️: Many behind-the-scenes changes to how new user gifting logic is handled. Thanks @Photaz!',
-            '🐞: Fixed site layout change breaking Gift New Users on home. Blessings @Photaz!',
+            // '🆕: Nothing new here',
         ] as string[],
         BUG_LIST: [
-            "SB buttons are still in the codebase, they just don't run",
+            // "Nothing new here",
         ] as string[],
     };
     export const TIMESTAMP: string = '##meta_timestamp##';
