@@ -1,3 +1,4 @@
+/// <reference types="@types/greasemonkey" />
 /// <reference path="types.ts" />
 /// <reference path="style.ts" />
 /// <reference path="./modules/core.ts" />
