@@ -20,13 +20,13 @@ class Shared {
         if (MP.DEBUG) console.log(`Shared.fillGiftBox( ${tar}, ${settingTitle} )`);
 
         return new Promise((resolve) => {
-            Check.elemLoad(tar).then(() => {
+            Check.elemLoad(tar).then(async () => {
                 const pointBox: HTMLInputElement = <HTMLInputElement>(
                     document.querySelector(tar)
                 );
                 if (pointBox) {
                     const userSetPoints: number = parseInt(
-                        GM_getValue(`${settingTitle}_val`)
+                        await GM.getValue<string>(`${settingTitle}_val`, '')
                     );
                     let maxPoints: number = parseInt(pointBox.getAttribute('max')!);
                     if (!isNaN(userSetPoints) && userSetPoints <= maxPoints) {
@@ -350,9 +350,9 @@ class Shared {
     };
 
     public getRatioProtectLevels = async () => {
-        let l1 = parseFloat(GM_getValue('ratioProtectL1_val'));
-        let l2 = parseFloat(GM_getValue('ratioProtectL2_val'));
-        let l3 = parseFloat(GM_getValue('ratioProtectL3_val'));
+        let l1 = parseFloat(await GM.getValue<string>('ratioProtectL1_val', ''));
+        let l2 = parseFloat(await GM.getValue<string>('ratioProtectL2_val', ''));
+        let l3 = parseFloat(await GM.getValue<string>('ratioProtectL3_val', ''));
         const l1_def = 0.5;
         const l2_def = 1;
         const l3_def = 2;

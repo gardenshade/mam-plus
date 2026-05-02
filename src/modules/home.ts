@@ -38,17 +38,19 @@ class GiftNewest implements Feature {
      * * Function that runs on the Home page
      */
     private async _homePageGifting() {
-        this._trimGiftList();
+        await this._trimGiftList();
         
         // Wait for the container to render to avoid the empty array race condition
         await Check.elemLoad('#newestMembers');
 
         // Helper to sync visual state with persistent history
-        const syncState = () => {
+        const syncState = async () => {
             const container = document.querySelector('#newestMembers');
             if (!container) return;
             
-            const historyStr = String(GM_getValue('mp_lastNewGifted') || '');
+            const historyStr = String(
+                (await GM.getValue<string>('mp_lastNewGifted', '')) || ''
+            );
             const history = historyStr.split(',');
             const members = Array.from(container.getElementsByTagName('a'));
 
@@ -66,13 +68,17 @@ class GiftNewest implements Feature {
         };
 
         // Run initial sync
-        syncState();
+        await syncState();
         
         // Watch for MAM's native AJAX refresh button
-        Check.elemObserver('#newestMembers', syncState);
+        Check.elemObserver('#newestMembers', () => {
+            void syncState();
+        });
 
         //get the default value of gifts set in preferences for user page
-        let giftValueSetting: string = String(GM_getValue('userGiftDefault_val') || '100');
+        let giftValueSetting: string = String(
+            (await GM.getValue<string>('userGiftDefault_val', '100')) || '100'
+        );
         //make sure the value falls within the acceptable range
         if (Number(giftValueSetting) > 100 || isNaN(Number(giftValueSetting))) {
             giftValueSetting = '100';
@@ -119,7 +125,7 @@ class GiftNewest implements Feature {
                 const container = document.querySelector('#newestMembers');
                 if (!container) return;
                 
-                syncState();
+                await syncState();
                 const members = Array.from(container.getElementsByTagName('a'));
                 const statusMsg = document.getElementById('mp_giftAllMsg')!;
                 const giftFinalAmount = (<HTMLInputElement>document.getElementById('mp_giftAmounts')).value;
@@ -150,8 +156,10 @@ class GiftNewest implements Feature {
                             if (span) span.style.color = 'rgb(187, 170, 119)';
                             
                             const id = Util.endOfHref(member);
-                            const h = String(GM_getValue('mp_lastNewGifted') || '');
-                            GM_setValue('mp_lastNewGifted', id + (h ? ',' + h : ''));
+                            const h = String(
+                                (await GM.getValue<string>('mp_lastNewGifted', '')) || ''
+                            );
+                            await GM.setValue('mp_lastNewGifted', id + (h ? ',' + h : ''));
                         } else {
                             console.warn(res.error);
                         }
@@ -236,14 +244,16 @@ class GiftNewest implements Feature {
      * * Function that runs on the New Users page
      */
     private async _newUsersPageGifting() {
-        this._trimGiftList();
+        await this._trimGiftList();
 
         const fpNM = document.querySelector('.blockCon') as HTMLDivElement;
         const footer = document.querySelector('.blockFoot') as HTMLDivElement;
         const memberLabels = Array.from(fpNM.querySelectorAll('label'));
 
         // Use includes() for exact matching and add fallback for undefined
-        const historyStr = String(GM_getValue('mp_lastNewGifted') || '');
+        const historyStr = String(
+            (await GM.getValue<string>('mp_lastNewGifted', '')) || ''
+        );
         const history = historyStr.split(',');
 
         memberLabels.forEach((label) => {
@@ -258,8 +268,10 @@ class GiftNewest implements Feature {
             }
         });
 
-        let giftValueSetting = GM_getValue('userGiftDefault_val') || '100';
-        giftValueSetting = Math.min(100, Math.max(5, Number(giftValueSetting))) || 100;
+        const storedGiftValue =
+            (await GM.getValue<string>('userGiftDefault_val', '100')) || '100';
+        const giftValueSetting =
+            Math.min(100, Math.max(5, Number(storedGiftValue))) || 100;
 
         const giftAmounts = document.createElement('input');
         Util.setAttr(giftAmounts, {
@@ -307,8 +319,10 @@ class GiftNewest implements Feature {
                         member.classList.add('mp_gifted');
                         
                         const id = Util.endOfHref(member);
-                        const h = String(GM_getValue('mp_lastNewGifted') || '');
-                        GM_setValue('mp_lastNewGifted', id + (h ? ',' + h : ''));
+                        const h = String(
+                            (await GM.getValue<string>('mp_lastNewGifted', '')) || ''
+                        );
+                        await GM.setValue('mp_lastNewGifted', id + (h ? ',' + h : ''));
                     } else {
                         console.warn(res.error);
                     }
@@ -398,8 +412,10 @@ class GiftNewest implements Feature {
     /**
      * * Trims the gifted list to last 500 names to avoid getting too large over time.
      */
-    private _trimGiftList() {
-        const historyStr = String(GM_getValue('mp_lastNewGifted') || '');
+    private async _trimGiftList() {
+        const historyStr = String(
+            (await GM.getValue<string>('mp_lastNewGifted', '')) || ''
+        );
         if (historyStr) {
             const giftNames = historyStr.split(',');
             let newGiftNames: string = '';
@@ -408,14 +424,14 @@ class GiftNewest implements Feature {
                     // Update bounds to use includes or strict indexing
                     if (giftNames.indexOf(giftName) <= 499) {
                         newGiftNames = newGiftNames + giftName + ',';
-                        GM_setValue('mp_lastNewGifted', newGiftNames);
+                        await GM.setValue('mp_lastNewGifted', newGiftNames);
                     } else {
                         break;
                     }
                 }
             }
         } else {
-            GM_setValue('mp_lastNewGifted', '');
+            await GM.setValue('mp_lastNewGifted', '');
         }
     }
 
@@ -448,7 +464,7 @@ class HideNews implements Feature {
 
     private async _init() {
         // NOTE: for development
-        // GM_deleteValue(this._valueTitle);console.warn(`Value of ${this._valueTitle} will be deleted!`);
+        // GM.deleteValue(this._valueTitle);console.warn(`Value of ${this._valueTitle} will be deleted!`);
 
         this._removeClock();
         this._adjustHeaderSize(this._tar);
@@ -460,7 +476,9 @@ class HideNews implements Feature {
     }
 
     _checkForSeen = async (): Promise<void> => {
-        const prevValue: string | undefined = GM_getValue(this._valueTitle);
+        const prevValue: string | undefined = await GM.getValue<string | undefined>(
+            this._valueTitle
+        );
         const news = this._getNewsItems();
         if (MP.DEBUG) console.log(this._valueTitle, ':\n', prevValue);
 
@@ -515,16 +533,18 @@ class HideNews implements Feature {
                 class: 'mp_clearBtn',
             });
             // Listen for clicks
-            xbutton.addEventListener('click', () => {
+            xbutton.addEventListener('click', async () => {
                 // When clicked, append the content of the current news post to the
                 // list of remembered news items
-                const previousValue: string | undefined = GM_getValue(this._valueTitle)
-                    ? GM_getValue(this._valueTitle)
-                    : '';
+                const previousValue: string =
+                    (await GM.getValue<string>(this._valueTitle, '')) || '';
                 if (MP.DEBUG)
                     console.log(`Hiding... ${previousValue}${entry.textContent}`);
 
-                GM_setValue(this._valueTitle, `${previousValue}${entry.textContent}`);
+                await GM.setValue(
+                    this._valueTitle,
+                    `${previousValue}${entry.textContent}`
+                );
                 entry.remove();
                 // If there are no more news items, remove the header
                 const updatedNews = this._getNewsItems();
@@ -539,14 +559,16 @@ class HideNews implements Feature {
         });
     };
 
-    _cleanValues = (num = 3) => {
-        let value: string | undefined = GM_getValue(this._valueTitle);
-        if (MP.DEBUG) console.log(`GM_getValue(${this._valueTitle})`, value);
+    _cleanValues = async (num = 3) => {
+        let value: string | undefined = await GM.getValue<string | undefined>(
+            this._valueTitle
+        );
+        if (MP.DEBUG) console.log(`GM.getValue(${this._valueTitle})`, value);
         if (value) {
             // Return the last 3 stored items after splitting them at the icon
             value = Util.arrayToString(value.split(this._icon).slice(0 - num));
             // Store the new value
-            GM_setValue(this._valueTitle, value);
+            await GM.setValue(this._valueTitle, value);
         }
     };
 

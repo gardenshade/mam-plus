@@ -80,24 +80,26 @@ class Settings {
     }
 
     // Function for retrieving the current settings values
-    private static _getSettings(page: SettingGlobObject) {
+    private static async _getSettings(page: SettingGlobObject): Promise<void> {
         // Util.purgeSettings();
-        const allValues: string[] = GM_listValues();
+        const allValues: string[] = await GM.listValues();
         if (MP.DEBUG) {
             console.log('_getSettings(', page, ')\nStored GM keys:', allValues);
         }
-        Object.keys(page).forEach((scope) => {
-            Object.keys(page[Number(scope)]).forEach((setting) => {
+        for (const scope of Object.keys(page)) {
+            for (const setting of Object.keys(page[Number(scope)])) {
                 const pref = page[Number(scope)][Number(setting)];
+                const prefEnabled = await GM.getValue<any>(`${pref.title}`);
+                const prefValue = await GM.getValue<any>(`${pref.title}_val`);
 
                 if (MP.DEBUG) {
                     console.log(
                         'Pref:',
                         pref.title,
                         '| Set:',
-                        GM_getValue(`${pref.title}`),
+                        prefEnabled,
                         '| Value:',
-                        GM_getValue(`${pref.title}_val`)
+                        prefValue
                     );
                 }
 
@@ -110,22 +112,22 @@ class Settings {
                             elem.setAttribute('checked', 'checked');
                         },
                         textbox: () => {
-                            elem.value = GM_getValue(`${pref.title}_val`);
+                            elem.value = String(prefValue ?? '');
                         },
                         dropdown: () => {
-                            elem.value = GM_getValue(pref.title);
+                            elem.value = String(prefEnabled ?? '');
                         },
                     };
-                    if (cases[pref.type] && GM_getValue(pref.title)) cases[pref.type]();
+                    if (cases[pref.type] && prefEnabled) cases[pref.type]();
                 }
-            });
-        });
+            }
+        }
     }
 
-    private static _setSettings(obj: SettingGlobObject) {
+    private static async _setSettings(obj: SettingGlobObject): Promise<void> {
         if (MP.DEBUG) console.log(`_setSettings(`, obj, ')');
-        Object.keys(obj).forEach((scope) => {
-            Object.keys(obj[Number(scope)]).forEach((setting) => {
+        for (const scope of Object.keys(obj)) {
+            for (const setting of Object.keys(obj[Number(scope)])) {
                 const pref = obj[Number(scope)][Number(setting)];
 
                 if (pref !== null && typeof pref === 'object') {
@@ -134,62 +136,62 @@ class Settings {
                     );
 
                     const cases = {
-                        checkbox: () => {
-                            if (elem.checked) GM_setValue(pref.title, true);
+                        checkbox: async () => {
+                            if (elem.checked) await GM.setValue(pref.title, true);
                         },
-                        textbox: () => {
+                        textbox: async () => {
                             const inp: string = elem.value;
 
                             if (inp !== '') {
-                                GM_setValue(pref.title, true);
-                                GM_setValue(`${pref.title}_val`, inp);
+                                await GM.setValue(pref.title, true);
+                                await GM.setValue(`${pref.title}_val`, inp);
                             }
                         },
-                        dropdown: () => {
-                            GM_setValue(pref.title, elem.value);
+                        dropdown: async () => {
+                            await GM.setValue(pref.title, elem.value);
                         },
                     };
-                    if (cases[pref.type]) cases[pref.type]();
+                    if (cases[pref.type]) await cases[pref.type]();
                 }
-            });
-        });
+            }
+        }
         console.log('[M+] Saved!');
     }
 
-    private static _copySettings(): string {
-        const gmList = GM_listValues();
+    private static async _copySettings(): Promise<string> {
+        const gmList = await GM.listValues();
         const outp: [string, string][] = [];
 
         // Loop over all stored settings and push to output array
-        gmList.map((setting) => {
+        for (const setting of gmList) {
             // Don't export mp_ settings as they should only be set at runtime
             if (setting.indexOf('mp_') < 0) {
-                outp.push([setting, GM_getValue(setting)]);
+                outp.push([setting, String(await GM.getValue(setting, ''))]);
             }
-        });
+        }
 
         return JSON.stringify(outp);
     }
 
-    private static _pasteSettings(payload: string) {
+    private static async _pasteSettings(payload: string) {
         if (MP.DEBUG) console.group(`_pasteSettings( )`);
         const settings = JSON.parse(payload);
-        settings.forEach((tuple: [string, string][]) => {
+        for (const tuple of settings as [string, string][]) {
             if (tuple[1]) {
-                GM_setValue(`${tuple[0]}`, `${tuple[1]}`);
+                await GM.setValue(`${tuple[0]}`, `${tuple[1]}`);
                 if (MP.DEBUG) console.log(tuple[0], ': ', tuple[1]);
             }
-        });
+        }
     }
 
     // Function that saves the values of the settings table
-    private static _saveSettings(timer: number, obj: SettingGlobObject) {
+    private static async _saveSettings(timer: number, obj: SettingGlobObject) {
         if (MP.DEBUG) console.group(`_saveSettings()`);
 
         const savestate: HTMLSpanElement = <HTMLSpanElement>(
             document.querySelector('span.mp_savestate')!
         );
-        const gmValues: string[] = GM_listValues();
+        const gmValues: string[] = await GM.listValues();
 
         // Reset timer & message
         savestate.style.opacity = '0';
@@ -204,14 +206,14 @@ class Settings {
                 if (!['mp_version', 'style_theme'].includes(gmValues[feature])) {
                     //if not part of preferences page
                     if (gmValues[feature].indexOf('mp_') !== 0) {
-                        GM_setValue(gmValues[feature], false);
+                        await GM.setValue(gmValues[feature], false);
                     }
                 }
             }
         }
 
         // Save the settings to GM values
-        this._setSettings(obj);
+        await this._setSettings(obj);
 
         // Display the confirmation message
         savestate.style.opacity = '1';
@@ -270,8 +272,7 @@ class Settings {
                         return pageScope;
                     })
                     .then((scopes) => {
-                        this._getSettings(scopes);
-                        return scopes;
+                        return this._getSettings(scopes).then(() => scopes);
                     })
                     // Make sure the settings are done loading
                     .then((scopes) => {
@@ -294,7 +295,9 @@ class Settings {
                                 false
                             );
                             Util.clipboardifyBtn(pasteBtn, this._pasteSettings, false);
-                            Util.clipboardifyBtn(copyBtn, this._copySettings());
+                            this._copySettings().then((payload) => {
+                                Util.clipboardifyBtn(copyBtn, payload);
+                            });
                         } catch (err) {
                             if (MP.DEBUG) console.warn(err);
                         }

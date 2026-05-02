@@ -24,16 +24,15 @@ class Alerts implements Feature {
         MP.settingsGlob.push(this._settings);
     }
 
-    public notify(kind: string | boolean, log: ArrayObject): Promise<any> {
+    public async notify(kind: string | boolean, log: ArrayObject): Promise<boolean> {
         if (MP.DEBUG) {
             console.group(`Alerts.notify( ${kind} )`);
         }
 
-        return new Promise((resolve) => {
-            // Verify a notification request was made
-            if (kind) {
-                // Verify notifications are allowed
-                if (GM_getValue('alerts')) {
+        // Verify a notification request was made
+        if (kind) {
+            // Verify notifications are allowed
+            if (await GM.getValue<boolean>('alerts', false)) {
                     // Internal function to build msg text
                     const buildMsg = (
                         arr: string[],
@@ -117,17 +116,18 @@ class Alerts implements Feature {
                     if (MP.DEBUG) {
                         console.groupEnd();
                     }
-                    resolve(true);
-                    // Notifications are disabled
-                } else {
-                    if (MP.DEBUG) {
-                        console.log('Notifications are disabled.');
-                        console.groupEnd();
-                    }
-                    resolve(false);
-                }
+                    return true;
             }
-        });
+
+            // Notifications are disabled
+            if (MP.DEBUG) {
+                console.log('Notifications are disabled.');
+                console.groupEnd();
+            }
+            return false;
+        }
+
+        return false;
     }
 
     get settings(): CheckboxSetting {

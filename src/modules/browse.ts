@@ -32,11 +32,15 @@ class ToggleSnatched implements Feature {
         let toggle: Promise<HTMLElement>;
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
         let results: NodeListOf<HTMLTableRowElement>;
-        const storedState: string | undefined = GM_getValue(
+        const storedState: string | undefined = await GM.getValue<string | undefined>(
             `${this._settings.title}State`
         );
+        const stickySnatchedToggle = await GM.getValue<boolean>(
+            'stickySnatchedToggle',
+            false
+        );
 
-        if (storedState === 'false' && GM_getValue('stickySnatchedToggle') === true) {
+        if (storedState === 'false' && stickySnatchedToggle === true) {
             this._setVisState(false);
         } else {
             this._setVisState(true);
@@ -137,11 +141,11 @@ class ToggleSnatched implements Feature {
             : `Show Snatched (${this._snatchedCount})`;
     }
 
-    private _setVisState(val: boolean): void {
+    private async _setVisState(val: boolean): Promise<void> {
         if (MP.DEBUG) {
             console.log('Snatch vis state:', this._isVisible, '\nval:', val);
         }
-        GM_setValue(`${this._settings.title}State`, `${val}`);
+        await GM.setValue(`${this._settings.title}State`, `${val}`);
         this._isVisible = val;
     }
 
@@ -205,9 +209,7 @@ class PlaintextSearch implements Feature {
         desc: `Insert plaintext search results at top of page`,
     };
     private _tar: string = '#ssr h1';
-    private _isOpen: 'true' | 'false' | undefined = GM_getValue(
-        `${this._settings.title}State`
-    );
+    private _isOpen: 'true' | 'false' | undefined = undefined;
     private _share: Shared = new Shared();
     private _plainText: string = '';
 
@@ -220,6 +222,10 @@ class PlaintextSearch implements Feature {
     }
 
     private async _init() {
+                this._isOpen = await GM.getValue<'true' | 'false' | undefined>(
+                    `${this._settings.title}State`
+                );
+
         let toggleBtn: Promise<HTMLElement>;
         let copyBtn: HTMLElement;
         let resultList: Promise<NodeListOf<HTMLTableRowElement>>;
@@ -320,11 +326,11 @@ class PlaintextSearch implements Feature {
      * Sets Open State to true/false internally and in script storage
      * @param val stringified boolean
      */
-    private _setOpenState(val: 'true' | 'false' | undefined): void {
+    private async _setOpenState(val: 'true' | 'false' | undefined): Promise<void> {
         if (val === undefined) {
             val = 'false';
         } // Default value
-        GM_setValue('toggleSnatchedState', val);
+        await GM.setValue('toggleSnatchedState', val);
         this._isOpen = val;
     }
 

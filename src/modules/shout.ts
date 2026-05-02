@@ -271,16 +271,23 @@ class ProcessShouts {
      * @param shout The node containing shout info
      * @param usertype The type of users that have been filtered
      */
-    public static styleShout(shout: Node, usertype: ShoutboxUserType): void {
+    public static async styleShout(
+        shout: Node,
+        usertype: ShoutboxUserType
+    ): Promise<void> {
         const shoutElem: HTMLElement = Util.nodeToElem(shout);
         if (usertype === 'priority') {
-            const customStyle: string | undefined = GM_getValue('priorityStyle_val');
+            const customStyle: string | undefined = await GM.getValue<string | undefined>(
+                'priorityStyle_val'
+            );
             shoutElem.style.background = customStyle ? `hsla(${customStyle})` : 'hsla(0,0%,50%,0.3)';
         } else if (usertype === 'mute') {
             shoutElem.classList.add('mp_muted');
         } else if (usertype === 'mention') {
             // Apply styling for posts that mention your username
-            const customStyle: string | undefined = GM_getValue('selfStyle_val');
+            const customStyle: string | undefined = await GM.getValue<string | undefined>(
+                'selfStyle_val'
+            );
             shoutElem.style.background = customStyle
                 ? `hsla(${customStyle})`
                 : 'hsla(266,75%,63%,0.25)';
@@ -313,7 +320,9 @@ class PriorityUsers implements Feature {
     }
 
     private async _init() {
-        const gmValue: string | undefined = GM_getValue(`${this.settings.title}_val`);
+        const gmValue: string | undefined = await GM.getValue<string | undefined>(
+            `${this.settings.title}_val`
+        );
         if (gmValue !== undefined) {
             this._priorityUsers = await Util.csvToArray(gmValue);
         } else {
@@ -415,7 +424,9 @@ class MutedUsers implements Feature {
     }
 
     private async _init() {
-        const gmValue: string | undefined = GM_getValue(`${this.settings.title}_val`);
+        const gmValue: string | undefined = await GM.getValue<string | undefined>(
+            `${this.settings.title}_val`
+        );
         if (gmValue !== undefined) {
             this._mutedUsers = await Util.csvToArray(gmValue);
         } else {
@@ -490,7 +501,9 @@ class GiftButton implements Feature {
             //make username equal the data-uid, force not null
             const userName: String = popupUser!.getAttribute('data-uid')!;
             //get the default value of gifts set in preferences for user page
-            let giftValueSetting: string | undefined = GM_getValue('userGiftDefault_val');
+            let giftValueSetting: string | undefined = await GM.getValue<string | undefined>(
+                'userGiftDefault_val'
+            );
             //if they did not set a value in preferences, set to 100
             if (!giftValueSetting) {
                 giftValueSetting = '100';
@@ -793,9 +806,9 @@ class QuickShout implements Feature {
         const comboBoxList = document.createElement('datalist');
         comboBoxList.setAttribute('id', 'mp_comboBoxList');
         //if the GM variable exists
-        if (GM_getValue('mp_quickShout')) {
+        if (await GM.getValue('mp_quickShout')) {
             //overwrite jsonList variable with parsed data
-            jsonList = JSON.parse(GM_getValue('mp_quickShout'));
+            jsonList = JSON.parse(await GM.getValue<string>('mp_quickShout', '{}'));
             //for each key item
             Object.keys(jsonList).forEach((key) => {
                 //create a new Option element and add our data for display to user
@@ -806,7 +819,7 @@ class QuickShout implements Feature {
             //if no GM variable
         } else {
             //create variable with out Intro data
-            GM_setValue('mp_quickShout', JSON.stringify(jsonList));
+            await GM.setValue('mp_quickShout', JSON.stringify(jsonList));
             //for each key item
             // TODO: probably can get rid of the forEach and just do single execution since we know this is Intro only
             Object.keys(jsonList).forEach((key) => {
@@ -873,7 +886,7 @@ class QuickShout implements Feature {
                 if (Object.keys(jsonList).length > 1) {
                     //delete the entry from the JSON and update the GM variable with new json list
                     delete jsonList[comboBoxInput.value.replace(/ /g, 'ಠ')];
-                    GM_setValue('mp_quickShout', JSON.stringify(jsonList));
+                    await GM.setValue('mp_quickShout', JSON.stringify(jsonList));
                     //re-style the save button for new unsaved status
                     saveButton.style.backgroundColor = 'Green';
                     saveButton.style.color = '';
@@ -895,7 +908,7 @@ class QuickShout implements Feature {
                     //delete item from jsonList
                     delete jsonList[comboBoxInput.value.replace(/ಠ/g, 'ಠ')];
                     //delete entire variable so its not empty GM variable
-                    GM_deleteValue('mp_quickShout');
+                    await GM.deleteValue('mp_quickShout');
                     //re-style the save button for new unsaved status
                     saveButton.style.backgroundColor = 'Green';
                     saveButton.style.color = '';
@@ -926,7 +939,7 @@ class QuickShout implements Feature {
                         `";`
                     );
                     //overwrite or create the GM variable with new jsonList
-                    GM_setValue('mp_quickShout', JSON.stringify(jsonList));
+                    await GM.setValue('mp_quickShout', JSON.stringify(jsonList));
                     //re-style save button to green now that its saved as-is
                     saveButton.style.backgroundColor = 'Green';
                     saveButton.style.color = '';
@@ -1163,27 +1176,27 @@ class AddToLists implements Feature {
                 console.log(`[M+] Custom buttons added successfully.`);
             });
         }
-    private _enablePriorityUsers() {
+    private async _enablePriorityUsers() {
             const key = 'priorityUsers';
 
             // Retrieve the current value or default to false
-            let currentValue = GM_getValue(key, false);
+            const currentValue = await GM.getValue<boolean>(key, false);
 
             // Check if the value is false
             if (!currentValue) {
                 // Set the value to true
-                GM_setValue(key, true);
+                await GM.setValue(key, true);
                 if(MP.DEBUG) console.log(`[UserManager] '${key}' was false and has been set to true.`);
             } else {
                 if(MP.DEBUG) console.log(`[UserManager] '${key}' is already true.`);
             }
         }
 
-    private _enableMutedUsers(){
+    private async _enableMutedUsers(){
         const key = 'mutedUsers';
-        let currentValue = GM_getValue(key, false);
+        const currentValue = await GM.getValue<boolean>(key, false);
         if (!currentValue){
-            GM_setValue(key, true);
+            await GM.setValue(key, true);
             if (MP.DEBUG) console.log(`[UserManager] '${key}' was false and has been set to true.`);
         }else{
             if (MP.DEBUG) console.log(`[UserManager] '${key}' is already true.`);
@@ -1193,7 +1206,9 @@ class AddToLists implements Feature {
         // Function to add a username to priorityUsers or mutedUsers if not already present and save it directly
     private async _add(userName: string, tar:'priority'|'muted') {
             // Load the current list from storage, initialize as empty array if not yet created
-            const gmValue: string | undefined = GM_getValue(`${tar}Users_val`);
+            const gmValue: string | undefined = await GM.getValue<string | undefined>(
+                `${tar}Users_val`
+            );
 
             // Convert CSV to array if gmValue exists; otherwise, start with an empty array
             this._addUsers = gmValue ? await Util.csvToArray(gmValue) : [];
@@ -1207,7 +1222,7 @@ class AddToLists implements Feature {
                 const updatedCsv = this._addUsers.join(',');
 
                 // Save the CSV string back to storage to persist changes
-                GM_setValue(`${tar}Users_val`, updatedCsv);
+                await GM.setValue(`${tar}Users_val`, updatedCsv);
                 console.log(`User ${userName} added to _priorityUsers and saved.`);
                 this._addMessage(`Added to ${tar} list, reload required`);
             } else {

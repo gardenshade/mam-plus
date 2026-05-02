@@ -3,8 +3,8 @@
  * # Class for handling validation & confirmation
  */
 class Check {
-    public static newVer: string = GM_info.script.version;
-    public static prevVer: string | undefined = GM_getValue('mp_version');
+    public static newVer: string = GM.info.script.version;
+    public static prevVer: string | undefined;
 
     /**
      * * Wait for an element to exist, then return it
@@ -85,46 +85,47 @@ class Check {
      * * Check to see if the script has been updated from an older version
      * @return The version string or false
      */
-    public static updated(): Promise<string | boolean> {
+    public static async updated(): Promise<string | boolean> {
+        this.prevVer = await GM.getValue('mp_version');
+
         if (MP.DEBUG) {
             console.group('Check.updated()');
             console.log(`PREV VER = ${this.prevVer}`);
             console.log(`NEW VER = ${this.newVer}`);
         }
-        return new Promise((resolve) => {
-            // Different versions; the script was updated
-            if (this.newVer !== this.prevVer) {
+
+        // Different versions; the script was updated
+        if (this.newVer !== this.prevVer) {
+            if (MP.DEBUG) {
+                console.log('Script is new or updated');
+            }
+            // Store the new version
+            await GM.setValue('mp_version', this.newVer);
+            if (this.prevVer) {
+                // The script has run before
                 if (MP.DEBUG) {
-                    console.log('Script is new or updated');
-                }
-                // Store the new version
-                GM_setValue('mp_version', this.newVer);
-                if (this.prevVer) {
-                    // The script has run before
-                    if (MP.DEBUG) {
-                        console.log('Script has run before');
-                        console.groupEnd();
-                    }
-                    resolve('updated');
-                } else {
-                    // First-time run
-                    if (MP.DEBUG) {
-                        console.log('Script has never run');
-                        console.groupEnd();
-                    }
-                    // Enable the most basic features
-                    GM_setValue('goodreadsBtn', true);
-                    GM_setValue('alerts', true);
-                    resolve('firstRun');
-                }
-            } else {
-                if (MP.DEBUG) {
-                    console.log('Script not updated');
+                    console.log('Script has run before');
                     console.groupEnd();
                 }
-                resolve(false);
+                return 'updated';
+            } else {
+                // First-time run
+                if (MP.DEBUG) {
+                    console.log('Script has never run');
+                    console.groupEnd();
+                }
+                // Enable the most basic features
+                await GM.setValue('goodreadsBtn', true);
+                await GM.setValue('alerts', true);
+                return 'firstRun';
             }
-        });
+        }
+
+        if (MP.DEBUG) {
+            console.log('Script not updated');
+            console.groupEnd();
+        }
+        return false;
     }
 
     /**
@@ -133,81 +134,81 @@ class Check {
      * @return {Promise<string>} A promise containing the name of the current page
      * @return {Promise<boolean>} Optionally, a boolean if the current page matches the `pageQuery`
      */
-    public static page(pageQuery?: ValidPage): Promise<string | boolean> {
-        const storedPage = GM_getValue('mp_currentPage');
+    public static async page(pageQuery?: ValidPage): Promise<string | boolean> {
+        const storedPage: ValidPage | undefined = await GM.getValue('mp_currentPage');
         let currentPage: ValidPage | undefined = undefined;
 
-        return new Promise((resolve) => {
-            // Check.page() has been run and a value was stored
-            if (storedPage !== undefined) {
-                // If we're just checking what page we're on, return the stored page
-                if (!pageQuery) {
-                    resolve(storedPage);
-                    // If we're checking for a specific page, return TRUE/FALSE
-                } else if (pageQuery === storedPage) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-                // Check.page() has not previous run
+        // Check.page() has been run and a value was stored
+        if (storedPage !== undefined) {
+            // If we're just checking what page we're on, return the stored page
+            if (!pageQuery) {
+                return storedPage;
+                // If we're checking for a specific page, return TRUE/FALSE
+            } else if (pageQuery === storedPage) {
+                return true;
             } else {
-                // Get the current page
-                let path: string = window.location.pathname;
-                path = path.indexOf('.php') ? path.split('.php')[0] : path;
-                const page = path.split('/');
-                page.shift();
-
-                if (MP.DEBUG) {
-                    console.log(`Page URL @ ${page.join(' -> ')}`);
-                }
-
-                // Create an object literal of sorts to use as a "switch"
-                const cases: { [key: string]: () => ValidPage | undefined } = {
-                    '': () => 'home',
-                    index: () => 'home',
-                    shoutbox: () => 'shoutbox',
-                    preferences: () => 'settings',
-                    millionaires: () => 'vault',
-                    t: () => 'torrent',
-                    u: () => 'user',
-                    f: () => {
-                        if (page[1] === 't') return 'forum thread';
-                    },
-                    tor: () => {
-                        if (page[1] === 'browse') return 'browse';
-                        else if (page[1] === 'requests2') return 'request';
-                        else if (page[1] === 'viewRequest') return 'request details';
-                        else if (page[1] === 'upload') return 'upload';
-                    },
-                    newUsers: () => 'new users',
-                };
-
-                // Check to see if we have a case that matches the current page
-                if (cases[page[0]]) {
-                    currentPage = cases[page[0]]();
-                } else {
-                    console.warn(`Page "${page}" is not a valid M+ page. Path: ${path}`);
-                }
-
-                if (currentPage !== undefined) {
-                    // Save the current page to be accessed later
-                    GM_setValue('mp_currentPage', currentPage);
-
-                    // If we're just checking what page we're on, return the page
-                    if (!pageQuery) {
-                        resolve(currentPage);
-                        // If we're checking for a specific page, return TRUE/FALSE
-                    } else if (pageQuery === currentPage) {
-                        resolve(true);
-                    } else {
-                        resolve(false);
-                    }
-                }
+                return false;
             }
-            if (MP.DEBUG) {
-                console.groupEnd();
+        }
+
+        // Check.page() has not previous run
+        // Get the current page
+        let path: string = window.location.pathname;
+        path = path.indexOf('.php') ? path.split('.php')[0] : path;
+        const page = path.split('/');
+        page.shift();
+
+        if (MP.DEBUG) {
+            console.log(`Page URL @ ${page.join(' -> ')}`);
+        }
+
+        // Create an object literal of sorts to use as a "switch"
+        const cases: { [key: string]: () => ValidPage | undefined } = {
+            '': () => 'home',
+            index: () => 'home',
+            shoutbox: () => 'shoutbox',
+            preferences: () => 'settings',
+            millionaires: () => 'vault',
+            t: () => 'torrent',
+            u: () => 'user',
+            f: () => {
+                if (page[1] === 't') return 'forum thread';
+            },
+            tor: () => {
+                if (page[1] === 'browse') return 'browse';
+                else if (page[1] === 'requests2') return 'request';
+                else if (page[1] === 'viewRequest') return 'request details';
+                else if (page[1] === 'upload') return 'upload';
+            },
+            newUsers: () => 'new users',
+        };
+
+        // Check to see if we have a case that matches the current page
+        if (cases[page[0]]) {
+            currentPage = cases[page[0]]();
+        } else {
+            console.warn(`Page "${page}" is not a valid M+ page. Path: ${path}`);
+        }
+
+        if (currentPage !== undefined) {
+            // Save the current page to be accessed later
+            await GM.setValue('mp_currentPage', currentPage);
+
+            // If we're just checking what page we're on, return the page
+            if (!pageQuery) {
+                return currentPage;
+                // If we're checking for a specific page, return TRUE/FALSE
+            } else if (pageQuery === currentPage) {
+                return true;
+            } else {
+                return false;
             }
-        });
+        }
+
+        if (MP.DEBUG) {
+            console.groupEnd();
+        }
+        return false;
     }
 
     /**

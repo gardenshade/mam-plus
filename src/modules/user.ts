@@ -274,7 +274,7 @@ class Notes implements Feature {
             inputField.rows = 4;
             inputField.cols = 100;
             inputField.placeholder = 'Enter your notes here';
-            inputField.value = GM_getValue(`user_notes_${userID}_val`, '');
+            inputField.value = await GM.getValue<string>(`user_notes_${userID}_val`, '');
 
             const saveButton = document.createElement('button');
             saveButton.textContent = 'Save Note';
@@ -286,14 +286,14 @@ class Notes implements Feature {
             savedMessage.style.opacity = '0'; // Start hidden
 
             // Add a click event listener to save the note and display "Saved!" message
-            saveButton.addEventListener('click', () => {
+            saveButton.addEventListener('click', async () => {
                 const noteValue = inputField.value.trim();
 
                 if (noteValue === '') {
-                    GM_deleteValue(`user_notes_${userID}_val`);
+                    await GM.deleteValue(`user_notes_${userID}_val`);
                     console.log(`Note for user ${userID} has been cleared.`);
                 } else {
-                    GM_setValue(`user_notes_${userID}_val`, noteValue);
+                    await GM.setValue(`user_notes_${userID}_val`, noteValue);
                     console.log(`Note for user ${userID} saved: ${noteValue}`);
                 }
 

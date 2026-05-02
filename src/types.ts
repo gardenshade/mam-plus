@@ -131,3 +131,26 @@ interface NavigatorClipboard {
 }
 
 interface NavigatorExtended extends NavigatorClipboard {}
+
+declare const GM: {
+    getValue<T = any>(key: string, defaultValue?: T): Promise<T>;
+    setValue<T = any>(key: string, value: T): Promise<void>;
+    listValues(): Promise<string[]>;
+    deleteValue(key: string): Promise<void>;
+    addStyle?(css: string): Promise<HTMLElement>;
+    xmlHttpRequest?: (details: {
+        method: string;
+        url: string;
+        headers?: { [key: string]: string };
+        data?: string;
+    }) => Promise<{
+        responseText: string;
+        status: number;
+        statusText: string;
+    }>;
+    info: {
+        script: {
+            version: string;
+        };
+    };
+};
