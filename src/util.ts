@@ -381,7 +381,7 @@ class Util {
      */
     public static getCurrentUserID(): string {
         const myInfo = <HTMLAnchorElement>(
-            document.querySelector('.mmUserStats .avatar a')
+            document.querySelector('.mmUserStats .myInfo a')
         );
         if (myInfo) {
             const userID = <string>this.endOfHref(myInfo);
