@@ -344,6 +344,7 @@ class RatioProtect implements Feature {
 
         // Get the custom ratio amounts (will return default values otherwise)
         const [r1, r2, r3] = await this._share.getRatioProtectLevels();
+        const minRatio = parseFloat(await GM.getValue<string>('ratioProtectMin_val', '0'));
         if (MP.DEBUG) console.log(`Ratio protection levels set to: ${r1}, ${r2}, ${r3}`);
 
         // Create the box we will display text in
@@ -423,7 +424,7 @@ class RatioProtect implements Feature {
 
                     if (
                         rDiff > r3 ||
-                        Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val') ||
+                        Util.extractFloat(rNew)[0] < minRatio ||
                         Util.extractFloat(rNew)[0] < 2
                     ) {
                         this._setButtonState(dlBtn, '3_alert');
@@ -620,6 +621,7 @@ class RatioProtectIcons implements Feature {
 
         // Get the custom ratio amounts (will return default values otherwise)
         const [r1, r2, r3] = await this._share.getRatioProtectLevels();
+        const minRatio = parseFloat(await GM.getValue<string>('ratioProtectMin_val', '0'));
         // Would become ratio
         const rNew: HTMLDivElement | null = document.querySelector(this._tar);
         // Current ratio
@@ -693,7 +695,7 @@ class RatioProtectIcons implements Feature {
             // Change icon based on Ratio Protect states
             if (
                 rDiff > r3 ||
-                Util.extractFloat(rNew)[0] < GM_getValue('ratioProtectMin_val') ||
+                Util.extractFloat(rNew)[0] < minRatio ||
                 Util.extractFloat(rNew)[0] < 2
             ) {
                 this._buildIconLinks(siteFavicons, '12');

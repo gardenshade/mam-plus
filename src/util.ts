@@ -35,9 +35,9 @@ class Util {
     /**
      * Forcefully empties any GM stored values
      */
-    public static purgeSettings(): void {
-        for (const value of GM_listValues()) {
-            GM_deleteValue(value);
+    public static async purgeSettings(): Promise<void> {
+        for (const value of await GM.listValues()) {
+            await GM.deleteValue(value);
         }
     }
 
@@ -84,16 +84,13 @@ class Util {
         }
 
         // Is the setting enabled?
-        if (GM_getValue(settings.title)) {
+        if (await GM.getValue(settings.title)) {
             // A specific page is needed
             if (page && page.length > 0) {
                 // Loop over all required pages
-                const results: boolean[] = [];
-                await page.forEach((p) => {
-                    Check.page(p).then((r) => {
-                        results.push(<boolean>r);
-                    });
-                });
+                const results: boolean[] = await Promise.all(
+                    page.map((p) => Check.page(p).then((r) => <boolean>r))
+                );
                 // If any requested page matches the current page, run the feature
                 if (results.includes(true) === true) return run();
                 else return false;

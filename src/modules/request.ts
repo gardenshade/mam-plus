@@ -132,9 +132,7 @@ class PlaintextRequest implements Feature {
         desc: `Insert plaintext request results at top of request page`,
     };
     private _tar: string = '#ssr';
-    private _isOpen: 'true' | 'false' | undefined = GM_getValue(
-        `${this._settings.title}State`
-    );
+    private _isOpen: 'true' | 'false' | undefined = undefined;
     private _plainText: string = '';
 
     constructor() {
@@ -146,6 +144,10 @@ class PlaintextRequest implements Feature {
     }
 
     private async _init() {
+                this._isOpen = await GM.getValue<'true' | 'false' | undefined>(
+                    `${this._settings.title}State`
+                );
+
         let toggleBtn: Promise<HTMLElement>;
         let copyBtn: HTMLElement;
         let resultList: Promise<NodeListOf<HTMLLIElement>>;
@@ -246,11 +248,11 @@ class PlaintextRequest implements Feature {
      * Sets Open State to true/false internally and in script storage
      * @param val stringified boolean
      */
-    private _setOpenState(val: 'true' | 'false' | undefined): void {
+    private async _setOpenState(val: 'true' | 'false' | undefined): Promise<void> {
         if (val === undefined) {
             val = 'false';
         } // Default value
-        GM_setValue('toggleSnatchedState', val);
+        await GM.setValue('toggleSnatchedState', val);
         this._isOpen = val;
     }
 

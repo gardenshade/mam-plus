@@ -8,22 +8,15 @@
 class Style {
     private _theme: string;
     private _prevTheme: string | undefined;
-    private _cssData: string | undefined;
+    private _cssURL: string;
 
     constructor() {
         // The light theme is the default theme, so use M+ Light values
         this._theme = 'light';
+        this._prevTheme = undefined;
 
-        // Get the previously used theme object
-        this._prevTheme = this._getPrevTheme();
-
-        // If the previous theme object exists, assume the current theme is identical
-        if (this._prevTheme !== undefined) {
-            this._theme = this._prevTheme;
-        } else if (MP.DEBUG) console.warn('no previous theme');
-
-        // Fetch the CSS data
-        this._cssData = GM_getResourceText('MP_CSS');
+        // Use the release CSS URL directly instead of userscript resources
+        this._cssURL = `https://raw.githubusercontent.com/gardenshade/mam-plus/master/release/main.css?v=${MP.VERSION}`;
     }
 
     /** Allows the current theme to be returned */
@@ -38,10 +31,19 @@ class Style {
 
     /** Sets the M+ theme based on the site theme */
     public async alignToSiteTheme(): Promise<void> {
+        this._prevTheme = await this._getPrevTheme();
+
+        // If the previous theme object exists, assume the current theme is identical
+        if (this._prevTheme !== undefined) {
+            this._theme = this._prevTheme;
+        } else if (MP.DEBUG) {
+            console.warn('no previous theme');
+        }
+
         const theme: string = await this._getSiteCSS();
         this._theme = theme.indexOf('dark') > 0 ? 'dark' : 'light';
         if (this._prevTheme !== this._theme) {
-            this._setPrevTheme();
+            await this._setPrevTheme();
         }
 
         // Inject the CSS class used by M+ for theming
@@ -55,26 +57,74 @@ class Style {
         });
     }
 
-    /** Injects the stylesheet link into the header */
-    public injectLink(): void {
+    /** Injects the stylesheet using userscript APIs to avoid page CSP issues */
+    public async injectLink(): Promise<void> {
         const id: string = 'mp_css';
-        if (!document.getElementById(id)) {
+        if (document.getElementById(id)) {
+            if (MP.DEBUG)
+                console.warn(`an element with the id "${id}" already exists`);
+            return;
+        }
+
+        try {
+            const cssText = await this._getRemoteCSS();
+
+            // Prefer GM.addStyle because it is not restricted by site CSP in userscript managers
+            if (GM.addStyle) {
+                const styleElem = await GM.addStyle(cssText);
+                if (styleElem && !styleElem.id) {
+                    styleElem.id = id;
+                }
+                return;
+            }
+
+            // Fallback: inline <style>
             const style: HTMLStyleElement = document.createElement('style');
             style.id = id;
-            style.innerText = this._cssData !== undefined ? this._cssData : '';
+            style.textContent = cssText;
             document.querySelector('head')!.appendChild(style);
-        } else if (MP.DEBUG)
-            console.warn(`an element with the id "${id}" already exists`);
+        } catch (err) {
+            if (MP.DEBUG) {
+                console.warn('[M+] Failed CSS API injection; falling back to <link>.', err);
+            }
+
+            // Last resort fallback
+            const link: HTMLLinkElement = document.createElement('link');
+            link.id = id;
+            link.rel = 'stylesheet';
+            link.href = this._cssURL;
+            document.querySelector('head')!.appendChild(link);
+        }
+    }
+
+    /** Fetches CSS text using userscript HTTP privileges (preferred) */
+    private async _getRemoteCSS(): Promise<string> {
+        if (GM.xmlHttpRequest) {
+            const response = await GM.xmlHttpRequest({
+                method: 'GET',
+                url: this._cssURL,
+            });
+            if (!response.responseText) {
+                throw new Error('GM.xmlHttpRequest returned empty CSS response');
+            }
+            return response.responseText;
+        }
+
+        const response = await fetch(this._cssURL, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`CSS fetch failed: ${response.status} ${response.statusText}`);
+        }
+        return response.text();
     }
 
     /** Returns the previous theme object if it exists */
-    private _getPrevTheme(): string | undefined {
-        return GM_getValue('style_theme');
+    private async _getPrevTheme(): Promise<string | undefined> {
+        return GM.getValue<string | undefined>('style_theme');
     }
 
     /** Saves the current theme for future reference */
-    private _setPrevTheme(): void {
-        GM_setValue('style_theme', this._theme);
+    private async _setPrevTheme(): Promise<void> {
+        await GM.setValue('style_theme', this._theme);
     }
 
     private _getSiteCSS(): Promise<string> {

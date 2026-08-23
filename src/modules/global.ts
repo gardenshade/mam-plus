@@ -28,8 +28,8 @@ class HideHome implements Feature {
         });
     }
 
-    private _init() {
-        const hider: string = GM_getValue(this._settings.title);
+    private async _init() {
+        const hider: string = await GM.getValue<string>(this._settings.title, 'default');
         if (hider === 'hideHome') {
             document.body.classList.add('mp_hide_home');
             console.log('[M+] Hid the home button!');
@@ -151,11 +151,11 @@ class BonusPointDelta implements Feature {
         });
     }
 
-    _init() {
+    async _init() {
         const currentBPEl: HTMLAnchorElement | null = document.querySelector(this._tar);
 
         // Get old BP value
-        this._prevBP = this._getBP();
+        this._prevBP = await this._getBP();
 
         if (currentBPEl !== null) {
             // Extract only the number from the BP element
@@ -165,7 +165,7 @@ class BonusPointDelta implements Feature {
 
             // Set new BP value
             this._currentBP = parseInt(current[0]);
-            this._setBP(this._currentBP);
+            await this._setBP(this._currentBP);
 
             // Calculate delta
             this._delta = this._currentBP - this._prevBP;
@@ -188,11 +188,13 @@ class BonusPointDelta implements Feature {
         }
     };
 
-    private _setBP = (bp: number): void => {
-        GM_setValue(`${this._settings.title}Val`, `${bp}`);
+    private _setBP = async (bp: number): Promise<void> => {
+        await GM.setValue(`${this._settings.title}Val`, `${bp}`);
     };
-    private _getBP = (): number => {
-        const stored: string | undefined = GM_getValue(`${this._settings.title}Val`);
+    private _getBP = async (): Promise<number> => {
+        const stored: string | undefined = await GM.getValue<string | undefined>(
+            `${this._settings.title}Val`
+        );
         if (stored === undefined) {
             return 0;
         } else {

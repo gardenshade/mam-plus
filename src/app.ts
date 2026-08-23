@@ -26,7 +26,7 @@
  * @constant run(): Starts the userscript
  */
 namespace MP {
-    export const DEBUG: boolean | undefined = GM_getValue('debug') ? true : false;
+    export let DEBUG: boolean = false;
     export const CHANGELOG: ArrayObject = {
         /* 🆕♻️🐞 */
         UPDATE_LIST: [
@@ -51,14 +51,15 @@ namespace MP {
     export const settingsGlob: AnyFeature[] = [];
 
     export const run = async () => {
+        DEBUG = (await GM.getValue<boolean>('debug', false)) === true;
         /**
          * * PRE SCRIPT
          */
         console.group(`Welcome to MAM+ v${VERSION}!`);
 
         // The current page is not yet known
-        GM_deleteValue('mp_currentPage');
-        Check.page();
+        await GM.deleteValue('mp_currentPage');
+        await Check.page();
         // Add a simple cookie to announce the script is being used
         document.cookie = 'mp_enabled=1;domain=myanonamouse.net;path=/;samesite=lax';
         // Initialize core functions
@@ -74,13 +75,14 @@ namespace MP {
         /**
          * * SETTINGS
          */
-        Check.page('settings').then((result) => {
-            const subPg: string = window.location.search;
-            if (result === true && (subPg === '' || subPg === '?view=general')) {
-                // Initialize the settings page
-                Settings.init(result, settingsGlob);
-            }
-        });
+        const subPg: string = window.location.search;
+        const onSettingsPage: boolean = window.location.pathname.startsWith(
+            '/preferences'
+        );
+        if (onSettingsPage && (subPg === '' || subPg === '?view=general')) {
+            // Initialize the settings page
+            Settings.init(true, settingsGlob);
+        }
 
         /**
          * * STYLES

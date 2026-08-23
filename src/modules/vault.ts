@@ -21,7 +21,7 @@ class SimpleVault implements Feature {
     }
 
     private async _init() {
-        const subPage: string = GM_getValue('mp_currentPage');
+        const subPage: string = await GM.getValue<string>('mp_currentPage', 'vault');
         const page = <HTMLElement>document.querySelector(this._tar);
         console.group(`Applying Vault (${subPage}) settings...`);
 
@@ -77,7 +77,7 @@ class PotHistory implements Feature {
     }
 
     private async _init() {
-        const subPage: string = GM_getValue('mp_currentPage');
+        const subPage: string = await GM.getValue<string>('mp_currentPage', 'vault');
         const form = <HTMLElement>(
             document.querySelector(this._tar + ' form[method="post"]')
         );
