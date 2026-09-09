@@ -44,6 +44,192 @@ class HideHome implements Feature {
     }
 }
 
+/** Resolved banner probe results, cached across pageloads to avoid re-probing. */
+interface BannerCache {
+    main: Record<string, number | null>;
+    donate: Record<string, boolean>;
+}
+
+/**
+ * ## Display banners from a previous month
+ * The user picks a past year-month; the current main & donate banners are
+ * swapped for that month's, reusing the index the site already randomized.
+ * Falls back to a lower index when the chosen month has fewer banners.
+ */
+class UsePreviousBanners implements Feature {
+    private _settings: DropdownSetting = {
+        scope: SettingGroup.Global,
+        type: 'dropdown',
+        title: 'usePreviousBanners',
+        tag: 'Use Previous Banners',
+        options: UsePreviousBanners._buildMonthOptions(),
+        desc: 'Show banners from a previous month instead of the current ones (<a href="/banner/winners.php">see previous banners</a>)',
+    };
+    private _tar: string = '#msb';
+    private _cdn: string = 'https://cdn.myanonamouse.net/banner/display.php';
+    private _cacheKey: string = 'mp_usePreviousBannersCache';
+
+    constructor() {
+        Util.startFeature(this._settings, this._tar).then((t) => {
+            if (t) {
+                this._init();
+            }
+        });
+    }
+
+    /** Build the year-month dropdown options (2013-03 → last month, newest first). */
+    private static _buildMonthOptions(): StringObject {
+        const opts: StringObject = { default: 'Use current banners' };
+        const now = new Date();
+        let y: number = now.getUTCFullYear();
+        let m: number = now.getUTCMonth() + 1;
+        // Start from last month
+        m--;
+        if (m === 0) {
+            m = 12;
+            y--;
+        }
+        // Down to 2013-03 (the earliest month with banners)
+        while (y > 2013 || (y === 2013 && m >= 3)) {
+            const key = `${y}-${m < 10 ? '0' + m : m}`;
+            opts[key] = key;
+            m--;
+            if (m === 0) {
+                m = 12;
+                y--;
+            }
+        }
+        return opts;
+    }
+
+    private async _init() {
+        const selected: string = GM_getValue(this._settings.title);
+        // "default" (or empty) means keep the site's current banners
+        if (!selected || selected === 'default') return;
+
+        const month: string = selected.replace('-', ''); // 2025-12 -> 202512
+
+        // Read the index the site already chose for the current banner
+        const img = <HTMLImageElement | null>document.querySelector('#msb img');
+        if (!img) return;
+        const match = img.src.match(/display\.php\/m\/(\d{6})\/(\d+)/);
+        if (!match) {
+            console.warn('[M+] Previous Banners: could not parse the current banner URL');
+            return;
+        }
+        const siteIndex: number = parseInt(match[2], 10);
+
+        // Find a valid index for the chosen month, falling back to lower indexes.
+        // Cached per month+siteIndex so repeat pageloads skip the probing entirely.
+        const cache: BannerCache = this._loadCache();
+        const mainKey = `${month}:${siteIndex}`;
+        let index: number | null;
+        if (mainKey in cache.main) {
+            index = cache.main[mainKey];
+        } else {
+            index = await this._resolveIndex(month, siteIndex);
+            cache.main[mainKey] = index;
+            this._saveCache(cache);
+        }
+        if (index === null) {
+            console.warn(`[M+] Previous Banners: no banners found for ${selected}`);
+            return;
+        }
+
+        // Swap the header (main) banner, reusing the element we already have
+        img.src = img.src.replace(/(display\.php\/m\/)\d{6}\/\d+/, `$1${month}/${index}`);
+        await this._applyDonate(month, index, cache);
+        console.log(`[M+] Showing previous banners from ${selected} (#${index})`);
+    }
+
+    /**
+     * Probe every index from `start` down to 0 in parallel, returning the
+     * highest one that has an image (same result as a sequential top-down
+     * scan, but in a single round-trip instead of up to `start + 1`).
+     */
+    private async _resolveIndex(month: string, start: number): Promise<number | null> {
+        const found: boolean[] = await Promise.all(
+            Array.from({ length: start + 1 }, (_, n) =>
+                this._imgExists(`${this._cdn}/m/${month}/${n}`)
+            )
+        );
+        for (let n = start; n >= 0; n--) {
+            if (found[n]) return n;
+        }
+        return null;
+    }
+
+    private _imgExists(url: string): Promise<boolean> {
+        return new Promise((resolve) => {
+            const probe = new Image();
+            probe.onload = () => resolve(probe.naturalWidth > 0);
+            probe.onerror = () => resolve(false);
+            probe.src = url;
+        });
+    }
+
+    private _loadCache(): BannerCache {
+        const raw: string | undefined = GM_getValue(this._cacheKey);
+        if (!raw) return { main: {}, donate: {} };
+        try {
+            return JSON.parse(raw);
+        } catch {
+            return { main: {}, donate: {} };
+        }
+    }
+
+    private _saveCache(cache: BannerCache): void {
+        GM_setValue(this._cacheKey, JSON.stringify(cache));
+    }
+
+    /**
+     * Swap the donate popup banner (both the `/d/` frame and the `/b/` image).
+     * If the chosen month has no donate banner, remove the donate box entirely.
+     */
+    private async _applyDonate(month: string, index: number, cache: BannerCache) {
+        const donateKey = `${month}:${index}`;
+        let hasDonate: boolean;
+        if (donateKey in cache.donate) {
+            hasDonate = cache.donate[donateKey];
+        } else {
+            hasDonate = await this._imgExists(`${this._cdn}/d/${month}/${index}`);
+            cache.donate[donateKey] = hasDonate;
+            this._saveCache(cache);
+        }
+
+        // Some months have no donate banner; drop the donate box in that case
+        if (!hasDonate) {
+            const donateLI = document.querySelector('#donateLI');
+            if (donateLI) donateLI.remove();
+            console.log(
+                `[M+] Previous Banners: no donate banner for ${month}; removed the donate box`
+            );
+            return;
+        }
+
+        const frame = <HTMLElement | null>document.querySelector('#mainDonate');
+        const image = <HTMLElement | null>(
+            document.querySelector('#mainDonate .donateImage')
+        );
+        if (frame) {
+            frame.style.backgroundImage = frame.style.backgroundImage.replace(
+                /(display\.php\/d\/)\d{6}\/\d+/,
+                `$1${month}/${index}`
+            );
+        }
+        if (image) {
+            image.style.backgroundImage = image.style.backgroundImage.replace(
+                /(display\.php\/b\/)\d{6}\/\d+/,
+                `$1${month}/${index}`
+            );
+        }
+    }
+
+    get settings(): DropdownSetting {
+        return this._settings;
+    }
+}
+
 /**
  * ## Bypass the vault info page
  */
